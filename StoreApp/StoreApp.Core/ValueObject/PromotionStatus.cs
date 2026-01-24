@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Core.ValueObject
 {
-    internal class DiscountStatus
+    public enum PromotionStatus
     {
+        Active,
+        Inactive
     }
 }

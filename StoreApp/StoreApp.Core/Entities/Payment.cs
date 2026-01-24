@@ -1,35 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Core.Entities
 {
-    [Table("payments")]
-    public class Payment
+    public class Payment : BaseEntity
     {
-        [Key]
-        [Column("payment_id")]
-        public int PaymentId { get; set; }
-
-        [Column("order_id")]
-        public int OrderId { get; set; }
-        [ForeignKey(nameof(OrderId))]
-        public Order? Order { get; set; }
-
-        [Required]
-        [Column("amount")]
-        public decimal Amount { get; set; }
-
-        [Required]
-        [Column("payment_method")]
-        public string PaymentMethod { get; set; } = null!;
-
-        [Required]
-        [Column("payment_date", TypeName = "timestamp")]
-        public DateTime PaymentDate { get; set; }
+        public Guid OrderId { get; private set; }
+        public decimal Amount { get; private set; }
+        public PaymentMethod PaymentMethod { get; private set; }
+        public DateTime PaymentDate { get; private set; } = DateTime.Now;
     }
 }
