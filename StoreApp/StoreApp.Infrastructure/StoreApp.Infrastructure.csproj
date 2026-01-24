@@ -20,8 +20,4 @@
     <ProjectReference Include="..\StoreApp.Application\StoreApp.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Adapter\" />
-  </ItemGroup>
-
 </Project>
