@@ -1,53 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Core.Entities
 {
-    [Table("promotions")]
-    public class Promotion
+    public class Promotion : BaseEntity
     {
-        [Key]
-        [Column("promo_id")]
-        public int PromoId { get; set; }
-
-        [Required]
-        [Column("promo_code", TypeName = "varchar(50)")]
-        public string PromoCode { get; set; } = "";
-
-        [Column("description", TypeName = "varchar(255)")]
-        public string? Description { get; set; }
-
-        [Required]
-        [Column("discount_type", TypeName = "enum('percent','fixed')")]
-        public string DiscountType { get; set; } = "";
-
-        [Required]
-        [Column("discount_value", TypeName = "decimal(10,2)")]
-        public decimal DiscountValue { get; set; }
-
-        [Required]
-        [Column("start_date", TypeName = "date")]
-        public DateTime StartDate { get; set; }
-
-        [Required]
-        [Column("end_date", TypeName = "date")]
-        public DateTime EndDate { get; set; }
-
-        [Column("min_order_amount", TypeName = "decimal(10,2)")]
-        public decimal MinOrderAmount { get; set; } = 0;
-
-        [Column("usage_limit")]
-        public int UsageLimit { get; set; } = 0;
-
-        [Column("used_count")]
-        public int UsedCount { get; set; } = 0;
-
-        [Column("status", TypeName = "enum('active','inactive')")]
-        public string Status { get; set; } = "active";
+        public string PromoCode { get; private set; } = "";
+        public string? Description { get; private set; }
+        public DiscountType DiscountType { get; private set; };
+        public decimal DiscountValue { get; private set; }
+        public DateTime StartDate { get; private set; }
+        public DateTime EndDate { get; private set; }
+        public decimal MinOrderAmount { get; private set; } = 0;
+        public int UsageLimit { get; private set; } = 0;
+        public int UsedCount { get; private set; } = 0;
+        public PromotionStatus PromotionStatus { get; private set; } = PromotionStatus.Active;
     }
 }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Core.ValueObject
 {
-    internal class PaymentStatus
+    public enum PaymentStatus
     {
+        Success, Failed, Pending
     }
 }

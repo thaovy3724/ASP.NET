@@ -1,59 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StoreApp.Core.Entities
+﻿namespace StoreApp.Core.Entities
 {
-    [Table("products")]
-    public class Product
+    public class Product : BaseEntity
     {
-        [Key]
-        [Column("product_id")]
-        public int ProductID { get; set; }
-
-        [Column("category_id")]
-        public int? CategoryID { get; set; }
-        [ForeignKey(nameof(CategoryID))]
-        public Category? Category { get; set; }
-
-        [Column("supplier_id")]
-        public int? SupplierID { get; set; }
-        [ForeignKey(nameof(SupplierID))]
-        public Supplier? Supplier { get; set; }
-
-        [Required(ErrorMessage = "Tên sản phẩm là bắt buộc!")]
-        [Column("product_name", TypeName = "varchar(100)")]
-        [MaxLength(100, ErrorMessage = "Tên sản phẩm tối đa 100 kí tự!")]
-        public string ProductName { get; set; }
-
-        [Required(ErrorMessage = "Mã vạch là bắt buộc!")]
-        [Column("barcode", TypeName = "varchar(50)")]
-        [MaxLength(ErrorMessage = "Mã vạch tối đa 50 kí tự!")]
-        public string Barcode { get; set; }
-
-        [Required(ErrorMessage = "Đơn giá là bắt buộc!")]
-        [Column("price", TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
-
-        [Column("unit", TypeName = "varchar(20)")]
-        public string Unit { get; set; }
-
-        [Column("created_at", TypeName = "timestamp")]
-        public DateTime CreatedAt { get; set; }
-
-        [Column("image_url", TypeName = "varchar(500)")] // Thêm trường này
-        public string? ImageUrl { get; set; }
-
-        //[Column("stock", TypeName = "int")]
-        //public int? stock { get; set; }
-
-        [Column("status", TypeName = "bit(1)")]
-        public int Status { get; set; }
-
-        public Product() { }
+        public Guid CategoryID { get; private set; }
+        public Guid SupplierID { get; private set; }
+        public string ProductName { get; private set; } = "";
+        public string Barcode { get; private set; } = "";
+        public decimal Price { get; private set; }
+        public string Unit { get; private set; } = "";
+        public DateTime CreatedAt { get; private set; } = DateTime.Now;
+        public string ImageUrl { get; private set; } = "";
+        //public int Status { get; set; }
     }
 }

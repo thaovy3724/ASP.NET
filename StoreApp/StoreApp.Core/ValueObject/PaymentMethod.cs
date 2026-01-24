@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Core.ValueObject
 {
-    internal class PaymentMethod
+    public enum PaymentMethod
     {
+        Cash,
+        Card,
+        BankTransfer,
+        EWallet
     }
 }

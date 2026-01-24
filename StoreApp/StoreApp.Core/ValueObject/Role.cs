@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Core.ValueObject
 {
-    internal class Role
+    public enum Role
     {
+        Admin,
+        Staff
     }
 }

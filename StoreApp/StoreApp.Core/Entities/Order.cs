@@ -1,39 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StoreApp.Core.Entities
+﻿namespace StoreApp.Core.Entities
 {
-    [Table("orders")]
-    public class Order
+    public class Order : BaseEntity
     {
-        [Key]
-        [Column("order_id")]
-        public int OrderId { get; set; }
-
-        [Column("customer_id")]
-        public int? CustomerId { get; set; }
-
-        [Column("user_id")]
-        public int? UserId { get; set; }
-
-        [Column("promo_id")]
-        public int? PromoId { get; set; }
-
-        [Column("order_date")]
-        public DateTime? OrderDate { get; set; }
-
-        [Column("total_amount")]
-        public decimal? TotalAmount { get; set; }
-
-        [Column("discount_amount")]
-        public decimal DiscountAmount { get; set; }
-
-        public List<OrderItem> Items { get; set; } = new();
-        public List<Payment> Payments { get; set; } = new();
+        public Guid? CustomerId { get; private set; }
+        public Guid UserId { get; private set; }
+        public Guid? PromoId { get; private set; }
+        public DateTime OrderDate { get; private set; }
+        public decimal DiscountAmount { get; private set; } = 0;
+        public decimal TotalAmount => Items?.Sum(i => i.Subtotal) ?? 0 - DiscountAmount;
+        public List<OrderItem> Items { get; private set; } = [];
+        //public List<Payment> Payments { get; private set; } = new();
     }
 }
