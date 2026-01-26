@@ -9,5 +9,6 @@ namespace StoreApp.Application.Ports.Output
 {
     public interface IUserRepository : IBaseRepository<User>
     {
+        List<User> SearchByKeyword(string keyword);
     }
 }

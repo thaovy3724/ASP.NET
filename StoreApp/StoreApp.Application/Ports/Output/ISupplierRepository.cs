@@ -9,5 +9,8 @@ namespace StoreApp.Application.Ports.Output
 {
     public interface ISupplierRepository : IBaseRepository<Supplier>
     {
+        List<Supplier> SearchByKeyword(string keyword);
+        Task<bool> IsSupplierIdExist(Guid supplierId);
+        Task<bool> IsSupplierExist(string name, string email, string phone, Guid? ignoreId = null);
     }
 }
