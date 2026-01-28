@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StoreApp.Core.Entities;
+using StoreApp.Core.ValueObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,12 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("total_amount")
                    .HasColumnType("decimal(10,2)")
                    .IsRequired();
+            // OrderStatus
+            builder.Property(u => u.OrderStatus)
+                    .HasColumnName("order_status")
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
 
             // --- Thiết lập Quan hệ ---
 
@@ -79,14 +86,14 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasForeignKey("order_id")
                    .OnDelete(DeleteBehavior.Cascade);
 
-            // --- Tối ưu hóa ---
+            //// --- Tối ưu hóa ---
 
-            // Index để tìm kiếm đơn hàng theo ngày hoặc theo khách hàng nhanh hơn
-            builder.HasIndex(o => o.OrderDate);
-            builder.HasIndex(o => o.CustomerId);
+            //// Index để tìm kiếm đơn hàng theo ngày hoặc theo khách hàng nhanh hơn
+            //builder.HasIndex(o => o.OrderDate);
+            //builder.HasIndex(o => o.CustomerId);
 
-            // Check Constraint: Đảm bảo tổng tiền không âm
-            builder.ToTable(t => t.HasCheckConstraint("CK_Order_TotalAmount", "total_amount >= 0"));
+            //// Check Constraint: Đảm bảo tổng tiền không âm
+            //builder.ToTable(t => t.HasCheckConstraint("CK_Order_TotalAmount", "total_amount >= 0"));
         }
     }
 }

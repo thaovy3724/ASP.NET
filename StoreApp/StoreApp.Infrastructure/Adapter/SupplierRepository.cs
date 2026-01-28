@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class SupplierRepository(DbContext context) : BaseRepository<Supplier>(context), ISupplierRepository
+    public class SupplierRepository(StoreDbContext context) : BaseRepository<Supplier>(context), ISupplierRepository
     {
         private readonly DbSet<Supplier> _dbset = context.Set<Supplier>();
         public List<Supplier> SearchByKeyword(string keyword)

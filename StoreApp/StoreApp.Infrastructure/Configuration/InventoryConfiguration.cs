@@ -33,14 +33,19 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnType("timestamp")
                    .IsRequired();
 
+            builder.HasOne<Product>()
+                   .WithOne()
+                   .HasForeignKey<Inventory>(i => i.ProductId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
             // Thiết lập Quan hệ (Nếu Product cũng nằm trong cùng DB/Service)
             // Nếu đây là Microservice riêng biệt, bạn có thể không cần Navigation Property 
             // mà chỉ cần lưu ProductId để đảm bảo tính độc lập.
 
             // Index để tăng tốc độ truy vấn theo sản phẩm
-            builder.HasIndex(i => i.ProductId);
+            //builder.HasIndex(i => i.ProductId);
 
-            builder.ToTable(t => t.HasCheckConstraint("CK_Inventory_Quantity", "quantity >= 0"));
+            //builder.ToTable(t => t.HasCheckConstraint("CK_Inventory_Quantity", "quantity >= 0"));
         }
     }
 }

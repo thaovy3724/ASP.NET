@@ -7,6 +7,5 @@
         public string? Email { get; private set; }
         public string? Address { get; private set; }
         public DateTime? CreatedAt { get; private set; } = DateTime.Now;
-        //public int RewardPoints { get; set; } = 0;
     }
 }

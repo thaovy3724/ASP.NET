@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+﻿using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class OrderRepository(DbContext context) : BaseRepository<Order>(context), IOrderRepository
+    public class OrderRepository(StoreDbContext context) : BaseRepository<Order>(context), IOrderRepository
     {
     }
 }
