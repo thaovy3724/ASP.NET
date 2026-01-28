@@ -2,8 +2,8 @@
 {
     public class Product : BaseEntity
     {
-        public Guid CategoryID { get; private set; }
-        public Guid SupplierID { get; private set; }
+        public Guid CategoryId { get; private set; }
+        public Guid SupplierId { get; private set; }
         public string ProductName { get; private set; } = "";
         public string Barcode { get; private set; } = "";
         public decimal Price { get; private set; }

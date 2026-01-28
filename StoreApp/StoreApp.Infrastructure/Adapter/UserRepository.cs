@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class UserRepository(DbContext context) : BaseRepository<User>(context), IUserRepository
+    public class UserRepository(StoreDbContext context) : BaseRepository<User>(context), IUserRepository
     {
         private readonly DbSet<User> _dbset = context.Set<User>();
         public List<User> SearchByKeyword(string keyword)

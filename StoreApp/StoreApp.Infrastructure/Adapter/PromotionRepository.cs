@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
 using StoreApp.Infrastructure.Data;
 using System;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class PromotionRepository(DbContext context) : BaseRepository<Promotion>(context), IPromotionRepository
+    public class PromotionRepository(StoreDbContext context) : BaseRepository<Promotion>(context), IPromotionRepository
     {
         protected readonly DbSet<Promotion> _dbSet = context.Set<Promotion>();
         public async Task<List<Promotion>> SearchByKeyword(string keyword)

@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class ProductRepository(DbContext context) : BaseRepository<Product>(context), IProductRepository
+    public class ProductRepository(StoreDbContext context) : BaseRepository<Product>(context), IProductRepository
     {
         private readonly DbSet<Product> _dbset = context.Set<Product>();
         public async Task<bool> checkExistBarcode(string barcode)
@@ -37,13 +38,13 @@ namespace StoreApp.Infrastructure.Adapter
                 // Filter by supplier
                 if (supplier_id.HasValue)
                 {
-                    query = query.Where(p => p.SupplierID == supplier_id.Value);
+                    query = query.Where(p => p.SupplierId == supplier_id.Value);
                 }
 
                 // Filter by category
                 if (category_id.HasValue)
                 {
-                    query = query.Where(p => p.CategoryID == category_id.Value);
+                    query = query.Where(p => p.CategoryId == category_id.Value);
                 }
 
                 // Search by keyword

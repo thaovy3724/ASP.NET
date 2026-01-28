@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class InventoryRepository(DbContext context) : BaseRepository<Inventory>(context), IInventoryRepository
+    public class InventoryRepository(StoreDbContext context) : BaseRepository<Inventory>(context), IInventoryRepository
     {
         private readonly DbSet<Inventory> _dbset = context.Set<Inventory>();
         public async Task<Inventory> GetByProductID(Guid productID)

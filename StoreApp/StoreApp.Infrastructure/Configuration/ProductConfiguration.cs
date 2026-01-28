@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StoreApp.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Infrastructure.Configuration
 {
@@ -14,8 +9,9 @@ namespace StoreApp.Infrastructure.Configuration
         {
             // Tên bảng
             builder.ToTable("products");
-            builder.HasKey(s => s.Id);
-
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.Id)
+                   .HasColumnName("product_id");
 
             // Cấu hình các cột (Property)
             builder.Property(p => p.ProductName)
@@ -47,20 +43,16 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("image_url")
                    .HasColumnType("varchar(500)");
 
-            //builder.Property(p => p.Status)
-            //       .HasColumnName("status")
-            //       .HasColumnType("bit(1)");
-
             // Cấu hình Quan hệ (Relationships)
-            //builder.HasOne(p => p.Category)
-            //       .WithMany() // Nếu LoaiSanPham không có List<SanPham>
-            //       .HasForeignKey(p => p.CategoryID)
-            //       .OnDelete(DeleteBehavior.SetNull);
+            builder.HasOne<Supplier>()
+                   .WithMany()
+                   .HasForeignKey(o => o.SupplierId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
-            //builder.HasOne(p => p.Supplier)
-            //       .WithMany()
-            //       .HasForeignKey(p => p.SupplierID)
-            //       .OnDelete(DeleteBehavior.SetNull);
+            builder.HasOne<Category>()
+                   .WithMany()
+                   .HasForeignKey(o => o.CategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

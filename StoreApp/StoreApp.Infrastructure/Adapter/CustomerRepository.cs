@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class CustomerRepository(DbContext context) : BaseRepository<Customer>(context), ICustomerRepository
+    public class CustomerRepository(StoreDbContext context) : BaseRepository<Customer>(context), ICustomerRepository
     {
         public async Task<List<Customer>> SearchByKeyword(string? keyword)
         {

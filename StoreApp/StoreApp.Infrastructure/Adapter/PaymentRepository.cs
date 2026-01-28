@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+﻿using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class PaymentRepository(DbContext context) : BaseRepository<Payment>(context), IPaymentRepository
+    public class PaymentRepository(StoreDbContext context) : BaseRepository<Payment>(context), IPaymentRepository
     {
     }
 }

@@ -1,15 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StoreApp.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Infrastructure.Configuration
 {
-    internal class CustomerConfiguration : IEntityTypeConfiguration<Customer>
+    public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
@@ -39,26 +34,20 @@ namespace StoreApp.Infrastructure.Configuration
 
             // Địa chỉ (Mặc định nvarchar max nếu không chỉ định TypeName)
             builder.Property(c => c.Address)
-                   .HasColumnName("address");
+                   .HasColumnName("address")
+                   .HasColumnType("text");
 
             // Ngày tạo
             builder.Property(c => c.CreatedAt)
                    .HasColumnName("created_at")
                    .HasColumnType("datetime")
                    .HasDefaultValueSql("GETDATE()");
+            
+            //// --- Cấu hình bổ sung (Best Practice) ---
 
-            // Điểm thưởng
-            // Lưu ý: Nếu trong Entity bạn đang comment nó, hãy mở ra để builder có thể nhận diện
-            //builder.Property(c => c.RewardPoints)
-            //       .HasColumnName("reward_points")
-            //       .HasColumnType("int")
-            //       .HasDefaultValue(0);
-
-            // --- Cấu hình bổ sung (Best Practice) ---
-
-            // Index cho số điện thoại và email để tìm kiếm khách hàng nhanh hơn
-            builder.HasIndex(c => c.Phone);
-            builder.HasIndex(c => c.Email).IsUnique(); // Email thường không nên trùng nhau
+            //// Index cho số điện thoại và email để tìm kiếm khách hàng nhanh hơn
+            //builder.HasIndex(c => c.Phone);
+            //builder.HasIndex(c => c.Email).IsUnique(); // Email thường không nên trùng nhau
         }
     }
 }
