@@ -9,5 +9,8 @@ namespace StoreApp.Application.Ports.Output
 {
     public interface IPromotionRepository : IBaseRepository<Promotion>
     {
+        Task<List<Promotion>> SearchByKeyword(string keyword);
+
     }
+
 }
