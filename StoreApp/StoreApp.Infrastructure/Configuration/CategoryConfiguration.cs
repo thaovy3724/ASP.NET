@@ -1,22 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StoreApp.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Infrastructure.Configuration
 {
-    internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Category> builder)
+        public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.ToTable("categories");
+            // Khóa chính
             builder.HasKey(c => c.Id);
-            builder.Property(c => c.CategoryName)
-                   .IsRequired()
-                   .HasMaxLength(100);
+            builder.Property(c => c.Id)
+                   .HasColumnName("category_id");
+
+            builder.Property(c => c.Name)
+                   .HasMaxLength(100)
+                   .IsRequired();
         }
     }
 }

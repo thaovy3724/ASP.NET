@@ -1,15 +1,13 @@
-﻿using StoreApp.Core;
+﻿using StoreApp.Application;
 using StoreApp.Infrastructure;
-
 namespace StoreApp.Api
 {
     public static class DependencyInjection
     {
         public static IServiceCollection AddAppDI(this IServiceCollection services)
         {
-            services.AddCoreDI()
-                .AddInfrastructureDI();
-            // Application Services
+            services.AddApplicationDI()
+                    .AddInfrastructureDI(); // chain calls
             return services;
         }
     }

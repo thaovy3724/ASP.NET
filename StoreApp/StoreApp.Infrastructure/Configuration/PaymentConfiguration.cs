@@ -37,7 +37,7 @@ namespace StoreApp.Infrastructure.Configuration
             builder.Property(p => p.PaymentMethod)
                    .HasColumnName("payment_method")
                    .HasConversion<string>()
-                   .HasMaxLength(30)
+                   .HasMaxLength(20)
                    .IsRequired();
 
             // Ngày thanh toán
@@ -51,17 +51,17 @@ namespace StoreApp.Infrastructure.Configuration
 
             // Quan hệ N-1 với Order
             builder.HasOne<Order>()
-                   .WithMany() // Một đơn hàng có thể có nhiều đợt thanh toán (ví dụ: đặt cọc và thanh toán nốt)
-                   .HasForeignKey(p => p.OrderId)
+                   .WithOne() // Một đơn hàng có thể có nhiều đợt thanh toán (ví dụ: đặt cọc và thanh toán nốt)
+                   .HasForeignKey<Payment>(p => p.OrderId)
                    .OnDelete(DeleteBehavior.Cascade); // Xóa đơn hàng thì xóa lịch sử thanh toán liên quan
 
             // --- Tối ưu hóa & Validation ---
 
-            // Index để tra cứu lịch sử thanh toán theo đơn hàng nhanh hơn
-            builder.HasIndex(p => p.OrderId);
+            //// Index để tra cứu lịch sử thanh toán theo đơn hàng nhanh hơn
+            //builder.HasIndex(p => p.OrderId);
 
-            // Kiểm tra số tiền thanh toán phải lớn hơn 0
-            builder.ToTable(t => t.HasCheckConstraint("CK_Payment_Amount", "amount > 0"));
+            //// Kiểm tra số tiền thanh toán phải lớn hơn 0
+            //builder.ToTable(t => t.HasCheckConstraint("CK_Payment_Amount", "amount > 0"));
 
         }
     }

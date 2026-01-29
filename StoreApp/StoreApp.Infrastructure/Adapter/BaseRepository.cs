@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoreApp.Application.Ports.Output;
+using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
 using StoreApp.Infrastructure.Data;
 using System;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class BaseRepository<T>(DbContext Context) : IBaseRepository<T> where T : BaseEntity
+    public class BaseRepository<T>(StoreDbContext Context) : IBaseRepository<T> where T : BaseEntity
     {
         protected readonly DbSet<T> DbSet = Context.Set<T>();
 
@@ -24,7 +24,7 @@ namespace StoreApp.Infrastructure.Adapter
             return await DbSet.FindAsync(id);
         }
 
-        public async Task Add(T entity)
+        public async Task Create(T entity)
         {
             DbSet.Add(entity);
             await Context.SaveChangesAsync();

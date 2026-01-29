@@ -14,18 +14,23 @@ namespace StoreApp.Infrastructure.Configuration
         {
             builder.ToTable("suppliers");
             builder.HasKey(s => s.Id);
+            builder.Property(c => c.Id)
+                   .HasColumnName("supplier_id");
+
             builder.Property(s => s.Name)
-                   .IsRequired()
-                   .HasMaxLength(100);
-            builder.Property(s => s.Phone).IsRequired()
-                   .HasMaxLength(10);
-            builder.Property(s => s.Email).IsRequired()
-                   .HasMaxLength(100);
+                   .HasMaxLength(100)
+                   .IsRequired();
+
+            builder.Property(s => s.Phone)
+                   .HasMaxLength(10)
+                   .IsRequired();
+
+            builder.Property(s => s.Email)
+                   .HasMaxLength(100)
+                   .IsRequired();
+
             builder.Property(s => s.Address).IsRequired()
                     .HasColumnType("text");
-            //builder.HasMany(s => s.Products)
-            //       .WithOne(p => p.Supplier)
-            //       .HasForeignKey(p => p.SupplierId);
         }
     }
 }
