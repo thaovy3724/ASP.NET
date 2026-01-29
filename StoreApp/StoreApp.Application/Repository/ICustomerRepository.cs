@@ -6,6 +6,8 @@ namespace StoreApp.Application.Repository
     {
         // search by keyword
         Task<List<Customer>> SearchByKeyword(string? keyword);
+        Task<bool> IsEmailExists(string email);
+        Task<bool> IsPhoneExists(string phone);
 
 
     }

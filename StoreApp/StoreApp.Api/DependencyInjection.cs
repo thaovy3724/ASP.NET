@@ -8,6 +8,7 @@ namespace StoreApp.Api
         {
             services.AddApplicationDI()
                     .AddInfrastructureDI(); // chain calls
+            
             return services;
         }
     }

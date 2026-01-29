@@ -1,4 +1,5 @@
-﻿using StoreApp.Core.Entities;
+﻿using StoreApp.Application.Repository;
+using StoreApp.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

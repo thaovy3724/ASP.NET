@@ -25,5 +25,18 @@ namespace StoreApp.Infrastructure.Adapter
             // 3. Thực thi truy vấn và trả về danh sách
             return await query.AsNoTracking().ToListAsync();
         }
+
+        public Task<bool> IsEmailExists(string email)
+        {
+            return context.Set<Customer>()
+                          .AsNoTracking()
+                          .AnyAsync(c => c.Email == email);
+        }
+        public Task<bool> IsPhoneExists(string phone)
+        {
+            return context.Set<Customer>()
+                          .AsNoTracking()
+                          .AnyAsync(c => c.Phone == phone);
+        }
     }
 }

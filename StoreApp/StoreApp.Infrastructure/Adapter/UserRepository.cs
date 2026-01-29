@@ -8,14 +8,14 @@ namespace StoreApp.Infrastructure.Adapter
     public class UserRepository(StoreDbContext context) : BaseRepository<User>(context), IUserRepository
     {
         private readonly DbSet<User> _dbset = context.Set<User>();
-        public List<User> SearchByKeyword(string keyword)
+        public async Task<List<User>> SearchByKeyword(string keyword)
         {
             if (string.IsNullOrEmpty(keyword))
-                return _dbset.ToList();
-            return _dbset.Where(x =>
+                return await _dbset.ToListAsync();
+            return await _dbset.Where(x =>
                 x.Username.Contains(keyword) ||
                 x.FullName.Contains(keyword) ||
-                x.Role.ToString().Contains(keyword)).ToList();
+                x.Role.ToString().Contains(keyword)).ToListAsync();
         }
         public async Task<bool> isUsernameExist(string username)
         {

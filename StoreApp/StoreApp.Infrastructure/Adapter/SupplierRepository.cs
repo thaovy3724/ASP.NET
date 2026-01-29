@@ -40,5 +40,34 @@ namespace StoreApp.Infrastructure.Adapter
                 (email != "" && x.Email == email) ||
                 (phone != "" && x.Phone == phone));
         }
+        public Task<bool> IsSupplierNameExist(string name, Guid? ignoreId = null)
+        {
+            name = name?.Trim() ?? "";
+            var q = _dbset.AsQueryable();
+            if (ignoreId.HasValue) q = q.Where(x => x.Id != ignoreId.Value);
+            return q.AnyAsync(x => x.Name == name);
+        }
+        public Task<bool> IsSupplierEmailExist(string email, Guid? ignoreId = null)
+        {
+            email = email?.Trim() ?? "";
+            var q = _dbset.AsQueryable();
+            if (ignoreId.HasValue) q = q.Where(x => x.Id != ignoreId.Value);
+            return q.AnyAsync(x => x.Email == email);
+        }
+        public Task<bool> IsSupplierPhoneExist(string phone, Guid? ignoreId = null)
+        {
+            phone = phone?.Trim() ?? "";
+            var q = _dbset.AsQueryable();
+            if (ignoreId.HasValue) q = q.Where(x => x.Id != ignoreId.Value);
+            return q.AnyAsync(x => x.Phone == phone);
+        }
+        public Task<bool> IsSupplierAddressExist(string address, Guid? ignoreId = null)
+        {
+            address = address?.Trim() ?? "";
+            var q = _dbset.AsQueryable();
+            if (ignoreId.HasValue) q = q.Where(x => x.Id != ignoreId.Value);
+            return q.AnyAsync(x => x.Address == address);
+        }
+
     }
 }
