@@ -1,73 +1,63 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Adapter;
 using StoreApp.Infrastructure.Data;
 
-namespace StoreApp.Infrastructure.Adapter
+public class ProductRepository(StoreDbContext context) : BaseRepository<Product>(context), IProductRepository
 {
-    public class ProductRepository(StoreDbContext context) : BaseRepository<Product>(context), IProductRepository
+    // Create
+    // Trong hệ thống đã có sản phẩm nào dùng barcode này chưa?
+    public async Task<bool> ExistsBarcode(string barcode)
     {
-        private readonly DbSet<Product> _dbset = context.Set<Product>();
-        public async Task<bool> checkExistBarcode(string barcode)
-        {
-            return await _dbset
-                .AnyAsync(x => x.Barcode == barcode);
+        // AnyAsync trả về bool, không load entity như FirstAsync => chạy nhanh hơn 
+        return await DbSet.AnyAsync(x => x.Barcode == barcode);
+    }
 
+    // Update
+    // Ngoài chính sản phẩm đang sửa, còn sản phẩm nào khác dùng barcode này không? 
+    public async Task<bool> ExistsBarcodeForOtherProducts(Guid id, string barcode)
+    {
+        // AnyAsync trả về bool, không load entity như FirstAsync => chạy nhanh hơn 
+        return await DbSet.AnyAsync(x => x.Id != id && x.Barcode == barcode);
+    }
+
+    // filter 
+    public async Task<List<Product>> Search(Guid? supplierId, Guid? categoryId, decimal? minPrice, decimal? maxPrice, string? keyword, string? priceOrder)
+    {
+        IQueryable<Product> query = DbSet.AsNoTracking();
+
+        if (supplierId.HasValue)
+            query = query.Where(x => x.SupplierId == supplierId.Value);
+
+        if (categoryId.HasValue)
+            query = query.Where(x => x.CategoryId == categoryId.Value);
+
+        if (minPrice.HasValue)
+            query = query.Where(x => x.Price >= minPrice.Value);
+
+        if (maxPrice.HasValue)
+            query = query.Where(x => x.Price <= maxPrice.Value);
+
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            var k = keyword.Trim();
+            query = query.Where(x =>
+                x.ProductName.Contains(k) ||
+                x.Barcode.Contains(k)
+            );
         }
 
-        public async Task<bool> checkExistID(Guid ID)
+        if (!string.IsNullOrWhiteSpace(priceOrder))
         {
-            bool exists = await _dbset
-                .AnyAsync(x => x.Id == ID);
-
-            return exists;
-        }
-        public async Task<bool> checkBarcodeExistForOtherProducts(Guid id, string barcode)
-        {
-            var sanpham = await GetById(id);
-            var exist = await _dbset.AnyAsync(x => x.Barcode == sanpham.Barcode && x.Id != sanpham.Id);
-            return exist;
-        }
-        public async Task<List<Product>> getProductsBysupplierIDAndCategoryIDAndPriceAndKeyword(Guid? supplier_id, Guid? category_id, string? order, string? keyword)
-        {
-            try
+            query = priceOrder.Trim().ToLower() switch
             {
-
-                var query = _dbset.AsQueryable();
-
-                // Filter by supplier
-                if (supplier_id.HasValue)
-                {
-                    query = query.Where(p => p.SupplierId == supplier_id.Value);
-                }
-
-                // Filter by category
-                if (category_id.HasValue)
-                {
-                    query = query.Where(p => p.CategoryId == category_id.Value);
-                }
-
-                // Search by keyword
-                if (!string.IsNullOrEmpty(keyword))
-                {
-                    query = query.Where(x => x.ProductName.ToLower().Contains(keyword.ToLower()) && x.Barcode.ToLower().Contains(keyword.ToLower()));
-                }
-
-                // Sort by price
-                if (!string.IsNullOrEmpty(order))
-                {
-                    query = order.ToLower() == "desc"
-                        ? query.OrderByDescending(p => p.Price)
-                        : query.OrderBy(p => p.Price);
-                }
-
-                return await query.ToListAsync();
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Lỗi khi lấy danh sách sản phẩm theo yêu cầu, nhà cung cấp, loại, keyword: " + e.Message);
-            }
+                "asc" => query.OrderBy(x => x.Price),
+                "desc" => query.OrderByDescending(x => x.Price),
+                _ => query      // nếu giá trị khác asc và desc thì không làm gì 
+            };
         }
 
+        return await query.ToListAsync();
     }
 }

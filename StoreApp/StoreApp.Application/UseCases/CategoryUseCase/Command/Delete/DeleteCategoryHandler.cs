@@ -23,7 +23,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Delete
                 );
             }
 
-            // Thực hiện xóa
+            // gọi hàm Delete trong IProductRepository (tầng Application) để xóa product khỏi db 
             await categoryRepository.Delete(category);
             return new Result(
                 Success: true,
