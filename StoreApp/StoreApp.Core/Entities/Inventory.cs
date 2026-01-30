@@ -1,18 +1,14 @@
 ﻿namespace StoreApp.Core.Entities
 {
-    public class Inventory : BaseEntity
+    public class Inventory(Guid productId, int quantity) : BaseEntity
     {
-        public Guid ProductId { get; private set; }
-        public int Quantity { get; private set; }
+        public Guid ProductId { get; private set; } = productId;
+        public int Quantity { get; private set; } = quantity;
         public DateTime UpdatedAt { get; private set; } = DateTime.Now;
 
-        public void AdjustQuantity(int amount)
+        public void UpdateQuantity(int quantity)
         {
-            Quantity += amount;
-            UpdatedAt = DateTime.Now;
-        }
-        public void UpdateTimestamp()
-        {
+            Quantity = quantity;
             UpdatedAt = DateTime.Now;
         }
     }

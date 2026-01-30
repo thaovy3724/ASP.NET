@@ -21,7 +21,8 @@ namespace StoreApp.Application.Mapper
                 Barcode:    entity.Barcode,
                 Price:      entity.Price,
                 Unit:       entity.Unit,
-                ImageUrl:   entity.ImageUrl
+                ImageUrl:   entity.ImageUrl,
+                CreatedAt: entity.CreatedAt
             );
         }
     }

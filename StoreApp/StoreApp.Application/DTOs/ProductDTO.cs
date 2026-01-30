@@ -8,6 +8,7 @@
         string Barcode,
         decimal Price,
         string Unit,
-        string? ImageUrl
+        string? ImageUrl,
+        DateTime CreatedAt
     );
 }

@@ -7,51 +7,27 @@ namespace StoreApp.Infrastructure.Adapter
 {
     public class InventoryRepository(StoreDbContext context) : BaseRepository<Inventory>(context), IInventoryRepository
     {
-        private readonly DbSet<Inventory> _dbset = context.Set<Inventory>();
-        public async Task<Inventory> GetByProductID(Guid productID)
+        public async Task<Inventory?> GetByProductID(Guid productID)
         {
-            try
-            {
-                return await _dbset.FirstOrDefaultAsync(x => x.Id == productID);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            return await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
         }
 
-        public async Task<Inventory> UpdateInventory(Guid productID, int quantityChange)
-        {
-            var tonkho = await _dbset.FirstOrDefaultAsync(x => x.Id == productID);
-            if (tonkho == null)
-            {
-                throw new Exception("Không tìm thấy tồn kho cho sản phẩm với ID: " + productID);
-            }
-            tonkho.AdjustQuantity(quantityChange);
-            tonkho.UpdateTimestamp();
-            _dbset.Update(tonkho);
-            await context.SaveChangesAsync();
-            return tonkho;
-        }
+        // chưa dùng Order
+        //public async Task<Inventory?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
+        //{
+        //    var inv = await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
+        //    if (inv is null) return null;
 
-        public async Task<Inventory> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
-        {
-            var tonkho = await _dbset.FirstOrDefaultAsync(x => x.Id == productID);
-            if (tonkho == null)
-            {
-                return null;
-            }
-            tonkho.AdjustQuantity(-quantityChange);
-            tonkho.UpdateTimestamp();
-            _dbset.Update(tonkho);
-            await context.SaveChangesAsync();
-            return tonkho;
-        }
+        //    inv.UpdateQuantity(inv.Quantity - quantityChange);
+        //    DbSet.Update(inv);
+        //    await context.SaveChangesAsync();
+        //    return inv;
+        //}
 
         public Task<int> GetLowStockCount()
         {
-            int lowStockThreshold = 10; // Ngưỡng tồn kho thấp
-            return _dbset.CountAsync(tk => tk.Quantity < lowStockThreshold);
+            const int lowStockThreshold = 10;   // đại đại đi 
+            return DbSet.CountAsync(x => x.Quantity < lowStockThreshold);
         }
     }
 }
