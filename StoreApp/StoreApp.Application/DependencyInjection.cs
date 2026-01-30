@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR.NotificationPublishers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace StoreApp.Application
 {
@@ -6,6 +7,11 @@ namespace StoreApp.Application
     {
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+            });
+
             // Application Services
             return services;
         }
