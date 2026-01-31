@@ -12,7 +12,7 @@ namespace StoreApp.Infrastructure
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer("Server=DESKTOP-U6O3QQL\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+                options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StoreAppDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
             });
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();

@@ -12,7 +12,7 @@ using StoreApp.Infrastructure.Data;
 namespace StoreApp.Infrastructure.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20260128111440_init")]
+    [Migration("20260129175954_init")]
     partial class init
     {
         /// <inheritdoc />
