@@ -28,7 +28,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] SearchCategoryQuery cmd)
         {
             var result = await mediator.Send(cmd);

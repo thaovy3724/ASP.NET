@@ -13,5 +13,6 @@ namespace StoreApp.Application.Repository
         Task<Category?> GetByExactName(string categoryName);
 
         Task<Category?> GetByExactName(string categoryName, Guid excludeId);
+        Task<bool> IsExistProductOfCategory(Guid categoryId);
     }
 }
