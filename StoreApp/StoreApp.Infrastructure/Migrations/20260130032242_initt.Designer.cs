@@ -12,8 +12,8 @@ using StoreApp.Infrastructure.Data;
 namespace StoreApp.Infrastructure.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20260128111440_init")]
-    partial class init
+    [Migration("20260130032242_initt")]
+    partial class initt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -338,22 +338,19 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 

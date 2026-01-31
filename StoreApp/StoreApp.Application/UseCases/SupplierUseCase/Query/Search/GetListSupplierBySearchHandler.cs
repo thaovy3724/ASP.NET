@@ -20,10 +20,10 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Query.Search
                 return new ResultWithData<List<SupplierDTO>>(
                     Success: false,
                     Message: "Từ khóa tìm kiếm không được để trống.",
-                    Data: null
+                    Data: []
                 );
             }
-            var suppliers = supplierRepository.SearchByKeyword(request.keyword);
+            var suppliers = await supplierRepository.SearchByKeyword(request.keyword);
             var supplierDTO = suppliers
                 .Select(supplier => supplier.ToDTO())
                 .ToList();

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.CustomerUseCase.Query.GetList;
 using StoreApp.Application.UseCases.CustomerUseCase.Query.Search;
+using System.Threading.Tasks;
 
 namespace StoreApp.Api.Controllers
 {
@@ -10,43 +11,43 @@ namespace StoreApp.Api.Controllers
     public class CustomerController(IMediator mediator) : Controller
     {
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var cmd = new GetListCustomerQuery();
-            var result = mediator.Send(cmd).Result;
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
         [HttpGet("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var cmd = new StoreApp.Application.UseCases.CustomerUseCase.Query.GetOne.GetCustomerQuery(id);
-            var result = mediator.Send(cmd).Result;
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
         [HttpGet("search")]
-        public IActionResult Search([FromQuery] GetListCustomerByKeywordQuery cmd)
+        public async Task<IActionResult> Search([FromQuery] GetListCustomerByKeywordQuery cmd)
         {
-            var result = mediator.Send(cmd).Result;
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
         [HttpPost]
-        public IActionResult Create([FromBody] StoreApp.Application.UseCases.CustomerUseCase.Command.Create.CreateCustomerCommand cmd)
+        public async Task<IActionResult> Create([FromBody] StoreApp.Application.UseCases.CustomerUseCase.Command.Create.CreateCustomerCommand cmd)
         {
-            var result = mediator.Send(cmd).Result;
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
         [HttpPut("{id:guid}")]
-        public IActionResult Update(Guid id, [FromBody] StoreApp.Application.UseCases.CustomerUseCase.Command.Update.UpdateCustomerCommand cmd)
+        public async Task<IActionResult> Update(Guid id, [FromBody] StoreApp.Application.UseCases.CustomerUseCase.Command.Update.UpdateCustomerCommand cmd)
         {
             cmd = cmd with { Id = id };
-            var result = mediator.Send(cmd).Result;
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
         [HttpDelete("{id:guid}")]
-        public IActionResult Remove(Guid id)
+        public async Task<IActionResult> Remove(Guid id)
         {
-            var cmd = new StoreApp.Application.UseCases.CustomerUseCase.Command.Remove.RemoveCustomerCommand(id);
-            var result = mediator.Send(cmd).Result;
+            var cmd = new StoreApp.Application.UseCases.CustomerUseCase.Command.Remove.RemoveCustomerCommand(Id:id);
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
     }

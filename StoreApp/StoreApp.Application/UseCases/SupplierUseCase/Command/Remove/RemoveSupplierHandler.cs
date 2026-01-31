@@ -13,16 +13,22 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Remove
     {
         public async Task<Result> Handle(RemoveSupplierCommand request, CancellationToken cancellationToken)
         {
-            var supplier = await supplierRepository.IsSupplierIdExist(request.Id);
-            if (!supplier)
+            var supplier = await supplierRepository.GetById(request.Id);
+            if (supplier == null)
             {
                 return new Result(
                     Success: false,
                     Message: "Nhà cung cấp không tồn tại."
                 );
             }
-            var entity = await supplierRepository.GetById(request.Id);
-            await supplierRepository.Delete(entity);
+            if(await supplierRepository.IsExistProductOfSupplier(request.Id))
+            {
+                return new Result(
+                    Success: false,
+                    Message: "Không thể xóa nhà cung cấp vì còn sản phẩm liên quan."
+                );
+            }
+            await supplierRepository.Delete(supplier);
             return new Result(
                 Success: true,
                 Message: "Xóa nhà cung cấp thành công."

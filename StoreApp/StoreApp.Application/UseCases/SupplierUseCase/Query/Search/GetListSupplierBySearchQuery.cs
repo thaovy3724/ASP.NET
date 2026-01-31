@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Query.Search
 {
-    public sealed record GetListSupplierBySearchQuery(string keyword) : IRequest<ResultWithData<List<SupplierDTO>>>; 
+    public sealed record GetListSupplierBySearchQuery(string? keyword = null) : IRequest<ResultWithData<List<SupplierDTO>>>; 
 }

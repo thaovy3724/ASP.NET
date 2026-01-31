@@ -50,7 +50,7 @@ namespace StoreApp.Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var cmd = new RemoveUserCommand(id);
+            var cmd = new RemoveUserCommand(Id:id);
             var result = await mediator.Send(cmd);
             return Ok(result);
         }

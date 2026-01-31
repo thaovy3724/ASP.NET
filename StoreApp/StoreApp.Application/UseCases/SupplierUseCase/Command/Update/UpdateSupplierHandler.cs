@@ -14,7 +14,8 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
     {
         public async Task<Result> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
-            if (await supplierRepository.IsSupplierIdExist(request.Id))
+            var supplierInDb = await supplierRepository.GetById(request.Id);
+            if (supplierInDb == null)
             {
                 return new Result(
                     Success: false,
@@ -42,13 +43,13 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
                     Message: "Email nhà cung cấp đã tồn tại."
                 );
             }
-            if(await supplierRepository.IsSupplierAddressExist(request.Address, request.Id))    
-            {
-                return new Result(
-                    Success: false,
-                    Message: "Địa chỉ nhà cung cấp đã tồn tại."
-                );
-            }
+            //if(await supplierRepository.IsSupplierAddressExist(request.Address, request.Id))    
+            //{
+            //    return new Result(
+            //        Success: false,
+            //        Message: "Địa chỉ nhà cung cấp đã tồn tại."
+            //    );
+            //}
             var supplier = await supplierRepository.GetById(request.Id);
             supplier.Update(
                 request.Name,

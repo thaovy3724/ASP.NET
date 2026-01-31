@@ -12,7 +12,7 @@ namespace StoreApp.Infrastructure
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer("Server=.\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true",
+                options.UseSqlServer("Server=LAPTOP-J2BK1VM3\\SQLEXPRESS01;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true",
                         sqlOptions =>
                         {
                             // Thêm dòng này để kích hoạt khả năng chịu lỗi

@@ -7,5 +7,6 @@ namespace StoreApp.Application.Repository
         Task<List<User>> SearchByKeyword(string keyword);
         Task<bool> isUsernameExist(string username);
         Task<bool> isUserExist(Guid userId);
+        Task<bool> isExistUserOfOrder(Guid userId);
     }
 }

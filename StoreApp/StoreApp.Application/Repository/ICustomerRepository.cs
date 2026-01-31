@@ -8,6 +8,7 @@ namespace StoreApp.Application.Repository
         Task<List<Customer>> SearchByKeyword(string? keyword);
         Task<bool> IsEmailExists(string email);
         Task<bool> IsPhoneExists(string phone);
+        Task<bool> IsExistOderOfCustomer(Guid customerId);
 
 
     }

@@ -13,6 +13,7 @@ namespace StoreApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class SupplierController(IMediator mediator) : Controller
     {
         [HttpGet("{id:guid}")]
@@ -29,8 +30,8 @@ namespace StoreApp.Api.Controllers
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
-        [HttpGet]
-        public async Task<IActionResult> Search([FromBody] GetListSupplierBySearchQuery cmd)
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] GetListSupplierBySearchQuery cmd)
         {
             var result = await mediator.Send(cmd);
             return Ok(result);
@@ -47,10 +48,10 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
         [HttpDelete("{id:guid}")]
-        public IActionResult Remove(Guid id)
+        public async Task<IActionResult> Remove(Guid id)
         {
-            var cmd = new RemoveSupplierCommand(id);
-            var result = mediator.Send(cmd);
+            var cmd = new RemoveSupplierCommand(Id : id);
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
     }

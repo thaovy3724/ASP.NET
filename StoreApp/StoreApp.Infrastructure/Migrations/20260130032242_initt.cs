@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StoreApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initt : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,10 +61,10 @@ namespace StoreApp.Infrastructure.Migrations
                 columns: table => new
                 {
                     supplier_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(500)", nullable: false)
                 },
                 constraints: table =>
                 {

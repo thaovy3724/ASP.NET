@@ -21,6 +21,14 @@ namespace StoreApp.Application.UseCases.CustomerUseCase.Command.Remove
                     Message: "Khách hàng không tồn tại!"
                 );
             }
+            if(await customerRepository.IsExistOderOfCustomer(request.Id))
+            {
+                return new Results.Result
+                (
+                    Success: false,
+                    Message: "Khách hàng đang có đơn hàng, không thể xóa!"
+                );
+            }
             await customerRepository.Delete(customer);
             return new Results.Result
             (

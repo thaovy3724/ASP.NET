@@ -14,23 +14,30 @@ namespace StoreApp.Infrastructure.Configuration
         {
             builder.ToTable("suppliers");
             builder.HasKey(s => s.Id);
-            builder.Property(c => c.Id)
-                   .HasColumnName("supplier_id");
 
+            // 1. Sửa lại Id cho khớp với kiểu uniqueidentifier trong DB
+            builder.Property(s => s.Id)
+                   .HasColumnName("supplier_id")
+                   .HasColumnType("uniqueidentifier");
+
+            // 2. Name dùng nvarchar là chuẩn
             builder.Property(s => s.Name)
-                   .HasMaxLength(100)
+                   .HasColumnType("nvarchar(100)")
                    .IsRequired();
 
+            // 3. Phone nên để nvarchar để tránh lỗi khi có dấu cách/dấu cộng
             builder.Property(s => s.Phone)
-                   .HasMaxLength(10)
+                   .HasColumnType("nvarchar(20)")
                    .IsRequired();
 
             builder.Property(s => s.Email)
-                   .HasMaxLength(100)
+                   .HasColumnType("nvarchar(100)")
                    .IsRequired();
 
-            builder.Property(s => s.Address).IsRequired()
-                    .HasColumnType("text");
+            // 4. Sửa lại Address: Bỏ .HasColumnType("text")
+            builder.Property(s => s.Address)
+                   .HasColumnType("nvarchar(500)") // nvarchar(500) là đủ cho địa chỉ và search rất nhanh
+                   .IsRequired();
         }
     }
 }

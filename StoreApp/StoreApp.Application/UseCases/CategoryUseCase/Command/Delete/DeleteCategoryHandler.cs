@@ -22,7 +22,13 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Delete
                     Message: "Thể loại không tồn tại."
                 );
             }
-
+            if(await categoryRepository.IsExistProductOfCategory(request.Id))
+            {
+                return new Result(
+                    Success: false,
+                    Message: "Thể loại đang được sử dụng, không thể xóa."
+                );
+            }
             // Thực hiện xóa
             await categoryRepository.Delete(category);
             return new Result(

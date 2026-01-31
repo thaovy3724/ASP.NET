@@ -9,6 +9,7 @@ namespace StoreApp.Infrastructure.Adapter
     // hoàn toàn không chứa nghiệp vụ.
     public class CategoryRepository(StoreDbContext context) : BaseRepository<Category>(context), ICategoryRepository
     {
+        private readonly DbSet<Product> DbSetPD = context.Set<Product>();
         public async Task<List<Category>> Search(string? keyword)
         {
             keyword = keyword?.Trim();
@@ -46,6 +47,12 @@ namespace StoreApp.Infrastructure.Adapter
             return await DbSet
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Name == name && x.Id != excludeId);
+        }
+        public async Task<bool> IsExistProductOfCategory(Guid categoryId)
+        {
+            return await DbSetPD.AsNoTracking()
+                .AsNoTracking()
+                .AnyAsync(x => x.CategoryId == categoryId);
         }
     }
 }

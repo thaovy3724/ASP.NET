@@ -38,5 +38,11 @@ namespace StoreApp.Infrastructure.Adapter
                           .AsNoTracking()
                           .AnyAsync(c => c.Phone == phone);
         }
+        public Task<bool> IsExistOderOfCustomer(Guid customerId)
+        {
+            return context.Set<Order>()
+                          .AsNoTracking()
+                          .AnyAsync(o => o.CustomerId == customerId);
+        }
     }
 }

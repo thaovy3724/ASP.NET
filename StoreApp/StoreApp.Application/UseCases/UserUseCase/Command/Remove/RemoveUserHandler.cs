@@ -20,6 +20,13 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Remove
                     Message: "Người dùng không tồn tại."
                 );
             }
+            if(await userRepository.isExistUserOfOrder(request.Id))
+            {
+                return new Result(
+                    Success: false,
+                    Message: "Người dùng đang được sử dụng trong đơn hàng, không thể xóa."
+                );
+            }   
             var user = await userRepository.GetById(request.Id);
             await userRepository.Delete(user);
             return new Result(

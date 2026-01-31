@@ -26,5 +26,11 @@ namespace StoreApp.Infrastructure.Adapter
         {
             return await _dbset.AnyAsync(x => x.Id == userId);
         }
+        public async Task<bool> isExistUserOfOrder(Guid userId)
+        {
+            return await context.Set<Order>()
+                          .AsNoTracking()
+                          .AnyAsync(o => o.UserId == userId);
+        }
     }
 }
