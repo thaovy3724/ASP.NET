@@ -91,9 +91,8 @@ namespace StoreApp.Infrastructure.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("quantity");
 
-                    b.Property<byte[]>("UpdatedAt")
-                        .IsRequired()
-                        .HasColumnType("timestamp")
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -245,15 +244,11 @@ namespace StoreApp.Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("CreatedAt")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("varchar(500)")
                         .HasColumnName("image_url");
 

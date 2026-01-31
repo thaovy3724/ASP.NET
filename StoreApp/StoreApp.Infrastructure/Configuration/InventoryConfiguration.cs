@@ -30,7 +30,7 @@ namespace StoreApp.Infrastructure.Configuration
 
             builder.Property(i => i.UpdatedAt)
                    .HasColumnName("updated_at")
-                   .HasColumnType("timestamp")
+                   .HasColumnType("datetime2")
                    .IsRequired();
 
             builder.HasOne<Product>()
@@ -38,12 +38,12 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasForeignKey<Inventory>(i => i.ProductId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            // 1 product chỉ có 1 inventory
+            builder.HasIndex(i => i.ProductId).IsUnique();
+
             // Thiết lập Quan hệ (Nếu Product cũng nằm trong cùng DB/Service)
             // Nếu đây là Microservice riêng biệt, bạn có thể không cần Navigation Property 
             // mà chỉ cần lưu ProductId để đảm bảo tính độc lập.
-
-            // Index để tăng tốc độ truy vấn theo sản phẩm
-            //builder.HasIndex(i => i.ProductId);
 
             //builder.ToTable(t => t.HasCheckConstraint("CK_Inventory_Quantity", "quantity >= 0"));
         }

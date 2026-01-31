@@ -36,8 +36,8 @@ namespace StoreApp.Infrastructure.Configuration
 
             builder.Property(p => p.CreatedAt)
                    .HasColumnName("created_at")
-                   .HasColumnType("timestamp")
-                   .HasDefaultValueSql("CURRENT_TIMESTAMP"); // Tự động lấy tgian thực nếu dùng MySQL/Postgres
+                   .HasColumnType("datetime2")
+                   .IsRequired();
 
             builder.Property(p => p.ImageUrl)
                    .HasColumnName("image_url")

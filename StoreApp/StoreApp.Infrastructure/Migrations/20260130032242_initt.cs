@@ -98,8 +98,8 @@ namespace StoreApp.Infrastructure.Migrations
                     barcode = table.Column<string>(type: "varchar(50)", nullable: false),
                     price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     unit = table.Column<string>(type: "varchar(20)", nullable: false),
-                    created_at = table.Column<byte[]>(type: "timestamp", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    image_url = table.Column<string>(type: "varchar(500)", nullable: false)
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    image_url = table.Column<string>(type: "varchar(500)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -161,7 +161,7 @@ namespace StoreApp.Infrastructure.Migrations
                     inventory_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     product_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    updated_at = table.Column<byte[]>(type: "timestamp", nullable: false)
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
