@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.Results;
-using StoreApp.Application.UseCases.InventoryUseCase.Command.Create;
-using StoreApp.Application.UseCases.InventoryUseCase.Command.Delete;
 using StoreApp.Application.UseCases.InventoryUseCase.Command.Update;
+using StoreApp.Application.UseCases.InventoryUseCase.Query.GetByProduct;
 using StoreApp.Application.UseCases.InventoryUseCase.Query.GetList;
 using StoreApp.Application.UseCases.InventoryUseCase.Query.GetOne;
 
@@ -19,6 +18,14 @@ namespace StoreApp.Api.Controllers
             var query = new GetInventoryQuery(id);
             var result = await mediator.Send(query);
             return Ok(result);
+
+        }
+
+        [HttpGet("by-product/{productId:guid}")]
+        public async Task<IActionResult> GetByProduct(Guid productId)
+        {
+            var query = new GetInventoryByProductQuery(productId);
+            return Ok(await mediator.Send(query));
         }
 
         [HttpGet]
@@ -29,29 +36,12 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateInventoryCommand command)
-        {
-            var result = await mediator.Send(command);
-            return Ok(result);
-        }
-
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInventoryCommand command)
         {
-            if (id != command.InventoryId)
-            {
-                return BadRequest(new Result(false, "InventoryId không khớp với id trên URL"));
-            }
+            // Không cho client gửi InventoryId trong body => server luôn lấy id từ route
+            command.InventoryId = id;
 
-            var result = await mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var command = new DeleteInventoryCommand(id);
             var result = await mediator.Send(command);
             return Ok(result);
         }

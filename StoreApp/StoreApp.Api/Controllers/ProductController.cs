@@ -58,20 +58,12 @@ namespace StoreApp.Api.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command)
         {
-            // Client có thể gọi URL /product/A
-            // Nhưng body gửi ProductId = B
-            // => Handler sẽ update sai sản phẩm
-            if (id != command.ProductId) { 
-                return BadRequest(new Result(
-                    Success: false, 
-                    Message: "ProductId không khớp với id trên URL")
-                );
-            }
+            // Không cho client gửi ProductId trong body => server luôn lấy id từ route
+            command.ProductId = id;
 
             var result = await mediator.Send(command);
             return Ok(result);
         }
-
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
