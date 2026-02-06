@@ -9,6 +9,6 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 {
-    public sealed record CreateOrderCommand(Guid? CustomerId, DateTime OrderDate, Guid UserId, Guid? PromoId, Core.ValueObject.OrderStatus OrderStatus, decimal DiscountAmount, decimal TotalAmount, IEnumerable<OrderItemDTO> Items)
+    public sealed record CreateOrderCommand(Guid? CustomerId, Guid UserId, Guid? PromoId, IEnumerable<CreateOrderRequestItem> Items)
         : IRequest<ResultWithData<OrderDTO>>;
 }

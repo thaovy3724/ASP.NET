@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.DTOs
 {
-    public sealed record OrderItemDTO(Guid OrderId, Guid ProductId, int Quantity, decimal UnitPrice, decimal TotalPrice);
+    public sealed record OrderItemDTO(Guid ProductId, int Quantity, decimal UnitPrice, decimal TotalPrice);
 }

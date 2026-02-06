@@ -20,5 +20,11 @@ namespace StoreApp.Core.Entities
             StartDate = startDate;
             EndDate = endDate;
         }
+
+        public bool IsActive()
+        {
+            var now = DateTime.UtcNow;
+            return now >= StartDate && now <= EndDate;
+        }
     }
 }

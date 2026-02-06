@@ -13,16 +13,16 @@ namespace StoreApp.Infrastructure.Adapter
         }
 
         // chưa dùng Order
-        //public async Task<Inventory?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
-        //{
-        //    var inv = await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
-        //    if (inv is null) return null;
+        public async Task<Inventory?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
+        {
+            var inv = await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
+            if (inv is null) return null;
 
-        //    inv.UpdateQuantity(inv.Quantity - quantityChange);
-        //    DbSet.Update(inv);
-        //    await context.SaveChangesAsync();
-        //    return inv;
-        //}
+            inv.UpdateQuantity(inv.Quantity - quantityChange);
+            DbSet.Update(inv);
+            await context.SaveChangesAsync();
+            return inv;
+        }
 
         public Task<int> GetLowStockCount()
         {
