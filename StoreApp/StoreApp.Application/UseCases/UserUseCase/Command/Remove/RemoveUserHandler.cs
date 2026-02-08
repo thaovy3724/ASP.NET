@@ -15,17 +15,11 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Remove
         {
             if (! await userRepository.isUserExist(request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Người dùng không tồn tại."
-                );
+                throw new NotFoundException("Không tìm thấy người dùng.");
             }
             if(await userRepository.isExistUserOfOrder(request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Người dùng đang được sử dụng trong đơn hàng, không thể xóa."
-                );
+                throw new ConflictException("Có thông tin đơn hàng  của người dùng. Không thể thực hiện xóa người dùng.");
             }   
             var user = await userRepository.GetById(request.Id);
             await userRepository.Delete(user);

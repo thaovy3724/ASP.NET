@@ -15,13 +15,9 @@ namespace StoreApp.Application.UseCases.CustomerUseCase.Query.Search
     {
         public async Task<ResultWithData<List<CustomerDTO>>> Handle(GetListCustomerByKeywordQuery request, CancellationToken cancellationToken)
         {
-            if(string.IsNullOrEmpty(request.keyword))
+            if(string.IsNullOrWhiteSpace(request.keyword))
             {
-                return new ResultWithData<List<CustomerDTO>>(
-                    Success: false,
-                    Message: "Từ khóa tìm kiếm không được để trống.",
-                    Data: null
-                );
+                throw new ArgumentNullException(nameof(request.keyword), "Từ khóa tìm kiếm không được để trống.");
             }
             var customers = await customerRepository.SearchByKeyword(request.keyword);
             var customerDTO = customers

@@ -17,10 +17,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
         {
             if (! await userRepository.isUserExist(request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Người dùng không tồn tại."
-                );
+                throw new NotFoundException("Không tìm thấy người dùng.");
             }
             Role role;
             switch (request.role)
@@ -32,11 +29,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
                     role = Role.Staff;
                     break;
                 default:
-                    return new ResultWithData<UserDTO>(
-                        Success: false,
-                        Message: "Vai trò không hợp lệ.",
-                        Data: null
-                    );
+                    throw new ArgumentException("Vai trò không hợp lệ(Admin/Staff).");
             }
             var user = await userRepository.GetById(request.Id);
             user.Update(request.userName, request.password, request.fullName, role);

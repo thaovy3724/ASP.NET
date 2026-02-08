@@ -15,10 +15,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Create
             var existingCategory = await categoryRepository.GetByExactName(request.Name);
             if (existingCategory is not null)
             {
-                return new ResultWithData<CategoryDTO>(
-                    Success: false,
-                    Message: "Thể loại đã tồn tại"
-                    );
+                throw new ConflictException("Thể loại đã tồn tại");
             }
 
             // tạo mới

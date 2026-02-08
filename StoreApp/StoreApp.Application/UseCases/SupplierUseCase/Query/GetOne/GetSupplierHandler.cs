@@ -19,11 +19,7 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Query.GetOne
             var supplier = await supplierRepository.GetById(request.Id);
             if(supplier == null)
             {
-                return new ResultWithData<SupplierDTO>(
-                    Success: false,
-                    Message: "Nhà cung cấp không tồn tại.",
-                    Data: null
-                );
+                throw new NotFoundException("Nhà cung cấp không tồn tại.");
             }
             // Trả về kết quả trực tiếp
             var dto = supplier.ToDTO();

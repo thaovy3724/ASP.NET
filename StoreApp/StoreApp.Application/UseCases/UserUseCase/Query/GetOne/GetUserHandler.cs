@@ -18,11 +18,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Query.GetOne
             var user = await userRepository.GetById(request.Id);
             if(user == null)
             {
-                return new ResultWithData<UserDTO>(
-                    Success: false,
-                    Message: "Người dùng không tồn tại.",
-                    Data: null
-                );
+                throw new NotFoundException("Không tìm thấy người dùng.");
             }
             // Trả về kết quả trực tiếp
             var dto = user.ToDTO();

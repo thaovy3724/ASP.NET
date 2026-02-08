@@ -15,19 +15,11 @@ namespace StoreApp.Application.UseCases.CustomerUseCase.Command.Remove
             var customer = await customerRepository.GetById(request.Id);
             if (customer is null)
             {
-                return new Results.Result
-                (
-                    Success: false,
-                    Message: "Khách hàng không tồn tại!"
-                );
+                throw new NotFoundException("Khách hàng không tồn tại!");
             }
             if(await customerRepository.IsExistOderOfCustomer(request.Id))
             {
-                return new Results.Result
-                (
-                    Success: false,
-                    Message: "Khách hàng đang có đơn hàng, không thể xóa!"
-                );
+                throw new ConflictException("Khách hàng đang có đơn hàng, không thể xóa!");
             }
             await customerRepository.Delete(customer);
             return new Results.Result
