@@ -12,15 +12,7 @@ namespace StoreApp.Infrastructure
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer("Server=LAPTOP-J2BK1VM3\\SQLEXPRESS01;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true",
-                        sqlOptions =>
-                        {
-                            // Thêm dòng này để kích hoạt khả năng chịu lỗi
-                            sqlOptions.EnableRetryOnFailure(
-                                maxRetryCount: 5,
-                                maxRetryDelay: TimeSpan.FromSeconds(30),
-                                errorNumbersToAdd: null);
-                        });
+                options.UseSqlServer("Server=LAPTOP-Q5U1UG52\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
             });
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();

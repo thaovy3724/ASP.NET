@@ -3,7 +3,7 @@ using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.Repository
 {
-    // khai báo output port để mô tả nhu cầu truy vấn
+    // khai báo để mô tả nhu cầu truy vấn
     public interface ICategoryRepository : IBaseRepository<Category>    // base đã có create/update/delete...
     {
         // Tìm kiếm/lọc theo tên (keyword rỗng => trả về tất cả).
