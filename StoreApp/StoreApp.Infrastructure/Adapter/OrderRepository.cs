@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
+using StoreApp.Core.ValueObject;
 using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
@@ -83,6 +84,13 @@ namespace StoreApp.Infrastructure.Adapter
         {
             return DbSet.AsNoTracking()
                         .Include(o => o.Items)
+                        .ToListAsync();
+        }
+
+        public Task<List<Order>> GetListExpiredOrders(DateTime timeLimit)
+        { // kiểm tra các đơn hàng Pending và chưa quá hạn
+            return DbSet.AsNoTracking()
+                        .Where(o => o.OrderStatus == OrderStatus.Pending && o.OrderDate < timeLimit)
                         .ToListAsync();
         }
     }

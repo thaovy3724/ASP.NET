@@ -1,5 +1,6 @@
 ﻿using StoreApp.Application.DTOs;
 using StoreApp.Core.Entities;
+using StoreApp.Core.ValueObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,9 @@ namespace StoreApp.Application.Mapper
                     Quantity: item.Quantity,
                     UnitPrice: item.Price,
                     TotalPrice: item.Subtotal
-                )).ToList() ?? new List<OrderItemDTO>()
+                )).ToList() ?? new List<OrderItemDTO>(),
+                PaymentMethod: string.Empty, // Nhớ thêm trường này vào Entity Order nếu chưa có, hoặc truyền từ ngoài vào
+                null // Mặc định PaymentUrl là null khi mới convert
             );
         }
     }

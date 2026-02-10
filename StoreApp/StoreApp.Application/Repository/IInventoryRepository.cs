@@ -8,5 +8,6 @@ namespace StoreApp.Application.Repository
         Task<Inventory?> GetByProductID(Guid productID);
         Task<Inventory> deductQuantityOfCreatedOrder(Guid productID, int quantityChange);
         Task<int> GetLowStockCount();
+        Task RestockQuantity(Guid productID, int quantityChange);
     }
 }

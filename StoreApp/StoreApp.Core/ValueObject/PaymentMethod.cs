@@ -8,7 +8,8 @@ namespace StoreApp.Core.ValueObject
 {
     public enum PaymentMethod
     {
-        Cash,
-        BankTransfer
+        Cash = 0,
+        BankTransfer = 1,
+        VnPay = 2
     }
 }

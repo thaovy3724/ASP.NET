@@ -29,5 +29,14 @@ namespace StoreApp.Infrastructure.Adapter
             const int lowStockThreshold = 10;   // đại đại đi 
             return DbSet.CountAsync(x => x.Quantity < lowStockThreshold);
         }
+
+        public Task RestockQuantity(Guid productID, int quantityChange)
+        {
+            var inv = DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
+            if (inv is null) return Task.CompletedTask;
+            inv.Result.UpdateQuantity(inv.Result.Quantity + quantityChange);
+            DbSet.Update(inv.Result);
+            return context.SaveChangesAsync();
+        }
     }
 }

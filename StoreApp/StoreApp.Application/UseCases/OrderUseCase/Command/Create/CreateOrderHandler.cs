@@ -18,40 +18,29 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         IPromotionRepository promotionRepository,
         IProductRepository productRepository,
         ICustomerRepository customerRepository,
-        IInventoryRepository inventoryRepository
+        IInventoryRepository inventoryRepository,
+        IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
     ) : IRequestHandler<CreateOrderCommand, ResultWithData<OrderDTO>>
     {
         public async Task<ResultWithData<OrderDTO>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            // --- 1. VALIDATION LAYER (Kiểm tra dữ liệu đầu vào) ---
-
-            // Check giỏ hàng rỗng
+            // --- 1. VALIDATION LAYER ---
             if (request.Items == null || !request.Items.Any())
-            {
                 return new ResultWithData<OrderDTO>(false, "Đơn hàng phải có ít nhất 1 sản phẩm.", null);
-            }
 
-            // Check số lượng không hợp lệ (nhỏ hơn hoặc bằng 0)
             if (request.Items.Any(x => x.Quantity <= 0))
-            {
                 return new ResultWithData<OrderDTO>(false, "Số lượng sản phẩm phải lớn hơn 0.", null);
-            }
 
-            // Check Khách hàng
-            var customer = await customerRepository.GetById((Guid) request.CustomerId);
+            var customer = await customerRepository.GetById((Guid)request.CustomerId);
             if (customer == null)
-            {
                 return new ResultWithData<OrderDTO>(false, "Khách hàng không tồn tại.", null);
-            }
 
             // --- 2. BUSINESS LOGIC LAYER (Transaction) ---
-
-            // Bắt đầu Transaction từ Repository (theo cách 1 bạn đã chọn)
             await orderRepository.BeginTransactionAsync();
 
             try
             {
-                // A. Khởi tạo Order (Chưa lưu DB ngay)
+                // A. Khởi tạo Order
                 var order = new Order(
                     customerId: request.CustomerId,
                     userId: request.UserId,
@@ -61,18 +50,16 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                     discountAmount: 0
                 );
 
-                // B. Xử lý từng sản phẩm
+                // B. Xử lý từng sản phẩm (Giữ nguyên logic cũ)
                 foreach (var item in request.Items)
                 {
-                    // Lấy thông tin sản phẩm để lấy Giá (Price)
                     var product = await productRepository.GetById(item.ProductId);
                     if (product == null)
                     {
-                        await orderRepository.RollbackTransactionAsync(); // SỬA: Gọi từ repo
+                        await orderRepository.RollbackTransactionAsync();
                         return new ResultWithData<OrderDTO>(false, $"Sản phẩm ID {item.ProductId} không tồn tại.", null);
                     }
 
-                    // Check Tồn kho (Inventory)
                     var inventory = await inventoryRepository.GetByProductID(item.ProductId);
                     if (inventory == null || inventory.Quantity < item.Quantity)
                     {
@@ -80,11 +67,8 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                         return new ResultWithData<OrderDTO>(false, $"Sản phẩm '{product.ProductName}' không đủ hàng (Còn: {inventory?.Quantity ?? 0}).", null);
                     }
 
-                    // TRỪ KHO: Gọi Inventory Repository để trừ
                     await inventoryRepository.deductQuantityOfCreatedOrder(item.ProductId, item.Quantity);
-                    // Lưu ý: Không cần gọi productRepository.Update(product) nếu stock nằm bên bảng Inventory
 
-                    // Thêm vào Order
                     order.Items.Add(new OrderItem(
                         orderId: order.Id,
                         productId: item.ProductId,
@@ -93,61 +77,78 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                     ));
                 }
 
-                // C. Tính toán giảm giá (Promotion)
+                // C. Tính toán giảm giá (Giữ nguyên logic cũ)
                 if (request.PromoId.HasValue)
                 {
                     var promotion = await promotionRepository.GetById(request.PromoId.Value);
-
-                    // Validate Promotion: Tồn tại + Còn hạn + Đang Active
                     if (promotion != null && promotion.IsActive())
                     {
                         decimal discount = 0;
                         decimal currentSubTotal = order.Items.Sum(x => x.Subtotal);
 
                         if (promotion.DiscountType == DiscountType.Percentage)
-                        {
                             discount = currentSubTotal * (promotion.DiscountValue / 100);
-                        }
                         else if (promotion.DiscountType == DiscountType.FixedAmount)
-                        {
                             discount = promotion.DiscountValue;
-                        }
 
                         discount = Math.Min(discount, currentSubTotal);
                         order.SetDiscount(discount);
                     }
-                    // Nếu Promotion không hợp lệ thì bỏ qua (hoặc return lỗi tùy nghiệp vụ)
                 }
 
                 // D. Tính tổng tiền và Lưu Order
                 order.CalculateTotal();
-                await orderRepository.Create(order);
+                await orderRepository.Create(order); // LÚC NÀY ĐÃ CÓ ORDER ID
 
                 // E. Tạo Payment
-                // Validate PaymentMethod: Nếu null thì mặc định Cash
-                var method = PaymentMethod.Cash;
 
-                var payment = new Payment(
-                    order.Id,
-                    order.TotalAmount,
-                    method
-                );
+                if (request.PaymentMethod != "VnPay")
+                {
+                    // 1. Xác định phương thức (Mặc định là Cash)
+                    var methodEnum = PaymentMethod.Cash;
 
-                await paymentRepository.Create(payment);
+                    var payment = new Payment(
+                        order.Id,
+                        order.TotalAmount,
+                        methodEnum
+                    );
 
-                // F. CHỐT TRANSACTION (Commit)
-                await orderRepository.CommitTransactionAsync(); // SỬA: Gọi từ repo
+                    await paymentRepository.Create(payment);
+                }
+
+                // F. CHỐT TRANSACTION
+                await orderRepository.CommitTransactionAsync();
+
+                // --- 3. POST-PROCESSING (Xử lý sau khi lưu thành công) ---
+
+
+                // 1. Map dữ liệu thô từ Entity ra DTO
+                // Lúc này PaymentMethod đang là "" và PaymentUrl là null (do hàm ToDTO ở trên)
+                var orderResponse = order.ToDTO();
+
+                // 2. Cập nhật PaymentMethod chuẩn từ Request
+                // Dùng 'with' để thay thế giá trị string.Empty ban đầu
+                orderResponse = orderResponse with { PaymentMethod = request.PaymentMethod };
+
+                // 3. Logic VNPay tạo URL
+                if (request.PaymentMethod == "VnPay")
+                {
+                    // Tạo URL
+                    string url = vnPayService.CreatePaymentUrl(orderResponse);
+
+                    // Cập nhật tiếp PaymentUrl
+                    orderResponse = orderResponse with { PaymentUrl = url };
+                }
 
                 return new ResultWithData<OrderDTO>(
                     true,
                     "Tạo đơn hàng thành công",
-                    order.ToDTO()
+                    orderResponse
                 );
             }
             catch (Exception ex)
             {
-                // G. HOÀN TÁC NẾU LỖI (Rollback)
-                await orderRepository.RollbackTransactionAsync(); // SỬA: Gọi từ repo
+                await orderRepository.RollbackTransactionAsync();
                 return new ResultWithData<OrderDTO>(false, "Lỗi hệ thống: " + ex.Message, null);
             }
         }
