@@ -17,7 +17,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Delete
             var category = await categoryRepository.GetById(request.Id);
             if (category is null)
             {
-                throw new ConflictException("Thể loại không tồn tại.");
+                throw new NotFoundException("Thể loại không tồn tại.");
             }
             if(await categoryRepository.IsExistProductOfCategory(request.Id))
             {

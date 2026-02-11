@@ -18,7 +18,7 @@ namespace StoreApp.Application.UseCases.PromotionUseCase.Query.GetOne
             var promotion = await promotionRepository.GetById(request.Id);
             if (promotion == null)
             {
-                return new ResultWithData<PromotionDTO>(Success: false, Message: "Promotion not found", Data: null);
+                throw new NotFoundException($"Không tìm thấy bản ghi khuyến mãi với Id: {request.Id}");
             }
             var promotionDTO = promotion.ToDTO();
             return new ResultWithData<PromotionDTO>(Success: true, Message: "Get promotion successfully", Data: promotionDTO);

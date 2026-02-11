@@ -16,10 +16,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
             var product = await productRepository.GetById(request.Id);
             if (product is null)
             {
-                return new Result(
-                    Success: false,
-                    Message: "Sản phẩm không tồn tại."
-                );
+                throw new NotFoundException("Sản phẩm không tồn tại.");
             }
 
             // kiểm tra product có nằm trong order nào không

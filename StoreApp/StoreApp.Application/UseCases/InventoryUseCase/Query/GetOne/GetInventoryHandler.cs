@@ -13,10 +13,7 @@ namespace StoreApp.Application.UseCases.InventoryUseCase.Query.GetOne
             var inv = await inventoryRepository.GetById(request.Id);
             if (inv is null)
             {
-                return new ResultWithData<InventoryDTO>(
-                    Success: false,
-                    Message: "Không tìm thấy tồn kho",
-                    Data: null);
+                throw new NotFoundException($"Không tìm thấy tồn kho với Id: {request.Id}");
             }
 
             return new ResultWithData<InventoryDTO>(

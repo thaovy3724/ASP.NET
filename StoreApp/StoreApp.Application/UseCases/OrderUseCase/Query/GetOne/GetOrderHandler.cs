@@ -21,11 +21,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Query.GetOne
             // 2. Kiểm tra nếu không tìm thấy đơn hàng
             if (order == null)
             {
-                return new ResultWithData<OrderDTO>(
-                    Success: false,
-                    Message: $"Không tìm thấy đơn hàng với mã: {request.Id}",
-                    Data: null
-                );
+                throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
 
             // 3. Map sang DTO và trả về

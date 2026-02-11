@@ -13,7 +13,7 @@ namespace StoreApp.Application.UseCases.InventoryUseCase.Command.Update
             var inv = await inventoryRepository.GetById(request.InventoryId);
             if (inv is null)
             {
-                return new Result(false, "Không tìm thấy tồn kho");
+               throw new NotFoundException($"Không tìm thấy tồn kho với Id: {request.InventoryId}");
             }
 
             inv.UpdateQuantity(request.Quantity);   // trong entity có set UpdatedAt 
