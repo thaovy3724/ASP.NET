@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.CategoryUseCase.Query.GetList;
 using StoreApp.Application.UseCases.CategoryUseCase.Query.GetOne;
@@ -11,11 +12,13 @@ using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class OrderController(IMediator mediator) : Controller
     {
         // get order by id
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> Get(Guid id)
         {

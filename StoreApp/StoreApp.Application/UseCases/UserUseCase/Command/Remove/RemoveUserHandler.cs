@@ -13,11 +13,11 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Remove
     {
         public async Task<Result> Handle(RemoveUserCommand request, CancellationToken cancellationToken)
         {
-            if (! await userRepository.isUserExist(request.Id))
+            if (! await userRepository.IsUserExist(request.Id))
             {
                 throw new NotFoundException("Không tìm thấy người dùng.");
             }
-            if(await userRepository.isExistUserOfOrder(request.Id))
+            if(await userRepository.IsExistUserOfOrder(request.Id))
             {
                 throw new ConflictException("Có thông tin đơn hàng  của người dùng. Không thể thực hiện xóa người dùng.");
             }   

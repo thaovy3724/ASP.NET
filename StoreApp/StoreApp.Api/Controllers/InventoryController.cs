@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.Results;
 using StoreApp.Application.UseCases.InventoryUseCase.Command.Update;
@@ -8,7 +9,8 @@ using StoreApp.Application.UseCases.InventoryUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class InventoryController(IMediator mediator) : Controller
     {

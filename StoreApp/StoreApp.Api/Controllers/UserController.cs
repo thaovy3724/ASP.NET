@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.UserUseCase.Command.Create;
 using StoreApp.Application.UseCases.UserUseCase.Command.Remove;
@@ -10,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class UserController(IMediator mediator) : Controller
     {

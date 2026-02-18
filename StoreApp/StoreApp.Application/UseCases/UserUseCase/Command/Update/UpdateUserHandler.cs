@@ -15,7 +15,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
     {
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            if (! await userRepository.isUserExist(request.Id))
+            if (! await userRepository.IsUserExist(request.Id))
             {
                 throw new NotFoundException("Không tìm thấy người dùng.");
             }
