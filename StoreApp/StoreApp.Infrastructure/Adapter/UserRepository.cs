@@ -17,20 +17,31 @@ namespace StoreApp.Infrastructure.Adapter
                 x.FullName.Contains(keyword) ||
                 x.Role.ToString().Contains(keyword)).ToListAsync();
         }
-        public async Task<bool> isUsernameExist(string username)
+        public async Task<bool> IsUsernameExist(string username)
         {
             return await _dbset.AnyAsync(x => x.Username == username);
         }
 
-        public async Task<bool> isUserExist(Guid userId)
+        public async Task<bool> IsUserExist(Guid userId)
         {
             return await _dbset.AnyAsync(x => x.Id == userId);
         }
-        public async Task<bool> isExistUserOfOrder(Guid userId)
+        public async Task<bool> IsExistUserOfOrder(Guid userId)
         {
             return await context.Set<Order>()
                           .AsNoTracking()
                           .AnyAsync(o => o.UserId == userId);
         }
+
+        public async Task<User?> GetByUserName(string username)
+        {
+            return await _dbset.FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public async Task<User?> GetByUserId(Guid userId)
+        {
+            return await _dbset.FirstOrDefaultAsync(x => x.Id == userId);
+        }
+
     }
 }

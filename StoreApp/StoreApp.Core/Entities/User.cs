@@ -11,7 +11,8 @@ namespace StoreApp.Core.Entities
         public string FullName { get; private set; } = fullName;
         public Role Role { get; private set; } = role;
         public DateTime CreatedAt { get; private set; } = createdAt;
-
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
         // BẮT BUỘC: Thêm constructor trống để EF Core có thể khởi tạo đối tượng khi lấy dữ liệu từ DB
         private User() : this(default!, default!, default!, default!, default!) { }
 

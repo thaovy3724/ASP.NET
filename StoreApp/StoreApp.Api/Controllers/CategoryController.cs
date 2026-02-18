@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Create;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Delete;
@@ -9,7 +10,8 @@ using StoreApp.Application.UseCases.CategoryUseCase.Query.Search;
 
 namespace StoreApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class CategoryController(IMediator mediator) : Controller
     {

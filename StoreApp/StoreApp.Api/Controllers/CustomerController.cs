@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.CustomerUseCase.Query.GetList;
 using StoreApp.Application.UseCases.CustomerUseCase.Query.Search;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class CustomerController(IMediator mediator) : Controller
     {

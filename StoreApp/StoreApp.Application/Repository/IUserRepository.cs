@@ -5,8 +5,11 @@ namespace StoreApp.Application.Repository
     public interface IUserRepository : IBaseRepository<User>
     {
         Task<List<User>> SearchByKeyword(string keyword);
-        Task<bool> isUsernameExist(string username);
-        Task<bool> isUserExist(Guid userId);
-        Task<bool> isExistUserOfOrder(Guid userId);
+        Task<bool> IsUsernameExist(string username);
+        Task<bool> IsUserExist(Guid userId);
+        Task<bool> IsExistUserOfOrder(Guid userId);
+        Task<User?> GetByUserName(string username);
+        Task<User?> GetByUserId(Guid userId);
+
     }
 }
