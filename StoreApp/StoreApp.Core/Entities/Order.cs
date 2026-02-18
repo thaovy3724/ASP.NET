@@ -14,8 +14,6 @@ namespace StoreApp.Core.Entities
         public Guid UserId { get; private set; } = userId;
         public Guid? PromoId { get; private set; } = promoId;
         public DateTime OrderDate { get; private set; } = orderDate;
-
-        // Gán giá trị từ tham số constructor thay vì gán cứng
         public OrderStatus OrderStatus { get; private set; } = orderStatus;
         public decimal DiscountAmount { get; private set; } = discountAmount;
         public decimal TotalAmount { get; private set; }
@@ -26,6 +24,19 @@ namespace StoreApp.Core.Entities
         public void Update( OrderStatus status)
         {
             OrderStatus = status;
+        }
+
+        public void SetDiscount(decimal amount)
+        {
+            if (amount < 0) amount = 0;
+            DiscountAmount = amount;
+        }
+
+        public void CalculateTotal()
+        {
+            var subTotal = Items.Sum(x => x.Subtotal);
+            TotalAmount = subTotal - DiscountAmount;
+            if (TotalAmount < 0) TotalAmount = 0;
         }
 
     }

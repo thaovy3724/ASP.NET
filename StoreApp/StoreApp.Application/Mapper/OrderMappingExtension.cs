@@ -1,5 +1,6 @@
 ﻿using StoreApp.Application.DTOs;
 using StoreApp.Core.Entities;
+using StoreApp.Core.ValueObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,21 +22,17 @@ namespace StoreApp.Application.Mapper
                 OrderDate: order.OrderDate,
                 OrderStatus: order.OrderStatus,
                 DiscountAmount: order.DiscountAmount,
-                TotalAmount: order.Items.Sum(item => item.Subtotal),
-                Items: order.Items.Select(static item => item.ToDTO()).ToList()
-            );
-        }
+                TotalAmount: order.TotalAmount,
 
-        public static Order ToEntity(this OrderDTO orderDTO)
-        {
-            return new Order
-            (
-                customerId: orderDTO.CustomerId,
-                userId: orderDTO.UserId,
-                promoId: orderDTO.PromoId,
-                orderDate: orderDTO.OrderDate,
-                orderStatus: orderDTO.OrderStatus,
-                discountAmount: orderDTO.DiscountAmount
+                // check null (?) và dùng toán tử ?? để luôn trả về list rỗng nếu null
+                Items: order.Items?.Select(item => new OrderItemDTO(
+                    ProductId: item.ProductId,
+                    Quantity: item.Quantity,
+                    UnitPrice: item.Price,
+                    TotalPrice: item.Subtotal
+                )).ToList() ?? new List<OrderItemDTO>(),
+                PaymentMethod: string.Empty, // Nhớ thêm trường này vào Entity Order nếu chưa có, hoặc truyền từ ngoài vào
+                null // Mặc định PaymentUrl là null khi mới convert
             );
         }
     }

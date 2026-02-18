@@ -9,7 +9,5 @@ namespace StoreApp.Application.Repository
         Task<bool> IsEmailExists(string email);
         Task<bool> IsPhoneExists(string phone);
         Task<bool> IsExistOderOfCustomer(Guid customerId);
-
-
     }
 }

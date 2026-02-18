@@ -11,5 +11,6 @@ namespace StoreApp.Application.Repository
     public interface IPaymentRepository : IBaseRepository<Payment>
     {
         Task<List<Payment>> SearchByKeyword(string keyword);
+        Task<Payment> GetByOrderId(Guid orderId);
     }
 }

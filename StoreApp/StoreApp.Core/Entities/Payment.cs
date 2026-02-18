@@ -1,4 +1,5 @@
 ﻿using StoreApp.Core.ValueObject;
+using System.Net.NetworkInformation;
 
 namespace StoreApp.Core.Entities
 {

@@ -13,21 +13,30 @@ namespace StoreApp.Infrastructure.Adapter
         }
 
         // chưa dùng Order
-        //public async Task<Inventory?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
-        //{
-        //    var inv = await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
-        //    if (inv is null) return null;
+        public async Task<Inventory?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
+        {
+            var inv = await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
+            if (inv is null) return null;
 
-        //    inv.UpdateQuantity(inv.Quantity - quantityChange);
-        //    DbSet.Update(inv);
-        //    await context.SaveChangesAsync();
-        //    return inv;
-        //}
+            inv.UpdateQuantity(inv.Quantity - quantityChange);
+            DbSet.Update(inv);
+            await context.SaveChangesAsync();
+            return inv;
+        }
 
         public Task<int> GetLowStockCount()
         {
             const int lowStockThreshold = 10;   // đại đại đi 
             return DbSet.CountAsync(x => x.Quantity < lowStockThreshold);
+        }
+
+        public Task RestockQuantity(Guid productID, int quantityChange)
+        {
+            var inv = DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
+            if (inv is null) return Task.CompletedTask;
+            inv.Result.UpdateQuantity(inv.Result.Quantity + quantityChange);
+            DbSet.Update(inv.Result);
+            return context.SaveChangesAsync();
         }
     }
 }
