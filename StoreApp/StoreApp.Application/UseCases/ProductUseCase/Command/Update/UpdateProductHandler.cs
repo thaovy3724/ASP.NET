@@ -19,10 +19,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
             var product = await productRepository.GetById(request.ProductId);
             if (product is null)
             {
-                return new Result(
-                    Success: false,
-                    Message: "Không tìm thấy sản phẩm"
-                );
+                throw new NotFoundException("Sản phẩm không tồn tại");  
             }
 
             // kiểm tra CategoryId tồn tại không

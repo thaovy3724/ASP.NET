@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Query.Search
 {
-    public sealed record GetListUserByKeywordQuery(string keyword) : IRequest<ResultWithData<List<UserDTO>>>;
+    public sealed record GetListUserByKeywordQuery(string? keyword = null) : IRequest<ResultWithData<List<UserDTO>>>;
 }

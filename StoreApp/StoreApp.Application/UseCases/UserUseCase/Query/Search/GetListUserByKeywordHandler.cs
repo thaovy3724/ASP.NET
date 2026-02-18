@@ -17,11 +17,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Query.Search
         {
             if (string.IsNullOrWhiteSpace(request.keyword))
             {
-                return new ResultWithData<List<UserDTO>>(
-                    Success: false,
-                    Message: "Từ khóa tìm kiếm không được để trống.",
-                    Data: null
-                );
+                throw new ArgumentNullException(nameof(request.keyword), "Từ khóa tìm kiếm không được để trống.");
             }
             var users = await userRepository.SearchByKeyword(request.keyword);
             var userDTO = users

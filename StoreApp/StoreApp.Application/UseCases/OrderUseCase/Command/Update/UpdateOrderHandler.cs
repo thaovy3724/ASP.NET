@@ -17,7 +17,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Update
             var order = await orderRepository.GetById(request.Id);
             if (order == null)
             {
-                throw new Exception($"Không tìm thấy đơn hàng với mã: {request.Id}");
+                throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
             order.Update(request.Status);
             await orderRepository.Update(order);

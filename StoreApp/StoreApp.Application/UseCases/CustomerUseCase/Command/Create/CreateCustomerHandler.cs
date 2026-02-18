@@ -18,21 +18,11 @@ namespace StoreApp.Application.UseCases.CustomerUseCase.Command.Create
         {
             if(await customerRepository.IsEmailExists(request.email))
             {
-                return new ResultWithData<CustomerDTO>
-                (
-                    Success : false,
-                    Message : "Email đã tồn tại!",
-                    Data : null
-                );
+                throw new ConflictException("Email đã tồn tại!");
             }
             if(await customerRepository.IsPhoneExists(request.phone))
             {
-                return new ResultWithData<CustomerDTO>
-                (
-                    Success : false,
-                    Message : "Số điện thoại đã tồn tại!",
-                    Data : null
-                );
+                throw new ConflictException("Số điện thoại đã tồn tại!");
             }
             var customer = new Customer(request.name, request.phone, request.email, request.address, DateTime.Now);
             await customerRepository.Create(customer);

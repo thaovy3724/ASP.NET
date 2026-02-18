@@ -17,39 +17,20 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
             var supplierInDb = await supplierRepository.GetById(request.Id);
             if (supplierInDb == null)
             {
-                return new Result(
-                    Success: false,
-                    Message: "Nhà cung cấp không tồn tại."
-                );
+                throw new NotFoundException("Nhà cung cấp không tồn tại.");
             }
             if(await supplierRepository.IsSupplierNameExist(request.Name, request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Tên nhà cung cấp đã tồn tại."
-                );
+                throw new ConflictException("Tên nhà cung cấp đã tồn tại.");
             }
             if(await supplierRepository.IsSupplierPhoneExist(request.Phone, request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Số điện thoại nhà cung cấp đã tồn tại."
-                );
+                throw new ConflictException("Số điện thoại nhà cung cấp đã tồn tại.");
             }
             if(await supplierRepository.IsSupplierEmailExist(request.Email, request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Email nhà cung cấp đã tồn tại."
-                );
+                throw new ConflictException("Email nhà cung cấp đã tồn tại.");
             }
-            //if(await supplierRepository.IsSupplierAddressExist(request.Address, request.Id))    
-            //{
-            //    return new Result(
-            //        Success: false,
-            //        Message: "Địa chỉ nhà cung cấp đã tồn tại."
-            //    );
-            //}
             var supplier = await supplierRepository.GetById(request.Id);
             supplier.Update(
                 request.Name,

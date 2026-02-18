@@ -18,11 +18,7 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Create
         {
             if(await supplierRepository.IsSupplierExist(request.Name, request.Email, request.Phone))
             {
-                return new ResultWithData<SupplierDTO>(
-                    Success: false,
-                    Message: "Nhà cung cấp đã tồn tại.",
-                    Data: null
-                );
+                throw new ConflictException("Nhà cung cấp đã tồn tại.");
             }
             var entity = new Supplier(
                 request.Name,

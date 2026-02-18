@@ -17,11 +17,7 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Query.Search
         {
             if(string.IsNullOrWhiteSpace(request.keyword))
             {
-                return new ResultWithData<List<SupplierDTO>>(
-                    Success: false,
-                    Message: "Từ khóa tìm kiếm không được để trống.",
-                    Data: []
-                );
+                throw new ArgumentNullException(nameof(request.keyword), "Từ khóa tìm kiếm không được để trống.");
             }
             var suppliers = await supplierRepository.SearchByKeyword(request.keyword);
             var supplierDTO = suppliers

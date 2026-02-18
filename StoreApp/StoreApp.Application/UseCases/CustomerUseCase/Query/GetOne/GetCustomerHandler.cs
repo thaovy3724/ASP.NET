@@ -20,12 +20,7 @@ namespace StoreApp.Application.UseCases.CustomerUseCase.Query.GetOne
             var customer = await customerRepository.GetById(request.Id);
             if(customer is null)
             {
-                return new ResultWithData<CustomerDTO>
-                (
-                    Success : false,
-                    Message : "Không tìm thấy thông tin khách hàng!",
-                    Data : null
-                );
+                throw new NotFoundException("Không tìm thấy thông tin khách hàng!");
             }
             return new ResultWithData<CustomerDTO>
             (

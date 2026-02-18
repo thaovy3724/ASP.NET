@@ -13,10 +13,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Update
             var categoryExisted = await categoryRepository.GetByExactName(request.Name, request.Id);
             if (categoryExisted is not null)
             {
-                return new Result(
-                    Success: false, 
-                    Message: "Tên danh mục đã tồn tại trong hệ thống. Vui lòng sử dụng tên khác."
-                );
+                throw new ConflictException("Tên danh mục đã tồn tại trong hệ thống. Vui lòng sử dụng tên khác.");
             }
 
             // thực hiện cập nhật

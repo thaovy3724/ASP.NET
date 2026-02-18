@@ -19,11 +19,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
         {
             if(await UserRepository.isUsernameExist(request.userName))
             {
-                return new ResultWithData<UserDTO>(
-                    Success: false,
-                    Message: "Tên đăng nhập đã tồn tại.",
-                    Data: null
-                );
+                throw new ConflictException("Tên đăng nhập đã tồn tại.");
             }
             Role role;
             switch (request.role)
@@ -35,11 +31,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
                     role = Role.Staff;
                     break;
                 default:
-                    return new ResultWithData<UserDTO>(
-                        Success: false,
-                        Message: "Vai trò không hợp lệ.",
-                        Data: null
-                    );
+                    throw new ArgumentException("Vai trò người dùng không hợp lệ(Admin/Staff)");
             }
             var user = new User
             (

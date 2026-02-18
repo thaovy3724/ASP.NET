@@ -16,17 +16,11 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Remove
             var supplier = await supplierRepository.GetById(request.Id);
             if (supplier == null)
             {
-                return new Result(
-                    Success: false,
-                    Message: "Nhà cung cấp không tồn tại."
-                );
+                throw new NotFoundException("Nhà cung cấp không tồn tại.");
             }
             if(await supplierRepository.IsExistProductOfSupplier(request.Id))
             {
-                return new Result(
-                    Success: false,
-                    Message: "Không thể xóa nhà cung cấp vì còn sản phẩm liên quan."
-                );
+                throw new ConflictException("Nhà cung cấp đang có sản phẩm liên kết, không thể xóa.");
             }
             await supplierRepository.Delete(supplier);
             return new Result(

@@ -16,11 +16,7 @@ namespace StoreApp.Application.UseCases.CustomerUseCase.Command.Update
             var customer = await customerRepository.GetById(request.Id);
             if (customer is null)
             {
-                return new Result
-                (
-                    Success: false,
-                    Message: "Khách hàng không tồn tại!"
-                );
+                throw new NotFoundException("Khách hàng không tồn tại!");
             }
             customer.Update(request.Name, request.Phone, request.Email, request.Address);
             await customerRepository.Update(customer);

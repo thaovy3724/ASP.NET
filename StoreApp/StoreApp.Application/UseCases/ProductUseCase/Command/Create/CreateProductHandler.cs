@@ -20,11 +20,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Create
             var category = await categoryRepository.GetById(request.CategoryId);
             if (category is null) 
             { 
-                return new ResultWithData<ProductDTO>(
-                    false,
-                    "CategoryId không tồn tại", 
-                    null
-                );
+                throw new NotFoundException("CategoryId không tồn tại");
             }
 
             // kiểm tra SupplierId tồn tại chưa

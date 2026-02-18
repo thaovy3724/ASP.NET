@@ -18,7 +18,7 @@ namespace StoreApp.Application.UseCases.PaymentUseCase.Query.GetOne
             var payment = await paymentRepository.GetById(request.Id);
             if (payment == null)
             {
-                return new ResultWithData<PaymentDTO>(false, "Không tìm thấy phương thức thanh toán", null);
+                throw new NotFoundException($"Không tìm thấy bản ghi thanh toán với Id: {request.Id}");
             }
             var paymentDTO = payment.ToDTO();
             return new ResultWithData<PaymentDTO>(true, "Thành công", paymentDTO);
