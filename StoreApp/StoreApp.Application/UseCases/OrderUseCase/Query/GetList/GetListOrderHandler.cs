@@ -15,7 +15,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Query.GetList
     {
         public async Task<ResultWithData<List<OrderDTO>>> Handle(GetListOrderQuery req, CancellationToken cancellationToken)
         {
-            var orders = await orderRepository.GetAll();
+            var orders = await orderRepository.GetListOrderWithDetails();
             var orderDTOs = orders.Select(orders => orders.ToDTO()).ToList();
 
             return new ResultWithData<List<OrderDTO>>(

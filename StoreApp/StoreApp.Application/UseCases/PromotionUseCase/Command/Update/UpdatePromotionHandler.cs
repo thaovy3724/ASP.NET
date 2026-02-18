@@ -17,7 +17,7 @@ namespace StoreApp.Application.UseCases.PromotionUseCase.Command.Update
             var promotion = await promotionRepository.GetById(request.Id);
             if (promotion == null)
             {
-                return new Result(Success: false, Message: "Promotion not found.");
+                throw new NotFoundException($"Không tìm thấy khuyến mãi với Id: {request.Id}");
             }
 
             // 2. Kiểm tra trùng mã PromoCode
@@ -26,7 +26,7 @@ namespace StoreApp.Application.UseCases.PromotionUseCase.Command.Update
 
             if (duplicateCode)
             {
-                return new Result(Success: false, Message: $"Mã khuyến mãi '{request.PromoCode}' đã tồn tại hệ thống.");
+                throw new ConflictException($"Mã khuyến mãi '{request.PromoCode}' đã tồn tại.");
             }
 
             // 3. Cập nhật thông tin qua

@@ -15,11 +15,7 @@ namespace StoreApp.Application.UseCases.InventoryUseCase.Query.GetByProduct
 
             if (inventory is null)
             {
-                return new ResultWithData<InventoryDTO>(
-                    Success: false,
-                    Message: "Không tìm thấy tồn kho theo product",
-                    Data: null
-                );
+                throw new NotFoundException($"Không tìm thấy tồn kho với ProductId: {request.ProductId}");
             }
 
             return new ResultWithData<InventoryDTO>(

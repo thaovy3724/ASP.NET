@@ -14,22 +14,10 @@ namespace StoreApp.Application.Mapper
         {
             return new OrderItemDTO
             (
-                OrderId: entity.OrderId,
                 ProductId: entity.ProductId,
                 Quantity: entity.Quantity,
                 UnitPrice: entity.Price,
                 TotalPrice: entity.Subtotal
-            );
-        }
-
-        public static OrderItem ToEntity(this OrderItemDTO dto)
-        {
-            return new OrderItem
-            (
-                orderId: dto.OrderId,
-                productId: dto.ProductId,
-                quantity: dto.Quantity,
-                price: dto.UnitPrice
             );
         }
     }

@@ -16,16 +16,12 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Query.GetOne
         public async Task<ResultWithData<OrderDTO>> Handle(GetOrderQuery request, CancellationToken cancellationToken)
         {
             // 1. Lấy dữ liệu từ Repository
-            var order = await orderRepository.GetById(request.Id);
+            var order = await orderRepository.GetOrderWithDetails(request.Id);
 
             // 2. Kiểm tra nếu không tìm thấy đơn hàng
             if (order == null)
             {
-                return new ResultWithData<OrderDTO>(
-                    Success: false,
-                    Message: $"Không tìm thấy đơn hàng với mã: {request.Id}",
-                    Data: null
-                );
+                throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
 
             // 3. Map sang DTO và trả về

@@ -6,7 +6,8 @@ namespace StoreApp.Application.Repository
     public interface IInventoryRepository : IBaseRepository<Inventory>
     {
         Task<Inventory?> GetByProductID(Guid productID);
-        //Task<Inventory> deductQuantityOfCreatedOrder(Guid productID, int quantityChange);
+        Task<Inventory> deductQuantityOfCreatedOrder(Guid productID, int quantityChange);
         Task<int> GetLowStockCount();
+        Task RestockQuantity(Guid productID, int quantityChange);
     }
 }
