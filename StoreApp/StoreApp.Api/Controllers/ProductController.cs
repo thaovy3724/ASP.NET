@@ -1,15 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application.DTOs;
-using StoreApp.Application.Results;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Create;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Delete;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Update;
 using StoreApp.Application.UseCases.ProductUseCase.Query.GetList;
 using StoreApp.Application.UseCases.ProductUseCase.Query.GetOne;
-using StoreApp.Application.UseCases.ProductUseCase.Query.Search;
-using StoreApp.Core.Entities;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace StoreApp.Api.Controllers
 {
@@ -18,7 +13,7 @@ namespace StoreApp.Api.Controllers
     public class ProductController(IMediator mediator, IWebHostEnvironment env) : Controller
     {
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetOne(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var query = new GetProductQuery(id);      // Use case của tầng Application
             var result = await mediator.Send(query);
@@ -26,25 +21,9 @@ namespace StoreApp.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetList()
+        public async Task<IActionResult> GetList([FromQuery] GetListProductQuery cmd)
         {
-            var query = new GetListProductQuery();  // Use case của tầng Application
-            var result = await mediator.Send(query);
-            return Ok(result);
-        }
-
-        [HttpGet("search")]
-        public async Task<IActionResult> Search(
-            [FromQuery] Guid? supplierId,
-            [FromQuery] Guid? categoryId,
-            [FromQuery] decimal? minPrice,
-            [FromQuery] decimal? maxPrice,
-            [FromQuery] string? keyword,
-            [FromQuery] string? priceOrder
-        )
-        {
-            var query = new SearchProductQuery(supplierId, categoryId, minPrice, maxPrice, keyword, priceOrder);
-            var result = await mediator.Send(query);
+            var result = await mediator.Send(cmd);
             return Ok(result);
         }
 
@@ -59,7 +38,7 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command)
         {
             // Không cho client gửi ProductId trong body => server luôn lấy id từ route
-            command.ProductId = id;
+            command = command with { ProductId = id };
 
             var result = await mediator.Send(command);
             return Ok(result);
@@ -74,8 +53,8 @@ namespace StoreApp.Api.Controllers
         }
 
         // Upload image:
-        //[HttpPost("upload-image")]
-        //public async Task<IActionResult<string>> UploadImage([FromForm] IFormFile file)
+        [HttpPost("upload-image")]
+        //public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
         //{
         //    if (file is null || file.Length == 0)
         //        return BadRequest("File is empty.");

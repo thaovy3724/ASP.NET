@@ -1,5 +1,5 @@
 ﻿using StoreApp.Core.Entities;
-using System;
+using System.Linq.Expressions;
 namespace StoreApp.Application.Repository
 {
     public interface IBaseRepository<T> where T : BaseEntity
@@ -10,5 +10,8 @@ namespace StoreApp.Application.Repository
         Task Create(T entity);
         Task Update(T entity);
         Task Delete(T entity); // Xoá khỏi DB luôn 
+
+        // Kiểm tra tồn tại theo điều kiện nào đó (ví dụ: tên đã tồn tại chưa)
+        Task<bool> IsExist(Expression<Func<T, bool>> predicate); 
     }
 }

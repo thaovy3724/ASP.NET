@@ -9,5 +9,10 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
 {
-    public sealed record CreateUserCommand(string userName, string fullName, string password, string role) : IRequest<ResultWithData<UserDTO>>;
+    public sealed record CreateUserCommand(
+        string UserName, 
+        string FullName, 
+        string Password, 
+        string Phone,
+        string Role) : IRequest<ResultWithData<UserDTO>>;
 }

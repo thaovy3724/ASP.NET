@@ -1,13 +1,9 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.CategoryUseCase.Query.GetOne
 {
@@ -16,10 +12,14 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Query.GetOne
         public async Task<ResultWithData<CategoryDTO>> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
         {
             var category = await categoryRepository.GetById(request.Id);
+            if(category is null)
+            {
+                throw new NotFoundException("Thể loại không tồn tại.");
+            }
             var categoryDTO = category.ToDTO();
             return new ResultWithData<CategoryDTO>(
                 Success: true,
-                Message: "Lấy thông tin loại sản phẩm thành công.",
+                Message: "Lấy thông tin thể loại thành công.",
                 Data: categoryDTO
                 );
         }

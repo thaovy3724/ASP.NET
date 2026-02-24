@@ -17,5 +17,6 @@ namespace StoreApp.Application.Repository
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();
         Task<List<Order>> GetListExpiredOrders(DateTime timeLimit);
+        Task<bool> HasProductReference(Guid productId);
     }
 }

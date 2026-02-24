@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application;
+using StoreApp.Application.ApplicationException;
 
 namespace StoreApp.Api.ApplException
 {
     public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IProblemDetailsService problemDetailsService) : IExceptionHandler
     {
-        public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
+        public async ValueTask<bool> TryHandleAsync(HttpContext context, System.Exception exception, CancellationToken cancellationToken)
         {
             logger.LogError(exception, "Lỗi xảy ra: {Message}", exception.Message);
 
@@ -36,7 +36,7 @@ namespace StoreApp.Api.ApplException
             return result;
         }
 
-        private static (int StatusCode, string Title) MapException(Exception exception) => exception switch
+        private static (int StatusCode, string Title) MapException(System.Exception exception) => exception switch
         {
 
             NotFoundException => (StatusCodes.Status404NotFound, "Không tìm thấy dữ liệu"),

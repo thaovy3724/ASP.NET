@@ -10,7 +10,7 @@ namespace StoreApp.Application.Mapper
 {
     public static class OrderItemMappingExtension
     {
-        public static OrderItemDTO ToDTO(this OrderItem entity)
+        public static OrderItemDTO ToDTO(this OrderDetail entity)
         {
             return new OrderItemDTO
             (

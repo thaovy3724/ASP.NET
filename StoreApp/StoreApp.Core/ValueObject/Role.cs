@@ -9,6 +9,7 @@ namespace StoreApp.Core.ValueObject
     public enum Role
     {
         Admin,
-        Staff
+        Staff,
+        Customer
     }
 }

@@ -9,50 +9,20 @@ namespace StoreApp.Infrastructure.Adapter
     // hoàn toàn không chứa nghiệp vụ.
     public class CategoryRepository(StoreDbContext context) : BaseRepository<Category>(context), ICategoryRepository
     {
-        private readonly DbSet<Product> DbSetPD = context.Set<Product>();
-        public async Task<List<Category>> Search(string? keyword)
+        public async Task<List<Category>> Search(string? keyword = null)
         {
-            keyword = keyword?.Trim();
 
-            IQueryable<Category> query = DbSet.AsNoTracking();
+            var query = DbSet.AsNoTracking();
 
             // keyword rỗng => lấy tất cả
             if (!string.IsNullOrWhiteSpace(keyword))
             {
+                keyword = keyword.Trim();
                 // có keywords (lọc theo tên)
-                query = query.Where(x => EF.Functions.Like(x.Name, $"%{keyword}%"));
+                query = query.Where(x => x.Name.Contains(keyword));
             }
 
-            // sắp xếp theo tên 
-            return await query
-                .OrderBy(x => x.Name)
-                .ToListAsync();
-        }
-
-        public async Task<Category?> GetByExactName(string? name)
-        {
-            name = name?.Trim();
-            if (string.IsNullOrWhiteSpace(name)) return null;
-
-            return await DbSet
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Name == name);
-        }
-
-        public async Task<Category?> GetByExactName(string? name, Guid excludeId)
-        {
-            name = name?.Trim();
-            if (string.IsNullOrWhiteSpace(name)) return null;
-
-            return await DbSet
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Name == name && x.Id != excludeId);
-        }
-        public async Task<bool> IsExistProductOfCategory(Guid categoryId)
-        {
-            return await DbSetPD.AsNoTracking()
-                .AsNoTracking()
-                .AnyAsync(x => x.CategoryId == categoryId);
+            return await query.ToListAsync();
         }
     }
 }

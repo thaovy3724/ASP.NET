@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;

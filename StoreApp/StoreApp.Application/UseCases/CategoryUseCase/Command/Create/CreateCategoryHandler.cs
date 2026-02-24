@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;
@@ -12,8 +13,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Create
         public async Task<ResultWithData<CategoryDTO>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             // kiểm tra trùng tên
-            var existingCategory = await categoryRepository.GetByExactName(request.Name);
-            if (existingCategory is not null)
+            if (await categoryRepository.IsExist(p => p.Name == request.Name))
             {
                 throw new ConflictException("Thể loại đã tồn tại");
             }
@@ -21,6 +21,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Create
             // tạo mới
             var category = new Category(request.Name);
             await categoryRepository.Create(category);
+
             return new ResultWithData<CategoryDTO>(
                 Success: true,
                 Message: "Thêm thể loại thành công",

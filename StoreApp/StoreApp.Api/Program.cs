@@ -6,14 +6,13 @@ using StoreApp.Api.ApplException;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//==== SERVICE REGISTRATION ====//
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddAppDI(builder.Configuration);
-builder.Services.AddAppDI();
 
 // cau hinh vnpay & order
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
@@ -21,12 +20,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddHostedService<OrderAutoCancelService>();
 
-var app = builder.Build();
+// Global exception handler
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+//==== CONFIGURE HTTP PIPELINE ====//
+
 var app = builder.Build();
+
 app.UseExceptionHandler();
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

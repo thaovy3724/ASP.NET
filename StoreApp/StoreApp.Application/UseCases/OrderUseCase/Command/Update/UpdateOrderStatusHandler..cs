@@ -10,7 +10,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.UpdateStatus
     public class UpdateOrderStatusHandler(
         IOrderRepository orderRepository,
         IPaymentRepository paymentRepository,
-        IInventoryRepository inventoryRepository
+        IGRNRepository inventoryRepository
     ) : IRequestHandler<UpdateOrderStatusCommand, ResultWithData<string>>
     {
         public async Task<ResultWithData<string>> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)

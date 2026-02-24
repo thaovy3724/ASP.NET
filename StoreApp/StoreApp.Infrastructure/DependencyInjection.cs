@@ -22,7 +22,7 @@ namespace StoreApp.Infrastructure
             // Repositories
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddScoped<IInventoryRepository, InventoryRepository>();
+            services.AddScoped<IGRNRepository, InventoryRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();

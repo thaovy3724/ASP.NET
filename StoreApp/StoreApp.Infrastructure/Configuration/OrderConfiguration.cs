@@ -15,44 +15,28 @@ namespace StoreApp.Infrastructure.Configuration
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             // Tên bảng
-            builder.ToTable("orders");
+            builder.ToTable("order");
 
             // Khóa chính (Map từ BaseEntity)
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id)
                    .HasColumnName("order_id");
 
-            // Ngày đặt hàng
-            builder.Property(o => o.OrderDate)
-                   .HasColumnName("order_date")
+            // Ngày cập nhật trạng thái đơn hàng lần gần nhất 
+            builder.Property(o => o.UpdatedAt)
+                   .HasColumnName("updated_date")
                    .HasColumnType("datetime")
-                   .IsRequired()
-                   .HasDefaultValueSql("GETDATE()");
+                   .IsRequired();
 
             // Khách hàng (Có thể null nếu khách lẻ không đăng ký)
             builder.Property(o => o.CustomerId)
                    .HasColumnName("customer_id");
 
             // Nhân viên bán hàng (Bắt buộc)
-            builder.Property(o => o.UserId)
-                   .HasColumnName("user_id")
+            builder.Property(o => o.StaffId)
+                   .HasColumnName("staff_id")
                    .IsRequired();
 
-            // Mã giảm giá (Có thể null)
-            builder.Property(o => o.PromoId)
-                   .HasColumnName("promo_id");
-
-            // Số tiền giảm giá
-            builder.Property(o => o.DiscountAmount)
-                   .HasColumnName("discount_amount")
-                   .HasColumnType("decimal(10,2)")
-                   .HasDefaultValue(0);
-
-            // Tổng tiền đơn hàng
-            builder.Property(o => o.TotalAmount)
-                   .HasColumnName("total_amount")
-                   .HasColumnType("decimal(10,2)")
-                   .IsRequired();
             // OrderStatus
             builder.Property(u => u.OrderStatus)
                     .HasColumnName("order_status")
@@ -60,40 +44,38 @@ namespace StoreApp.Infrastructure.Configuration
                     .HasMaxLength(20)
                     .IsRequired();
 
+            // PaymentMethod
+            builder.Property(u => u.PaymentMethod)
+                    .HasColumnName("payment_method")
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+            // Address
+            builder.Property(o => o.Address)
+                   .HasColumnName("address")
+                   .HasColumnType("nvarchar(500)")
+                   .IsRequired();
+
             // --- Thiết lập Quan hệ ---
 
             // Quan hệ với Khách hàng
-            builder.HasOne<Customer>()
+            builder.HasOne<User>()
                    .WithMany()
                    .HasForeignKey(o => o.CustomerId)
-                   .OnDelete(DeleteBehavior.SetNull);
+                   .OnDelete(DeleteBehavior.Restrict);
 
             // Quan hệ với Nhân viên (Staff/User)
             builder.HasOne<User>()
                    .WithMany()
-                   .HasForeignKey(o => o.UserId)
+                   .HasForeignKey(o => o.StaffId)
                    .OnDelete(DeleteBehavior.Restrict);
-
-            // Quan hệ với Mã giảm giá
-            builder.HasOne<Promotion>()
-                   .WithMany()
-                   .HasForeignKey(o => o.PromoId)
-                   .OnDelete(DeleteBehavior.SetNull);
 
             // Quan hệ 1-N với OrderItem
             builder.HasMany(o => o.Items)
                    .WithOne()
                    .HasForeignKey("order_id")
                    .OnDelete(DeleteBehavior.Cascade);
-
-            //// --- Tối ưu hóa ---
-
-            //// Index để tìm kiếm đơn hàng theo ngày hoặc theo khách hàng nhanh hơn
-            //builder.HasIndex(o => o.OrderDate);
-            //builder.HasIndex(o => o.CustomerId);
-
-            //// Check Constraint: Đảm bảo tổng tiền không âm
-            //builder.ToTable(t => t.HasCheckConstraint("CK_Order_TotalAmount", "total_amount >= 0"));
         }
     }
 }

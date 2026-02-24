@@ -3,11 +3,7 @@ using StoreApp.Application.DTOs;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Query.GetList
 {
@@ -15,7 +11,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Query.GetList
     {
         public async Task<ResultWithData<List<UserDTO>>> Handle(GetListUserQuery request, CancellationToken cancellationToken)
         {
-            var users = await userRepository.GetAll();
+            var users = await userRepository.Search(request.Keyword);
             var userDTO = users
                 .Select(user => user.ToDTO())
                 .ToList();

@@ -1,12 +1,7 @@
 ﻿using MediatR;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;
-using StoreApp.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
 {
@@ -14,24 +9,27 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
     {
         public async Task<Result> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
-            var supplierInDb = await supplierRepository.GetById(request.Id);
-            if (supplierInDb == null)
+            var supplier = await supplierRepository.GetById(request.Id);
+            if (supplier is null)
             {
                 throw new NotFoundException("Nhà cung cấp không tồn tại.");
             }
-            if(await supplierRepository.IsSupplierNameExist(request.Name, request.Id))
+
+            if(await supplierRepository.IsExist(s => s.Name == request.Name && s.Id != request.Id))
             {
                 throw new ConflictException("Tên nhà cung cấp đã tồn tại.");
             }
-            if(await supplierRepository.IsSupplierPhoneExist(request.Phone, request.Id))
+
+            if(await supplierRepository.IsExist(s => s.Phone == request.Phone && s.Id != request.Id))
             {
                 throw new ConflictException("Số điện thoại nhà cung cấp đã tồn tại.");
             }
-            if(await supplierRepository.IsSupplierEmailExist(request.Email, request.Id))
+
+            if(await supplierRepository.IsExist(s => s.Email == request.Email && s.Id != request.Id))
             {
                 throw new ConflictException("Email nhà cung cấp đã tồn tại.");
             }
-            var supplier = await supplierRepository.GetById(request.Id);
+
             supplier.Update(
                 request.Name,
                 request.Phone,

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;

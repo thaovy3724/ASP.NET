@@ -5,20 +5,12 @@ using StoreApp.Application.Repository;
 using StoreApp.Application.Results;
 using StoreApp.Core.Entities;
 using StoreApp.Core.ValueObject;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 {
     public class CreateOrderHandler(
         IOrderRepository orderRepository,
-        IPaymentRepository paymentRepository,
-        IPromotionRepository promotionRepository,
         IProductRepository productRepository,
-        ICustomerRepository customerRepository,
-        IInventoryRepository inventoryRepository,
         IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
     ) : IRequestHandler<CreateOrderCommand, ResultWithData<OrderDTO>>
     {
@@ -69,7 +61,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 
                     await inventoryRepository.deductQuantityOfCreatedOrder(item.ProductId, item.Quantity);
 
-                    order.Items.Add(new OrderItem(
+                    order.Items.Add(new OrderDetail(
                         orderId: order.Id,
                         productId: item.ProductId,
                         quantity: item.Quantity,

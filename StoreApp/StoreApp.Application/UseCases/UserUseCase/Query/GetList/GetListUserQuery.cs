@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Query.GetList
 {
-    public sealed record GetListUserQuery() : IRequest<ResultWithData<List<UserDTO>>>; 
+    public sealed record GetListUserQuery(string? Keyword = null) : IRequest<ResultWithData<List<UserDTO>>>; 
 }

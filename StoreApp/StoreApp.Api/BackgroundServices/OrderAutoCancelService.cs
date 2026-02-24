@@ -1,12 +1,8 @@
 ﻿using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SM.Infrastructure.Adapters.Payment.Config;
 using StoreApp.Application.Repository;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Update;
-using StoreApp.Application.UseCases.OrderUseCase.Command.UpdateStatus; // Namespace chứa Command
 
 namespace StoreApp.Api.BackgroundServices;
 

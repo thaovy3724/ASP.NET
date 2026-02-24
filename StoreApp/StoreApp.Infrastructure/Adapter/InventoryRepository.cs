@@ -5,15 +5,15 @@ using StoreApp.Infrastructure.Data;
 
 namespace StoreApp.Infrastructure.Adapter
 {
-    public class InventoryRepository(StoreDbContext context) : BaseRepository<Inventory>(context), IInventoryRepository
+    public class InventoryRepository(StoreDbContext context) : BaseRepository<GRN>(context), IGRNRepository
     {
-        public async Task<Inventory?> GetByProductID(Guid productID)
+        public async Task<GRN?> GetByProductID(Guid productID)
         {
             return await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
         }
 
         // chưa dùng Order
-        public async Task<Inventory?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
+        public async Task<GRN?> deductQuantityOfCreatedOrder(Guid productID, int quantityChange)
         {
             var inv = await DbSet.FirstOrDefaultAsync(x => x.ProductId == productID);
             if (inv is null) return null;

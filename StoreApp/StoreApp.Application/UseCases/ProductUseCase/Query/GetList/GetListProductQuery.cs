@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
 {
-    public sealed record GetListProductQuery : IRequest<ResultWithData<List<ProductDTO>>>;
+    public sealed record GetListProductQuery
+        (Guid? CategoryId = null, 
+        decimal? MinPrice = null, 
+        decimal? MaxPrice = null, 
+        string? Keyword = null) : IRequest<ResultWithData<List<ProductDTO>>>;
 }

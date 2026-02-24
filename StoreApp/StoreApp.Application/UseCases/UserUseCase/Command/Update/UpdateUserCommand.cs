@@ -8,5 +8,11 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
 {
-    public sealed record UpdateUserCommand(Guid Id, string userName, string fullName, string password, string role) : IRequest<Result>;
+    public sealed record UpdateUserCommand(
+        Guid Id, 
+        string UserName, 
+        string FullName, 
+        string Password,
+        string Phone, 
+        string Role) : IRequest<Result>;
 }

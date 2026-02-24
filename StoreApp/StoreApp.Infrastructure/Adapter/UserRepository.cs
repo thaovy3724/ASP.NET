@@ -8,40 +8,19 @@ namespace StoreApp.Infrastructure.Adapter
     public class UserRepository(StoreDbContext context) : BaseRepository<User>(context), IUserRepository
     {
         private readonly DbSet<User> _dbset = context.Set<User>();
-        public async Task<List<User>> SearchByKeyword(string keyword)
-        {
-            if (string.IsNullOrEmpty(keyword))
-                return await _dbset.ToListAsync();
-            return await _dbset.Where(x =>
-                x.Username.Contains(keyword) ||
-                x.FullName.Contains(keyword) ||
-                x.Role.ToString().Contains(keyword)).ToListAsync();
-        }
-        public async Task<bool> IsUsernameExist(string username)
-        {
-            return await _dbset.AnyAsync(x => x.Username == username);
-        }
 
-        public async Task<bool> IsUserExist(Guid userId)
+        public async Task<List<User>> Search(string? keyword = null)
         {
-            return await _dbset.AnyAsync(x => x.Id == userId);
+            var query = _dbset.AsNoTracking();
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                keyword = keyword.Trim();
+                query = query.Where(x =>
+                    x.Username.Contains(keyword) ||
+                    x.FullName.Contains(keyword) ||
+                    x.Role.ToString().Contains(keyword));
+            }
+            return await _dbset.ToListAsync();
         }
-        public async Task<bool> IsExistUserOfOrder(Guid userId)
-        {
-            return await context.Set<Order>()
-                          .AsNoTracking()
-                          .AnyAsync(o => o.UserId == userId);
-        }
-
-        public async Task<User?> GetByUserName(string username)
-        {
-            return await _dbset.FirstOrDefaultAsync(x => x.Username == username);
-        }
-
-        public async Task<User?> GetByUserId(Guid userId)
-        {
-            return await _dbset.FirstOrDefaultAsync(x => x.Id == userId);
-        }
-
     }
 }

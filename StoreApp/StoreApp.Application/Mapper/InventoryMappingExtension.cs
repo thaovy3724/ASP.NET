@@ -10,7 +10,7 @@ namespace StoreApp.Application.Mapper
 {
     public static class InventoryMappingExtension
     {
-        public static InventoryDTO ToDTO(this Inventory entity)
+        public static GRNDTO ToDTO(this GRN entity)
         {
             return new InventoryDTO(
                 Id: entity.Id,

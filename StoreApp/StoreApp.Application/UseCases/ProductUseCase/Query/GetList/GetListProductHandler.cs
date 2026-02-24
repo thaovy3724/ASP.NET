@@ -3,11 +3,6 @@ using StoreApp.Application.DTOs;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
 using StoreApp.Application.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
 {
@@ -15,10 +10,9 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
     {
         public async Task<ResultWithData<List<ProductDTO>>> Handle(GetListProductQuery request, CancellationToken cancellationToken)
         {
-            // getAll() trong BaseRepository của tầng application
-            var productList = await productRepository.GetAll();
+            var products = await productRepository.Search(request.CategoryId, request.MinPrice, request.MaxPrice, request.Keyword);
 
-            var productListDTO = productList
+            var productListDTO = products
                 .Select(product => product.ToDTO())     // entity => DTO 
                 .ToList();
 

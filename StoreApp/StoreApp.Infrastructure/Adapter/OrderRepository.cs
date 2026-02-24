@@ -93,5 +93,12 @@ namespace StoreApp.Infrastructure.Adapter
                         .Where(o => o.OrderStatus == OrderStatus.Pending && o.OrderDate < timeLimit)
                         .ToListAsync();
         }
+
+        public Task<bool> HasProductReference(Guid productId)
+        {
+            return DbSet.AsNoTracking()
+                        .Include(o => o.Items)
+                        .AnyAsync(o => o.Items.Any(oi => oi.ProductId == productId));
+        }
     }
 }
