@@ -48,6 +48,16 @@ namespace StoreApp.Infrastructure.Configuration
             // CreatedAt
             builder.Property(u => u.CreatedAt)
                    .HasColumnName("created_at")
+                   .HasColumnType("datetime")
+                   .IsRequired();
+
+            builder.Property(u => u.RefreshToken)
+                   .HasColumnName("refresh_token")
+                   .HasColumnType("nvarchar(255)");
+
+            // RefreshTokenExpiryTime
+            builder.Property(u => u.RefreshTokenExpiryTime)
+                   .HasColumnName("refresh_token_expiry_time")
                    .HasColumnType("datetime");
         }
     }

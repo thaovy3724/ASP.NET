@@ -2,7 +2,5 @@
 
 namespace StoreApp.Application.Exceptions
 {
-    internal class ConflictException(string message) : ApplicationException(message, HttpStatusCode.Conflict)
-    {
-    }
+    public class ConflictException(string message) : ApplicationException(message, HttpStatusCode.Conflict);
 }

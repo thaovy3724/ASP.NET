@@ -1,9 +1,4 @@
-﻿using StoreApp.Core.ValueObject;
-
-namespace StoreApp.Core.Exceptions
+﻿namespace StoreApp.Core.Exceptions
 {
-    public class OrderCannotBeConfirmedException(string message) 
-        : DomainException(message)
-    {
-    }
+    public class OrderCannotBeConfirmedException(string message) : DomainException(message);
 }

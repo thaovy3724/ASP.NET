@@ -30,9 +30,14 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnType("datetime")
                    .IsRequired();
 
+            builder.Property(p => p.Quantity)
+                   .HasColumnName("quantity")
+                   .IsRequired();
+
             builder.Property(p => p.ImageUrl)
                    .HasColumnName("image_url")
-                   .HasColumnType("nvarchar(500)");
+                   .HasColumnType("nvarchar(500)")
+                   .IsRequired();
 
             // Cấu hình Quan hệ (Relationships)
             builder.HasOne<Supplier>()

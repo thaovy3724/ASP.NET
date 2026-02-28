@@ -6,7 +6,6 @@
         Guid SupplierId,
         string ProductName,
         decimal Price,
-        string? ImageUrl,
-        DateTime CreatedAt
+        string? ImageUrl
     );
 }

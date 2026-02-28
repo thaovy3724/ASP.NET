@@ -2,14 +2,12 @@
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
-using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.CategoryUseCase.Query.GetList
 {
-    public class GetListCategoryHandler(ICategoryRepository categoryRepository) : IRequestHandler<GetListCategoryQuery, ResultWithData<List<CategoryDTO>>>
+    public class GetListCategoryHandler(ICategoryRepository categoryRepository) : IRequestHandler<GetListCategoryQuery, List<CategoryDTO>>
     {
-        public async Task<ResultWithData<List<CategoryDTO>>> Handle(GetListCategoryQuery request, CancellationToken cancellationToken)
+        public async Task<List<CategoryDTO>> Handle(GetListCategoryQuery request, CancellationToken cancellationToken)
         {
             var categories = await categoryRepository.Search(request.Keyword);
 
@@ -17,11 +15,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Query.GetList
                     .Select(category => category.ToDTO())
                     .ToList();
 
-            return new ResultWithData<List<CategoryDTO>>(
-                Success: true,
-                Message: "Lấy danh sách danh mục thành công.",
-                Data: categoryDTO
-            );
+            return categoryDTO;
         }
     }
 }

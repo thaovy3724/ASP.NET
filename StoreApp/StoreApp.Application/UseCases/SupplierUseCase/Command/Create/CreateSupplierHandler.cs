@@ -3,14 +3,13 @@ using StoreApp.Application.DTOs;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Create
 {
-    public class CreateSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<CreateSupplierCommand, ResultWithData<SupplierDTO>>
+    public class CreateSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<CreateSupplierCommand, SupplierDTO>
     {
-        public async Task<ResultWithData<SupplierDTO>> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<SupplierDTO> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
         {
             // Kiểm tra trùng tên, email, số điện thoại của nhà cung cấp
             if (await supplierRepository.IsExist(s => s.Name == request.Name))
@@ -40,11 +39,7 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Create
             await supplierRepository.Create(supplier);
 
             // Trả về kết quả thành công cùng với dữ liệu nhà cung cấp đã được tạo
-            return new ResultWithData<SupplierDTO>(
-                Success: true,
-                Message: "Tạo nhà cung cấp thành công.",
-                Data: supplier.ToDTO()
-            );
+            return supplier.ToDTO();
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Delete
 {
-    public class DeleteCategoryHandler(ICategoryRepository categoryRepository, IProductRepository productRepository) : IRequestHandler<DeleteCategoryCommand, Result>
+    public class DeleteCategoryHandler(ICategoryRepository categoryRepository, IProductRepository productRepository) : IRequestHandler<DeleteCategoryCommand, Unit>
     {
-        public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             // Kiểm tra category có tồn tại không
-            var category = await categoryRepository.GetById(request.Id) ;
+            var category = await categoryRepository.GetById(request.Id);
             if (category is null)
             {
                 throw new NotFoundException("Thể loại không tồn tại.");
@@ -23,10 +22,9 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Delete
 
             // Thực hiện xóa
             await categoryRepository.Delete(category);
-            return new Result(
-                Success: true,
-                Message: "Xóa thể loại thành công."
-            );
+
+            // Return Unit.Value to satisfy the method's return type
+            return Unit.Value;
         }
     }
 }

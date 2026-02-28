@@ -4,15 +4,14 @@ using StoreApp.Application.DTOs;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 using StoreApp.Core.Entities;
 using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
 {
-    public class CreateUserHandler(IUserRepository UserRepository, IPasswordHasher<User> PasswordHasher) : IRequestHandler<CreateUserCommand, ResultWithData<UserDTO>>
+    public class CreateUserHandler(IUserRepository UserRepository, IPasswordHasher<User> PasswordHasher) : IRequestHandler<CreateUserCommand, UserDTO>
     {
-        public async Task<ResultWithData<UserDTO>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserDTO> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             if (await UserRepository.IsExist(u => u.Username == request.UserName))
             {
@@ -39,11 +38,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
             );
 
             await UserRepository.Create(user);
-            return new ResultWithData<UserDTO>(
-                Success: true,
-                Message: "Tạo người dùng thành công.",
-                Data: user.ToDTO()
-            );
+            return user.ToDTO();
         }
     }
 }

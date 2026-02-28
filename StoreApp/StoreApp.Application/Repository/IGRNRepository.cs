@@ -1,13 +1,10 @@
-﻿using StoreApp.Application.Repository;
-using StoreApp.Core.Entities;
+﻿using StoreApp.Core.Entities;
+using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.Repository
 {
     public interface IGRNRepository : IBaseRepository<GRN>
     {
-        Task<GRN?> GetByProductID(Guid productID);
-        Task<GRN> deductQuantityOfCreatedOrder(Guid productID, int quantityChange);
-        Task<int> GetLowStockCount();
-        Task RestockQuantity(Guid productID, int quantityChange);
+        Task<List<GRN>> Search(Guid? supplierId = null, GRNStatus? status = null);
     }
 }

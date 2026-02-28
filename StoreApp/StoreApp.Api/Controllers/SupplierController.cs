@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.SupplierUseCase.Command.Create;
 using StoreApp.Application.UseCases.SupplierUseCase.Command.Delete;
@@ -30,22 +29,22 @@ namespace StoreApp.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateSupplierCommand cmd) {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSupplierCommand cmd) {
             cmd = cmd with { Id = id };
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var cmd = new DeleteSupplierCommand(Id : id);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
     }
 }

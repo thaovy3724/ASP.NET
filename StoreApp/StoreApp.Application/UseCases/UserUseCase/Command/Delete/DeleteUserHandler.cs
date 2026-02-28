@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Command.Delete
 {
-    public class DeleteUserHandler(IUserRepository userRepository, IOrderRepository orderRepository) : IRequestHandler<DeleteUserCommand, Result>
+    public class DeleteUserHandler(IUserRepository userRepository, IOrderRepository orderRepository) : IRequestHandler<DeleteUserCommand, Unit>
     {
-        public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetById(request.Id);
 
@@ -22,10 +21,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Delete
             }   
 
             await userRepository.Delete(user);
-            return new Result(
-                Success: true,
-                Message: "Xóa người dùng thành công."
-            );
+            return Unit.Value;
         }
     }
 }

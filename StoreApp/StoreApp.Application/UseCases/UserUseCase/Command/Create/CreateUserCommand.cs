@@ -1,11 +1,5 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
-using StoreApp.Application.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
 {
@@ -14,5 +8,5 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
         string FullName, 
         string Password, 
         string Phone,
-        string Role) : IRequest<ResultWithData<UserDTO>>;
+        string Role) : IRequest<UserDTO>;
 }

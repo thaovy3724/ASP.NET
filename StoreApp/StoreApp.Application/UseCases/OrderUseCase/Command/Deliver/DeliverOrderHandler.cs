@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Deliver
 {
-    public class DeliverOrderHandler(IOrderRepository orderRepository) : IRequestHandler<DeliverOrderCommand, Result>
+    public class DeliverOrderHandler(IOrderRepository orderRepository) : IRequestHandler<DeliverOrderCommand, Unit>
     {
-        public async Task<Result> Handle(DeliverOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeliverOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await orderRepository.GetById(request.Id);
             if (order is null)
@@ -17,10 +16,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Deliver
 
             order.MarkAsDelivered();
             await orderRepository.Update(order);
-            return new Result(
-                Success: true,
-                Message: "Đơn hàng đã được giao thành công."
-            );
+            return Unit.Value;
         }
     }
 }

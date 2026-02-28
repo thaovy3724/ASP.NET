@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Update
 {
-    public class UpdateCategoryHandler(ICategoryRepository categoryRepository) : IRequestHandler<UpdateCategoryCommand, Result>
+    public class UpdateCategoryHandler(ICategoryRepository categoryRepository) : IRequestHandler<UpdateCategoryCommand, Unit>
     {
-        public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await categoryRepository.GetById(request.Id);
             if (category is null)
@@ -23,11 +22,7 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Command.Update
             category.Update(request.Name);
 
             await categoryRepository.Update(category);
-            return new Result(
-                Success: true,
-                Message: "Cập nhật danh mục thành công."
-            );
-
+            return Unit.Value;
         }
     }
 }

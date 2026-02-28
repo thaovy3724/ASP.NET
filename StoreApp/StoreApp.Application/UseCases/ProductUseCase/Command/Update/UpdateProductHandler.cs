@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
 {
@@ -9,13 +8,13 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
         IProductRepository productRepository, 
         ICategoryRepository categoryRepository, 
         ISupplierRepository supplierRepository) 
-        : IRequestHandler<UpdateProductCommand, Result>
+        : IRequestHandler<UpdateProductCommand, Unit>
     {
-        public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
 
             // kiểm tra sản phẩm đang update có trong db không
-            var product = await productRepository.GetById(request.ProductId);
+            var product = await productRepository.GetById(request.Id);
             if (product is null)
             {
                 throw new NotFoundException("Sản phẩm không tồn tại");  
@@ -46,10 +45,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
             // cuối cùng gọi hàm Update trong IProductRepository (tầng Application) để thực hiện update vào db 
             await productRepository.Update(product);
 
-            return new Result(
-                Success: true,
-                Message: "Cập nhật sản phẩm thành công"
-            );
+            return Unit.Value;
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
-using StoreApp.Application.Results;
 
-namespace StoreApp.Application.UseCases.InventoryUseCase.Query.GetOne
+namespace StoreApp.Application.UseCases.GRNUseCase.Query.GetOne
 {
-    public sealed record GetGRNQuery(Guid Id) : IRequest<ResultWithData<GRNDTO>>;
+    public sealed record GetGRNQuery(Guid Id) : IRequest<GRNDTO>;
 }

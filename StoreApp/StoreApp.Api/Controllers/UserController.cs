@@ -32,23 +32,23 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateUserCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand cmd)
         {
             cmd = cmd with { Id = id };
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var cmd = new DeleteUserCommand(Id:id);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
     }
 }

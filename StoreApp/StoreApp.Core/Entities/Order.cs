@@ -17,7 +17,7 @@ namespace StoreApp.Core.Entities
         public OrderStatus OrderStatus { get; private set; } = orderStatus;
         public string Address { get; private set; } = address;
         public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
-        public decimal TotalAmount { get; private set; }
+        public decimal TotalAmount => Items.Sum(x => x.Subtotal);
 
         // Đảm bảo list không bị null
         public List<OrderDetail> Items { get; private set; } = [];
@@ -53,12 +53,5 @@ namespace StoreApp.Core.Entities
             }
             OrderStatus = OrderStatus.Canceled;
         }
-
-        //public void CalculateTotal()
-        //{
-        //    var subTotal = Items.Sum(x => x.Subtotal);
-        //    TotalAmount = subTotal - DiscountAmount;
-        //    if (TotalAmount < 0) TotalAmount = 0;
-        //}
     }
 }

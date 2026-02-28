@@ -10,6 +10,6 @@ namespace StoreApp.Core.ValueObject
     {
         Pending,
         Completed,
-        Cancelled
+        Canceled
     }
 }

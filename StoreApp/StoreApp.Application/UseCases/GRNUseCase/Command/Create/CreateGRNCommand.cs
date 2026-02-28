@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using StoreApp.Application.Results;
+using StoreApp.Application.DTOs;
 
 namespace StoreApp.Application.UseCases.GRNUseCase.Command.Create
 {
-    public sealed record CreateGRNCommand(Guid SupplierId, List<CreateGRNItem> Items) : IRequest<Result>;
+    public sealed record CreateGRNCommand(Guid SupplierId, List<CreateGRNItem> Items) : IRequest<GRNDTO>;
 }

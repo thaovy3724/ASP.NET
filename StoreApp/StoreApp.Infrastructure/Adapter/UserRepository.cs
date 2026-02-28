@@ -9,6 +9,11 @@ namespace StoreApp.Infrastructure.Adapter
     {
         private readonly DbSet<User> _dbset = context.Set<User>();
 
+        public Task<User?> GetByName(string name)
+        {
+            return _dbset.AsNoTracking().FirstOrDefaultAsync(x => x.Username == name);
+        }
+
         public async Task<List<User>> Search(string? keyword = null)
         {
             var query = _dbset.AsNoTracking();

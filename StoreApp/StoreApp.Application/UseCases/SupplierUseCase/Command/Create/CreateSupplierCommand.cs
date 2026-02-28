@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Create
 {
@@ -9,5 +8,5 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Create
         string Phone,
         string Email,
         string Address
-    ) : IRequest<ResultWithData<SupplierDTO>>;
+    ) : IRequest<SupplierDTO>;
 }

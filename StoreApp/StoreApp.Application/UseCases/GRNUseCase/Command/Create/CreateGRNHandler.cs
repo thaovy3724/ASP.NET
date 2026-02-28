@@ -1,16 +1,17 @@
 ﻿using MediatR;
+using StoreApp.Application.DTOs;
 using StoreApp.Application.Exceptions;
+using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.GRNUseCase.Command.Create
 {
     public class CreateGRNHandler(IGRNRepository grnRepository, 
                                 ISupplierRepository supplierRepository,
-                                IProductRepository productRepository) : IRequestHandler<CreateGRNCommand, Result>
+                                IProductRepository productRepository) : IRequestHandler<CreateGRNCommand, GRNDTO>
     {
-        public async Task<Result> Handle(CreateGRNCommand request, CancellationToken cancellationToken)
+        public async Task<GRNDTO> Handle(CreateGRNCommand request, CancellationToken cancellationToken)
         {
             // Kiểm tra tồn tại nhà cung cấp (Supplier)
             var supplier = await supplierRepository.GetById(request.SupplierId);
@@ -30,17 +31,12 @@ namespace StoreApp.Application.UseCases.GRNUseCase.Command.Create
             });
 
             // Tạo mới GRN
-            var grn = new GRN
-            {
-                SupplierId = request.SupplierId,
-                GRNDate = DateTime.Now,
-                Items = request.Items.Select(item => new GRNDetail
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    Price = item.Price
-                }).ToList()
-            };
+            var grn = new GRN(request.SupplierId);
+
+            // Thêm các item vào GRN
+            request.Items.ForEach(item => grn.AddItem(item.ProductId, item.Quantity, item.Price));
+            await grnRepository.Create(grn);
+            return grn.ToDTO();
         }
     }
 }

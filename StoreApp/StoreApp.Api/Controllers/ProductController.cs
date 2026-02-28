@@ -31,29 +31,28 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
         {
             var result = await mediator.Send(command);
-            return Ok(result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command)
         {
             // Không cho client gửi ProductId trong body => server luôn lấy id từ route
-            command = command with { ProductId = id };
-
-            var result = await mediator.Send(command);
-            return Ok(result);
+            command = command with { Id = id };
+            await mediator.Send(command);
+            return NoContent(); 
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var command = new DeleteProductCommand(id);
-            var result = await mediator.Send(command);
-            return Ok(result);
+            await mediator.Send(command);
+            return NoContent();
         }
 
         // Upload image:
-        [HttpPost("upload-image")]
+        //[HttpPost("upload-image")]
         //public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
         //{
         //    if (file is null || file.Length == 0)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application.ApplicationException;
+using StoreApp.Application.Exceptions;
+using StoreApp.Core.Exceptions;
 
 namespace StoreApp.Api.ApplException
 {
@@ -22,10 +23,10 @@ namespace StoreApp.Api.ApplException
                 Instance = context.Request.Path
             };
 
-            if (exception is ValidationException validationException)
-            {
-                problemDetails.Extensions["errors"] = validationException.Errors;
-            }
+            //if (exception is ValidationException validationException)
+            //{
+            //    problemDetails.Extensions["errors"] = validationException.Errors;
+            //}
 
             var result = await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
             {
@@ -42,9 +43,10 @@ namespace StoreApp.Api.ApplException
             NotFoundException => (StatusCodes.Status404NotFound, "Không tìm thấy dữ liệu"),
             BadRequestException => (StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ"),
             ConflictException => (StatusCodes.Status409Conflict, "Dữ liệu bị xung đột"),
-            ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
+            DomainException => (StatusCodes.Status400BadRequest, "Lỗi nghiệp vụ"),
+            //ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
 
-            BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
+            //BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
 
             ArgumentNullException => (StatusCodes.Status400BadRequest, "Tham số không được để trống"),
             ArgumentException => (StatusCodes.Status400BadRequest, "Tham số không hợp lệ"),

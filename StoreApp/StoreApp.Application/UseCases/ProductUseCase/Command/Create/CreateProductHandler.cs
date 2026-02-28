@@ -3,7 +3,6 @@ using StoreApp.Application.DTOs;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Command.Create
@@ -12,9 +11,9 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Create
         IProductRepository productRepository, 
         ICategoryRepository categoryRepository,     // khóa ngoại 
         ISupplierRepository supplierRepository)   // sửa inventory khi update 
-        : IRequestHandler<CreateProductCommand, ResultWithData<ProductDTO>>
+        : IRequestHandler<CreateProductCommand, ProductDTO>
     {
-        public async Task<ResultWithData<ProductDTO>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductDTO> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             // kiểm tra CategoryId tồn tại chưa
             var category = await categoryRepository.GetById(request.CategoryId);
@@ -42,11 +41,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Create
             // cuối cùng gọi hàm Create trong IProductRepository (tầng Application) để thêm product vào db 
             await productRepository.Create(product);
 
-            return new ResultWithData<ProductDTO>(
-                Success: true,
-                Message: "Tạo sản phẩm thành công",
-                Data: product.ToDTO()
-                );
+            return product.ToDTO();
         }
     }
 }

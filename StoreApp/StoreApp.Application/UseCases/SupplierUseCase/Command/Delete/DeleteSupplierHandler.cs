@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Delete
 {
-    public class DeleteSupplierHandler(ISupplierRepository supplierRepository, IProductRepository productRepository) : IRequestHandler<DeleteSupplierCommand, Result>
+    public class DeleteSupplierHandler(ISupplierRepository supplierRepository, IProductRepository productRepository) : IRequestHandler<DeleteSupplierCommand, Unit>
     {
-        public async Task<Result> Handle(DeleteSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteSupplierCommand request, CancellationToken cancellationToken)
         {
             var supplier = await supplierRepository.GetById(request.Id);
             if (supplier is null)
@@ -21,10 +20,7 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Delete
             }
 
             await supplierRepository.Delete(supplier);
-            return new Result(
-                Success: true,
-                Message: "Xóa nhà cung cấp thành công."
-            );
+            return Unit.Value;
         }
     }
 }

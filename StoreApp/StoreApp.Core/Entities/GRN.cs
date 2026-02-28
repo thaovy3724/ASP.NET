@@ -1,4 +1,5 @@
-﻿using StoreApp.Core.ValueObject;
+﻿using StoreApp.Core.Exceptions;
+using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Core.Entities
 {
@@ -13,6 +14,32 @@ namespace StoreApp.Core.Entities
         public void UpdateInventoryStatus(GRNStatus grnStatus)
         {
             Status = grnStatus;
+            UpdatedAt = DateTime.Now;
+        }
+
+        public void AddItem(Guid productId, int quantity, decimal price)
+        {
+            var item = new GRNDetail(Id, productId, quantity, price);
+            Items.Add(item);
+        }
+
+        public void CancelGRN()
+        {
+            if (Status != GRNStatus.Pending)
+            {
+                throw new GRNCannotBeCanceledException("Chỉ có thể hủy GRN ở trạng thái chờ duyệt.");
+            }
+            Status = GRNStatus.Canceled;
+            UpdatedAt = DateTime.Now;
+        }
+
+        public void MarkAsCompleted()
+        {
+            if (Status != GRNStatus.Pending)
+            {
+                throw new GRNCannotBeCompletedException("Chỉ có thể hoàn thành GRN ở trạng thái chờ duyệt.");
+            }
+            Status = GRNStatus.Completed;
             UpdatedAt = DateTime.Now;
         }
     }

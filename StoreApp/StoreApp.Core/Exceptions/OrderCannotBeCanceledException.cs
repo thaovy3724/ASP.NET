@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StoreApp.Core.Exceptions
+﻿namespace StoreApp.Core.Exceptions
 {
-    public class OrderCannotBeCanceledException(string message) : DomainException(message)
-    {
-    }
+    public class OrderCannotBeCanceledException(string message) : DomainException(message);
 }

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using SM.Infrastructure.Adapters.Payment.Config;
 using StoreApp.Application.Repository;
-using StoreApp.Application.UseCases.OrderUseCase.Command.Update;
 
 namespace StoreApp.Api.BackgroundServices;
 
@@ -40,28 +39,28 @@ public class OrderAutoCancelService : BackgroundService
                     // Gọi hàm trong Repo (Bạn cần viết hàm này ở bước dưới)
                     var expiredOrders = await orderRepo.GetListExpiredOrders(timeLimit);
 
-                    if (expiredOrders.Any())
-                    {
-                        _logger.LogInformation($"Tìm thấy {expiredOrders.Count} đơn hàng treo cần hủy.");
+                    //if (expiredOrders.Any())
+                    //{
+                    //    _logger.LogInformation($"Tìm thấy {expiredOrders.Count} đơn hàng treo cần hủy.");
 
-                        foreach (var order in expiredOrders)
-                        {
-                            try
-                            {
-                                // Gửi Command để xử lý (IsSuccess = false -> Hủy đơn & Hoàn kho)
-                                // Lưu ý: TransactionId null vì không có giao dịch VNPay
-                                var command = new UpdateOrderStatusCommand(order.Id, false, null);
-                                await mediator.Send(command);
+                    //    foreach (var order in expiredOrders)
+                    //    {
+                    //        try
+                    //        {
+                    //            // Gửi Command để xử lý (IsSuccess = false -> Hủy đơn & Hoàn kho)
+                    //            // Lưu ý: TransactionId null vì không có giao dịch VNPay
+                    //            var command = new UpdateOrderStatusCommand(order.Id, false, null);
+                    //            await mediator.Send(command);
 
-                                _logger.LogInformation($"Đã hủy tự động đơn: {order.Id}");
-                            }
-                            catch (Exception ex)
-                            {
-                                // Try-catch lồng: Để nếu 1 đơn lỗi thì các đơn sau vẫn chạy tiếp
-                                _logger.LogError(ex, $"Lỗi khi hủy đơn {order.Id}");
-                            }
-                        }
-                    }
+                    //            _logger.LogInformation($"Đã hủy tự động đơn: {order.Id}");
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            // Try-catch lồng: Để nếu 1 đơn lỗi thì các đơn sau vẫn chạy tiếp
+                    //            _logger.LogError(ex, $"Lỗi khi hủy đơn {order.Id}");
+                    //        }
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)

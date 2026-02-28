@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Cancel
 {
-    public class CancelOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository) : IRequestHandler<CancelOrderCommand, Result>
+    public class CancelOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository) : IRequestHandler<CancelOrderCommand, Unit>
     {
-        public async Task<Result> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await orderRepository.GetById(request.Id);
             if (order is null)
@@ -29,10 +28,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Cancel
                     await productRepository.Update(product);
                 }
             }
-            return new Result(
-                Success: true,
-                Message: "Hủy đơn hàng thành công."
-            );
+            return Unit.Value;
 
         }
     }

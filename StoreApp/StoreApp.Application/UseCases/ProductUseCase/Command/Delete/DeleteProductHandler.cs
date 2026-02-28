@@ -1,16 +1,15 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
 {
     public class DeleteProductHandler(
         IProductRepository productRepository,
         IOrderRepository orderRepository
-    ) : IRequestHandler<DeleteProductCommand, Result>
+    ) : IRequestHandler<DeleteProductCommand, Unit>
     {
-        public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             // Kiểm tra product có tồn tại không
             var product = await productRepository.GetById(request.Id);
@@ -32,10 +31,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
             // Xóa product
             await productRepository.Delete(product);
 
-            return new Result(
-                Success: true,
-                Message: "Xóa sản phẩm thành công."
-            );
+            return Unit.Value;
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application.UseCases.InventoryUseCase.Command.Update;
-using StoreApp.Application.UseCases.InventoryUseCase.Query.GetList;
-using StoreApp.Application.UseCases.InventoryUseCase.Query.GetOne;
+using StoreApp.Application.UseCases.GRNUseCase.Command.Cancel;
+using StoreApp.Application.UseCases.GRNUseCase.Command.Complete;
+using StoreApp.Application.UseCases.GRNUseCase.Command.Create;
+using StoreApp.Application.UseCases.GRNUseCase.Query.GetList;
+using StoreApp.Application.UseCases.GRNUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
@@ -16,7 +18,6 @@ namespace StoreApp.Api.Controllers
             var query = new GetGRNQuery(id);
             var result = await mediator.Send(query);
             return Ok(result);
-
         }
 
         [HttpGet]
@@ -26,21 +27,13 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInventoryCommand command)
-        {
-            command = command with { InventoryId = id };
-            var result = await mediator.Send(command);
-            return Ok(result);
-        }
-
         // Complete GRN
         [HttpPut("{id:guid}/complete")]
         public async Task<IActionResult> Complete(Guid id)
         {
             var cmd = new CompleteGRNCommand(Id: id);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
 
         // Cancel GRN
@@ -48,15 +41,15 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Cancel(Guid id)
         {
             var cmd = new CancelGRNCommand(Id: id);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateGRNCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
     }
 }

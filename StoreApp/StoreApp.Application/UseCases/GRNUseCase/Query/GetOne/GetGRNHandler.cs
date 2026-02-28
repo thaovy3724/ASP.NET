@@ -3,25 +3,20 @@ using StoreApp.Application.DTOs;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
-namespace StoreApp.Application.UseCases.InventoryUseCase.Query.GetOne
+namespace StoreApp.Application.UseCases.GRNUseCase.Query.GetOne
 {
-    public class GetGRNHandler(IGRNRepository inventoryRepository) : IRequestHandler<GetGRNQuery, ResultWithData<GRNDTO>>
+    public class GetGRNHandler(IGRNRepository grnRepository) : IRequestHandler<GetGRNQuery, GRNDTO>
     {
-        public async Task<ResultWithData<GRNDTO>> Handle(GetGRNQuery request, CancellationToken cancellationToken)
+        public async Task<GRNDTO> Handle(GetGRNQuery request, CancellationToken cancellationToken)
         {
-            var inv = await inventoryRepository.GetById(request.Id);
-            if (inv is null)
+            var grn = await grnRepository.GetById(request.Id);
+            if (grn is null)
             {
                 throw new NotFoundException($"Không tìm thấy tồn kho với Id: {request.Id}");
             }
 
-            return new ResultWithData<GRNDTO>(
-                Success: true,
-                Message: "Lấy thông tin tồn kho thành công.",
-                Data: inv.ToDTO()
-            );
+            return grn.ToDTO();
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Confirm
 {
-    public class ConfirmOrderHandler(IOrderRepository orderRepository) : IRequestHandler<ConfirmOrderCommand, Result>
+    public class ConfirmOrderHandler(IOrderRepository orderRepository) : IRequestHandler<ConfirmOrderCommand, Unit>
     {
-        public async Task<Result> Handle(ConfirmOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ConfirmOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await orderRepository.GetById(request.Id);
             if (order is null)
@@ -17,7 +16,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Confirm
 
             order.MarkAsConfirmed();
             await orderRepository.Update(order);
-            return new Result { Success = true, Message = "Xác nhận đơn hàng thành công" };
+            return Unit.Value;
         }
     }
 }

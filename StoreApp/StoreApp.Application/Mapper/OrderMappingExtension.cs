@@ -1,11 +1,5 @@
 ﻿using StoreApp.Application.DTOs;
 using StoreApp.Core.Entities;
-using StoreApp.Core.ValueObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.Mapper
 {
@@ -17,21 +11,19 @@ namespace StoreApp.Application.Mapper
             (
                 Id: order.Id,
                 CustomerId: order.CustomerId,
-                UserId: order.UserId,
-                PromoId: order.PromoId,
-                OrderDate: order.OrderDate,
+                StaffId: order.StaffId,
+                UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
-                DiscountAmount: order.DiscountAmount,
+                Address: order.Address,
                 TotalAmount: order.TotalAmount,
-
+                PaymentMethod: order.PaymentMethod, // Nhớ thêm trường này vào Entity Order nếu chưa có, hoặc truyền từ ngoài vào
                 // check null (?) và dùng toán tử ?? để luôn trả về list rỗng nếu null
-                Items: order.Items?.Select(item => new OrderItemDTO(
+                Items: order.Items?.Select(item => new OrderDetailDTO(
                     ProductId: item.ProductId,
                     Quantity: item.Quantity,
-                    UnitPrice: item.Price,
+                    Price: item.Price,
                     TotalPrice: item.Subtotal
-                )).ToList() ?? new List<OrderItemDTO>(),
-                PaymentMethod: string.Empty, // Nhớ thêm trường này vào Entity Order nếu chưa có, hoặc truyền từ ngoài vào
+                )).ToList() ?? new List<OrderDetailDTO>(),
                 null // Mặc định PaymentUrl là null khi mới convert
             );
         }

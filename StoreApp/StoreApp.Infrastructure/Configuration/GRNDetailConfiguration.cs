@@ -16,7 +16,7 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("GRN_detail_id");
 
             // Khóa ngoại trỏ tới bảng Inventory
-            builder.Property(od => od.InventoryId)
+            builder.Property(od => od.GRNId)
                    .HasColumnName("GRN_id")
                    .IsRequired();
 

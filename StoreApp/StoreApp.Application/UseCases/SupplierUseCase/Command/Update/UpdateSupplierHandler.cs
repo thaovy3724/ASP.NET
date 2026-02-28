@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
 {
-    public class UpdateSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<UpdateSupplierCommand, Result>
+    public class UpdateSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<UpdateSupplierCommand, Unit>
     {
-        public async Task<Result> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
             var supplier = await supplierRepository.GetById(request.Id);
             if (supplier is null)
@@ -37,10 +36,7 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
                 request.Address
             );
             await supplierRepository.Update(supplier);
-            return new Result(
-                Success: true,
-                Message: "Cập nhật nhà cung cấp thành công."
-            );
+            return Unit.Value;
         }
     }
 }

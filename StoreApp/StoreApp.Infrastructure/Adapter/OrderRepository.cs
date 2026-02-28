@@ -90,7 +90,7 @@ namespace StoreApp.Infrastructure.Adapter
         public Task<List<Order>> GetListExpiredOrders(DateTime timeLimit)
         { // kiểm tra các đơn hàng Pending và chưa quá hạn
             return DbSet.AsNoTracking()
-                        .Where(o => o.OrderStatus == OrderStatus.Pending && o.OrderDate < timeLimit)
+                        .Where(o => o.OrderStatus == OrderStatus.Pending && o.UpdatedAt < timeLimit)
                         .ToListAsync();
         }
 
