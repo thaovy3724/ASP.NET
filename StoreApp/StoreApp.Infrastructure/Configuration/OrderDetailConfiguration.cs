@@ -1,20 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StoreApp.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Infrastructure.Configuration
 {
-    internal class OrderDetailConfiguration : IEntityTypeConfiguration<OrderItem>
+    internal class OrderDetailConfiguration : IEntityTypeConfiguration<OrderDetail>
     {
-        public void Configure(EntityTypeBuilder<OrderItem> builder)
+        public void Configure(EntityTypeBuilder<OrderDetail> builder)
         {
             // Tên bảng
-            builder.ToTable("order_details");
+            builder.ToTable("order_detail");
             // Khóa chính (Id từ BaseEntity map vào order_detail_id)
             builder.HasKey(od => od.Id);
             builder.Property(od => od.Id)
@@ -43,7 +38,7 @@ namespace StoreApp.Infrastructure.Configuration
            
             // --- Thiết lập Quan hệ ---
             // Quan hệ với bảng Product
-            builder.HasOne<Product>() // Nếu bạn không có thuộc tính Navigation Product trong class
+            builder.HasOne<Product>() 
                    .WithMany()
                    .HasForeignKey(od => od.ProductId)
                    .OnDelete(DeleteBehavior.Restrict);

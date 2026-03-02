@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using StoreApp.Application.DTOs;
+using StoreApp.Application.Repository;
 using StoreApp.Application.Service.Security;
 using StoreApp.Core.Entities;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,7 +11,7 @@ using System.Text;
 
 namespace StoreApp.Infrastructure.Adapter.Security
 {
-    public class AuthService(UserRepository userRepository, IConfiguration configuration) : IAuthService
+    public class AuthService(IUserRepository userRepository, IConfiguration configuration) : IAuthService
     {
         public string CreateToken(User user)
         {
@@ -47,7 +48,7 @@ namespace StoreApp.Infrastructure.Adapter.Security
 
         public async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
-            var user = await userRepository.GetByUserId(userId);
+            var user = await userRepository.GetById(userId);
             if (user is null || user.RefreshToken != refreshToken
                 || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {

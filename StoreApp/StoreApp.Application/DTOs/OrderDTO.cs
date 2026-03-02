@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.DTOs
 {
     public sealed record OrderDTO(
         Guid Id,
-        Guid? CustomerId,
-        Guid UserId,
-        Guid? PromoId,
-        DateTime OrderDate,
-        Core.ValueObject.OrderStatus OrderStatus,
-        decimal DiscountAmount, decimal TotalAmount,
-        IEnumerable<OrderItemDTO> Items,
-        string PaymentMethod,
+        Guid CustomerId,
+        Guid? StaffId,
+        DateTime UpdatedAt,
+        OrderStatus OrderStatus,
+        string Address,
+        decimal TotalAmount,
+        PaymentMethod PaymentMethod,
+        List<OrderDetailDTO> Items,
         string? PaymentUrl);
 }

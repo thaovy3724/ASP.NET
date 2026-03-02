@@ -5,10 +5,7 @@
         Guid CategoryId,
         Guid SupplierId,
         string ProductName,
-        string Barcode,
         decimal Price,
-        string Unit,
-        string? ImageUrl,
-        DateTime CreatedAt
+        string? ImageUrl
     );
 }

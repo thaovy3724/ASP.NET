@@ -5,6 +5,7 @@ using StoreApp.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +40,11 @@ namespace StoreApp.Infrastructure.Adapter
         {
             DbSet.Remove(entity);
             await Context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsExist(Expression<Func<T, bool>> predicate)
+        {
+            return await DbSet.AsNoTracking().AnyAsync(predicate);
         }
     }
 }

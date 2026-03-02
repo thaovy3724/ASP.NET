@@ -8,7 +8,7 @@ namespace StoreApp.Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.ToTable("users");
+            builder.ToTable("user");
 
             // Khóa chính
             builder.HasKey(u => u.Id);
@@ -18,14 +18,19 @@ namespace StoreApp.Infrastructure.Configuration
             // Username: Cần Unique để không bị trùng tên đăng nhập
             builder.Property(u => u.Username)
                    .HasColumnName("username")
-                   .HasColumnType("varchar(50)")
+                   .HasColumnType("nvarchar(50)")
                    .IsRequired();
 
             // Password: Thường để dài hơn để lưu Hash
             builder.Property(u => u.Password)
                    .HasColumnName("password")
-                   .HasColumnType("varchar(255)")
+                   .HasColumnType("nvarchar(255)")
                    .IsRequired();
+
+            // Số điện thoại (Varchar 20)
+            builder.Property(c => c.Phone)
+                   .HasColumnName("phone")
+                   .HasColumnType("nvarchar(10)");
 
             // FullName: Sử dụng nvarchar để hỗ trợ tiếng Việt có dấu
             builder.Property(u => u.FullName)
@@ -44,8 +49,16 @@ namespace StoreApp.Infrastructure.Configuration
             builder.Property(u => u.CreatedAt)
                    .HasColumnName("created_at")
                    .HasColumnType("datetime")
-                   .HasDefaultValueSql("GETDATE()"); // Hoặc CURRENT_TIMESTAMP tùy DB
+                   .IsRequired();
 
+            builder.Property(u => u.RefreshToken)
+                   .HasColumnName("refresh_token")
+                   .HasColumnType("nvarchar(255)");
+
+            // RefreshTokenExpiryTime
+            builder.Property(u => u.RefreshTokenExpiryTime)
+                   .HasColumnName("refresh_token_expiry_time")
+                   .HasColumnType("datetime");
         }
     }
 }

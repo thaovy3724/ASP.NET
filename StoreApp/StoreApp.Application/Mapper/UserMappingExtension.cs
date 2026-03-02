@@ -15,10 +15,9 @@ namespace StoreApp.Application.Mapper
             return new UserDTO(
                 Id: user.Id,
                 Username: user.Username,
-                Password: user.Password,
                 FullName: user.FullName,
                 Role: user.Role,
-                CreatedAt: user.CreatedAt
+                Phone: user.Phone
             );
         }
     }

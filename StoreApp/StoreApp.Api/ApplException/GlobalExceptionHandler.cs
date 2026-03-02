@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application;
+using StoreApp.Application.Exceptions;
+using StoreApp.Core.Exceptions;
 
 namespace StoreApp.Api.ApplException
 {
     public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IProblemDetailsService problemDetailsService) : IExceptionHandler
     {
-        public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
+        public async ValueTask<bool> TryHandleAsync(HttpContext context, System.Exception exception, CancellationToken cancellationToken)
         {
             logger.LogError(exception, "Lỗi xảy ra: {Message}", exception.Message);
 
@@ -22,10 +23,10 @@ namespace StoreApp.Api.ApplException
                 Instance = context.Request.Path
             };
 
-            if (exception is ValidationException validationException)
-            {
-                problemDetails.Extensions["errors"] = validationException.Errors;
-            }
+            //if (exception is ValidationException validationException)
+            //{
+            //    problemDetails.Extensions["errors"] = validationException.Errors;
+            //}
 
             var result = await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
             {
@@ -36,15 +37,16 @@ namespace StoreApp.Api.ApplException
             return result;
         }
 
-        private static (int StatusCode, string Title) MapException(Exception exception) => exception switch
+        private static (int StatusCode, string Title) MapException(System.Exception exception) => exception switch
         {
 
             NotFoundException => (StatusCodes.Status404NotFound, "Không tìm thấy dữ liệu"),
             BadRequestException => (StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ"),
             ConflictException => (StatusCodes.Status409Conflict, "Dữ liệu bị xung đột"),
-            ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
+            DomainException => (StatusCodes.Status400BadRequest, "Lỗi nghiệp vụ"),
+            //ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
 
-            BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
+            //BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
 
             ArgumentNullException => (StatusCodes.Status400BadRequest, "Tham số không được để trống"),
             ArgumentException => (StatusCodes.Status400BadRequest, "Tham số không hợp lệ"),

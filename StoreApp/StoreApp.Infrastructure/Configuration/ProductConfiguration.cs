@@ -8,7 +8,7 @@ namespace StoreApp.Infrastructure.Configuration
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Product> builder)
         {
             // Tên bảng
-            builder.ToTable("products");
+            builder.ToTable("product");
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id)
                    .HasColumnName("product_id");
@@ -16,32 +16,28 @@ namespace StoreApp.Infrastructure.Configuration
             // Cấu hình các cột (Property)
             builder.Property(p => p.ProductName)
                    .HasColumnName("product_name")
-                   .HasColumnType("varchar(100)")
+                   .HasColumnType("nvarchar(100)")
                    .IsRequired()
                    .HasMaxLength(100);
 
-            builder.Property(p => p.Barcode)
-                   .HasColumnName("barcode")
-                   .HasColumnType("varchar(50)")
-                   .IsRequired();
-
             builder.Property(p => p.Price)
                    .HasColumnName("price")
-                   .HasColumnType("decimal(10,2)")
+                   .HasColumnType("decimal(18,2)")
                    .IsRequired();
-
-            builder.Property(p => p.Unit)
-                   .HasColumnName("unit")
-                   .HasColumnType("varchar(20)");
 
             builder.Property(p => p.CreatedAt)
                    .HasColumnName("created_at")
-                   .HasColumnType("datetime2")
+                   .HasColumnType("datetime")
+                   .IsRequired();
+
+            builder.Property(p => p.Quantity)
+                   .HasColumnName("quantity")
                    .IsRequired();
 
             builder.Property(p => p.ImageUrl)
                    .HasColumnName("image_url")
-                   .HasColumnType("varchar(500)");
+                   .HasColumnType("nvarchar(500)")
+                   .IsRequired();
 
             // Cấu hình Quan hệ (Relationships)
             builder.HasOne<Supplier>()

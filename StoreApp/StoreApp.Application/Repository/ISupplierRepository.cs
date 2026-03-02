@@ -10,14 +10,6 @@ namespace StoreApp.Application.Repository
 {
     public interface ISupplierRepository : IBaseRepository<Supplier>
     {
-
-        Task<List<Supplier>> SearchByKeyword(string keyword);
-        Task<bool> IsSupplierIdExist(Guid supplierId);
-        Task<bool> IsSupplierNameExist(string name, Guid? ignoreId = null);
-        Task<bool> IsSupplierEmailExist(string email, Guid? ignoreId = null);
-        Task<bool> IsSupplierPhoneExist(string phone, Guid? ignoreId = null);
-        Task<bool> IsSupplierAddressExist(string address, Guid? ignoreId = null);
-        Task<bool> IsSupplierExist(string name, string email, string phone, Guid? ignoreId = null);
-        Task<bool> IsExistProductOfSupplier(Guid Id);
+        Task<List<Supplier>> Search(string? keyword = null);
     }
 }

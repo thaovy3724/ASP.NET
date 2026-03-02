@@ -1,37 +1,45 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 using StoreApp.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Create
 {
-    public class CreateSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<CreateSupplierCommand, ResultWithData<SupplierDTO>>
+    public class CreateSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<CreateSupplierCommand, SupplierDTO>
     {
-        public async Task<ResultWithData<SupplierDTO>> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<SupplierDTO> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
         {
-            if(await supplierRepository.IsSupplierExist(request.Name, request.Email, request.Phone))
+            // Kiểm tra trùng tên, email, số điện thoại của nhà cung cấp
+            if (await supplierRepository.IsExist(s => s.Name == request.Name))
             {
-                throw new ConflictException("Nhà cung cấp đã tồn tại.");
+                throw new ConflictException("Tên nhà cung cấp đã tồn tại.");
             }
-            var entity = new Supplier(
+
+            if (await supplierRepository.IsExist(s => s.Phone == request.Phone))
+            {
+                throw new ConflictException("Số điện thoại nhà cung cấp đã tồn tại.");
+            }
+
+            if (await supplierRepository.IsExist(s => s.Email == request.Email))
+            {
+                throw new ConflictException("Email nhà cung cấp đã tồn tại.");
+            }
+
+            // Tạo mới nhà cung cấp
+            var supplier = new Supplier(
                 request.Name,
                 request.Phone,
                 request.Email,
                 request.Address
             );
-            await supplierRepository.Create(entity);
-            return new ResultWithData<SupplierDTO>(
-                Success: true,
-                Message: "Tạo nhà cung cấp thành công.",
-                Data: entity.ToDTO()
-            );
+
+            // Gọi repository để tạo nhà cung cấp mới
+            await supplierRepository.Create(supplier);
+
+            // Trả về kết quả thành công cùng với dữ liệu nhà cung cấp đã được tạo
+            return supplier.ToDTO();
         }
     }
 }

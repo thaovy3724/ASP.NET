@@ -8,14 +8,15 @@ namespace StoreApp.Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("categories");
+            builder.ToTable("category");
             // Khóa chính
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id)
                    .HasColumnName("category_id");
 
             builder.Property(c => c.Name)
-                   .HasMaxLength(100)
+                   .HasColumnName("name")
+                   .HasColumnType("nvarchar(100)")
                    .IsRequired();
         }
     }

@@ -1,8 +1,6 @@
 ﻿using MediatR;
-using StoreApp.Application.DTOs;
-using StoreApp.Application.Mapper;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Results;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
 {
@@ -10,13 +8,13 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
         IProductRepository productRepository, 
         ICategoryRepository categoryRepository, 
         ISupplierRepository supplierRepository) 
-        : IRequestHandler<UpdateProductCommand, Result>
+        : IRequestHandler<UpdateProductCommand, Unit>
     {
-        public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
 
             // kiểm tra sản phẩm đang update có trong db không
-            var product = await productRepository.GetById(request.ProductId);
+            var product = await productRepository.GetById(request.Id);
             if (product is null)
             {
                 throw new NotFoundException("Sản phẩm không tồn tại");  
@@ -26,28 +24,13 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
             var category = await categoryRepository.GetById(request.CategoryId);
             if (category is null) 
             { 
-                return new Result(
-                    false, 
-                    "CategoryId không tồn tại"
-                );
+                throw new NotFoundException("Thể loại không tồn tại");
             }
             // kiểm tra SupplierId tồn tại không
             var supplier = await supplierRepository.GetById(request.SupplierId);
             if (supplier is null)
             {
-                return new Result(
-                    false,
-                    "SupplierId không tồn tại"
-                );
-            }
-
-            // kiểm tra barcode vừa nhập có trùng với product nào khác không 
-            if (await productRepository.ExistsBarcodeForOtherProducts(request.ProductId, request.Barcode))
-            { 
-                return new Result(
-                    Success: false,
-                    Message: "Barcode đã tồn tại ở sản phẩm khác"
-                    );
+                throw new NotFoundException("Nhà cung cấp không tồn tại");
             }
 
             // pass hết thì gọi Update để truyền data vào Product Entity 
@@ -55,19 +38,14 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
                 request.CategoryId,
                 request.SupplierId,
                 request.ProductName,
-                request.Barcode,
                 request.Price,
-                request.Unit,
                 request.ImageUrl
             );
 
             // cuối cùng gọi hàm Update trong IProductRepository (tầng Application) để thực hiện update vào db 
             await productRepository.Update(product);
 
-            return new Result(
-                Success: true,
-                Message: "Cập nhật sản phẩm thành công"
-            );
+            return Unit.Value;
         }
     }
 }

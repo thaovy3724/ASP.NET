@@ -6,17 +6,15 @@ using StoreApp.Application.UseCases.CategoryUseCase.Command.Delete;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Update;
 using StoreApp.Application.UseCases.CategoryUseCase.Query.GetList;
 using StoreApp.Application.UseCases.CategoryUseCase.Query.GetOne;
-using StoreApp.Application.UseCases.CategoryUseCase.Query.Search;
 
 namespace StoreApp.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/admin/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CategoryController(IMediator mediator) : Controller
     {
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var cmd = new GetCategoryQuery(Id: id);
             var result = await mediator.Send(cmd);
@@ -30,34 +28,27 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] SearchCategoryQuery cmd)
-        {
-            var result = await mediator.Send(cmd);
-            return Ok(result);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCategoryCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCategoryCommand cmd)
         {
             cmd = cmd with { Id = id };
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var cmd = new DeleteCategoryCommand ( Id : id );
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            var cmd = new DeleteCategoryCommand (Id : id);
+            await mediator.Send(cmd);
+            return NoContent();
         }
     }
 }

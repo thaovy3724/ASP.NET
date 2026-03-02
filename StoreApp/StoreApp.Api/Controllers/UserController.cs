@@ -1,28 +1,18 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StoreApp.Application.UseCases.CategoryUseCase.Query.GetList;
 using StoreApp.Application.UseCases.UserUseCase.Command.Create;
-using StoreApp.Application.UseCases.UserUseCase.Command.Remove;
+using StoreApp.Application.UseCases.UserUseCase.Command.Delete;
 using StoreApp.Application.UseCases.UserUseCase.Command.Update;
-using StoreApp.Application.UseCases.UserUseCase.Query.GetList;
 using StoreApp.Application.UseCases.UserUseCase.Query.GetOne;
-using StoreApp.Application.UseCases.UserUseCase.Query.Search;
-using System.Threading.Tasks;
 
 namespace StoreApp.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Route("api/admin/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController(IMediator mediator) : Controller
     {
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var cmd = new GetListUserQuery();
-            var result = await mediator.Send(cmd);
-            return Ok(result);
-        }
+        
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -30,31 +20,35 @@ namespace StoreApp.Api.Controllers
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
-        [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] GetListUserByKeywordQuery cmd)
+
+        [HttpGet]
+        public async Task<IActionResult> GetList([FromQuery] GetListCategoryQuery cmd)
         {
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
+
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand cmd)
         {
             cmd = cmd with { Id = id };
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            await mediator.Send(cmd);
+            return NoContent();
         }
+
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var cmd = new RemoveUserCommand(Id:id);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            var cmd = new DeleteUserCommand(Id:id);
+            await mediator.Send(cmd);
+            return NoContent();
         }
     }
 }

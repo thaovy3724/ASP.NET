@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.AuthUseCase.Command.Login;
 using StoreApp.Application.UseCases.AuthUseCase.Command.RefreshToken;
+using StoreApp.Application.UseCases.AuthUseCase.Command.Register;
 
 namespace StoreApp.Api.Controllers
 {
@@ -9,6 +10,13 @@ namespace StoreApp.Api.Controllers
     [ApiController]
     public class AuthController(IMediator mediator) : ControllerBase
     {
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCommand cmd)
         {

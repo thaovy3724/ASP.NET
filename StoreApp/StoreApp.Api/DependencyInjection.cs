@@ -6,8 +6,8 @@ namespace StoreApp.Api
     {
         public static IServiceCollection AddAppDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddApplicationDI()
-                    .AddInfrastructureDI(configuration); // chain calls
+            services.AddInfrastructureDI(configuration)
+                    .AddApplicationDI(); // chain calls
             
             return services;
         }

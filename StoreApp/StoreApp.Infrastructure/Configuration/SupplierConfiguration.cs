@@ -12,31 +12,31 @@ namespace StoreApp.Infrastructure.Configuration
     {
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Supplier> builder)
         {
-            builder.ToTable("suppliers");
+            builder.ToTable("supplier");
             builder.HasKey(s => s.Id);
 
-            // 1. Sửa lại Id cho khớp với kiểu uniqueidentifier trong DB
+            // 1. Id
             builder.Property(s => s.Id)
-                   .HasColumnName("supplier_id")
-                   .HasColumnType("uniqueidentifier");
+                   .HasColumnName("supplier_id");
 
-            // 2. Name dùng nvarchar là chuẩn
+            // 2. Name 
             builder.Property(s => s.Name)
                    .HasColumnType("nvarchar(100)")
                    .IsRequired();
 
-            // 3. Phone nên để nvarchar để tránh lỗi khi có dấu cách/dấu cộng
+            // 3. Phone 
             builder.Property(s => s.Phone)
-                   .HasColumnType("nvarchar(20)")
+                   .HasColumnType("nvarchar(10)")
                    .IsRequired();
 
+            // 4. Email
             builder.Property(s => s.Email)
-                   .HasColumnType("nvarchar(100)")
+                   .HasColumnType("nvarchar(255)")
                    .IsRequired();
 
-            // 4. Sửa lại Address: Bỏ .HasColumnType("text")
+            // 5. Address
             builder.Property(s => s.Address)
-                   .HasColumnType("nvarchar(500)") // nvarchar(500) là đủ cho địa chỉ và search rất nhanh
+                   .HasColumnType("nvarchar(500)") // 
                    .IsRequired();
         }
     }

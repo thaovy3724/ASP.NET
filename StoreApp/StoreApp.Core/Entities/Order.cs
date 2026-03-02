@@ -1,43 +1,57 @@
-﻿using StoreApp.Core.ValueObject;
+﻿using StoreApp.Core.Exceptions;
+using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Core.Entities
 {
     public class Order(
-        Guid? customerId,
-        Guid userId,
-        Guid? promoId,
-        DateTime orderDate,
-        OrderStatus orderStatus,
-        decimal discountAmount) : BaseEntity
+        Guid customerId,
+        Guid? staffId,
+        DateTime updatedAt,
+        string address,
+        PaymentMethod paymentMethod,
+        OrderStatus orderStatus) : BaseEntity
     {
-        public Guid? CustomerId { get; private set; } = customerId;
-        public Guid UserId { get; private set; } = userId;
-        public Guid? PromoId { get; private set; } = promoId;
-        public DateTime OrderDate { get; private set; } = orderDate;
+        public Guid CustomerId { get; private set; } = customerId;
+        public Guid? StaffId { get; private set; } = staffId;
+        public DateTime UpdatedAt { get; private set; } = updatedAt;
         public OrderStatus OrderStatus { get; private set; } = orderStatus;
-        public decimal DiscountAmount { get; private set; } = discountAmount;
-        public decimal TotalAmount { get; private set; }
+        public string Address { get; private set; } = address;
+        public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
+        public decimal TotalAmount => Items.Sum(x => x.Subtotal);
 
         // Đảm bảo list không bị null
-        public List<OrderItem> Items { get; private set; } = [];
+        public List<OrderDetail> Items { get; private set; } = [];
 
         public void Update( OrderStatus status)
         {
             OrderStatus = status;
         }
 
-        public void SetDiscount(decimal amount)
+        public void MarkAsConfirmed()
         {
-            if (amount < 0) amount = 0;
-            DiscountAmount = amount;
+            if(OrderStatus != OrderStatus.Pending)
+            {
+                throw new OrderCannotBeConfirmedException("Chỉ có thể xác nhận đơn hàng ở trạng thái Pending.");
+            }
+            OrderStatus = OrderStatus.Confirmed;
         }
 
-        public void CalculateTotal()
+        public void MarkAsDelivered()
         {
-            var subTotal = Items.Sum(x => x.Subtotal);
-            TotalAmount = subTotal - DiscountAmount;
-            if (TotalAmount < 0) TotalAmount = 0;
+            if (OrderStatus != OrderStatus.Confirmed)
+            {
+                throw new OrderCannotBeDeliveredException("Chỉ có thể giao hàng cho đơn hàng đã được xác nhận.");
+            }
+            OrderStatus = OrderStatus.Delivered;
         }
 
+        public void CancelOrder()
+        {
+            if (OrderStatus != OrderStatus.Confirmed)
+            {
+                throw new OrderCannotBeCanceledException("Không thể hủy đơn hàng đã được xác nhận.");
+            }
+            OrderStatus = OrderStatus.Canceled;
+        }
     }
 }
