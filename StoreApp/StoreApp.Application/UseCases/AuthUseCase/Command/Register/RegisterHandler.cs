@@ -24,8 +24,8 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.Register
             var user = new User
             (
                 request.UserName,
-                request.FullName,
                 hashedPassword,
+                request.FullName,
                 request.Phone,
                 role,
                 DateTime.Now

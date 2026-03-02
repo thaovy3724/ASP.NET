@@ -12,6 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Add application and infrastructure services (repositories, services, etc.)
 builder.Services.AddAppDI(builder.Configuration);
 
 // cau hinh vnpay & order
