@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Create;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Delete;

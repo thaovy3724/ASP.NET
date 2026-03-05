@@ -9,7 +9,7 @@ namespace StoreApp.Infrastructure.Adapter
     // hoàn toàn không chứa nghiệp vụ.
     public class CategoryRepository(StoreDbContext context) : BaseRepository<Category>(context), ICategoryRepository
     {
-        public async Task<List<Category>> Search(string? keyword = null)
+        public async Task<PagedList<Category>> Search(string? keyword = null, int pageNumber, int pageSize)
         {
 
             var query = DbSet.AsNoTracking();
@@ -21,8 +21,7 @@ namespace StoreApp.Infrastructure.Adapter
                 // có keywords (lọc theo tên)
                 query = query.Where(x => x.Name.Contains(keyword));
             }
-
-            return await query.ToListAsync();
+            return await query.ToPagedListAsync(pageNumber, pageSize);
         }
     }
 }

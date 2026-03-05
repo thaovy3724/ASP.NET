@@ -7,5 +7,5 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
         (Guid? CategoryId = null, 
         decimal? MinPrice = null, 
         decimal? MaxPrice = null, 
-        string? Keyword = null) : IRequest<List<ProductDTO>>;
+        string? Keyword = null) : QueryStringParameters, IRequest<List<ProductDTO>>;
 }
