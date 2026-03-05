@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Complete;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Create;
@@ -24,7 +25,8 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> GetList([FromQuery] GetListGRNQuery query)
         {
             var result = await mediator.Send(query);
-            return Ok(result);
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
         }
 
         // Complete GRN

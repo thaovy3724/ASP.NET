@@ -8,7 +8,7 @@ namespace StoreApp.Infrastructure.Adapter
 {
     public class GRNRepository(StoreDbContext context) : BaseRepository<GRN>(context), IGRNRepository
     {
-        public async Task<List<GRN>> Search(Guid? supplierId = null, GRNStatus? status = null)
+        public async Task<PagedList<GRN>> Search(int pageNumber, int pageSize, Guid? supplierId = null, GRNStatus? status = null)
         {
             var query = DbSet.AsNoTracking();
 
@@ -18,7 +18,7 @@ namespace StoreApp.Infrastructure.Adapter
             if(status is not null)
                 query = query.Where(x => x.Status == status);
 
-            return await query.ToListAsync();
+            return await query.ToPagedListAsync(pageNumber, pageSize);
         }
     }
 }

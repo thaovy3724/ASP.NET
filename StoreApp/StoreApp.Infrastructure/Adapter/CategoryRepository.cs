@@ -9,7 +9,7 @@ namespace StoreApp.Infrastructure.Adapter
     // hoàn toàn không chứa nghiệp vụ.
     public class CategoryRepository(StoreDbContext context) : BaseRepository<Category>(context), ICategoryRepository
     {
-        public async Task<PagedList<Category>> Search(string? keyword = null, int pageNumber, int pageSize)
+        public async Task<PagedList<Category>> Search(int pageNumber, int pageSize, string? keyword = null)
         {
 
             var query = DbSet.AsNoTracking();

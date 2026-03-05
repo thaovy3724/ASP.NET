@@ -10,12 +10,12 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Query.GetList
     {
         public async Task<PagedList<CategoryDTO>> Handle(GetListCategoryQuery request, CancellationToken cancellationToken)
         {
-            var result = await categoryRepository.Search(request.Keyword, request.PageNumber, request.PageSize);
-            var categoryDTO = result.Items
+            var result = await categoryRepository.Search(request.PageNumber, request.PageSize, request.Keyword);
+            var categoryListDTO = result.Items
                     .Select(category => category.ToDTO())
                     .ToList();
 
-            return new PagedList<CategoryDTO>(categoryDTO, result.MetaData);
+            return new PagedList<CategoryDTO>(categoryListDTO, result.MetaData);
         }
     }
 }

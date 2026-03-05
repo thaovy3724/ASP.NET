@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using StoreApp.Application.UseCases.SupplierUseCase.Command.Create;
 using StoreApp.Application.UseCases.SupplierUseCase.Command.Delete;
 using StoreApp.Application.UseCases.SupplierUseCase.Command.Update;
@@ -23,7 +24,8 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> GetList([FromQuery] GetListSupplierQuery cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
         }
         
         [HttpPost]

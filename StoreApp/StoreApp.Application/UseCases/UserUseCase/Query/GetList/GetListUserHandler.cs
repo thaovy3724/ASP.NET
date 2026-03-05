@@ -2,19 +2,20 @@
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
+using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.UserUseCase.Query.GetList
 {
-    public class GetListUserHandler(IUserRepository userRepository) : IRequestHandler<GetListUserQuery, List<UserDTO>>
+    public class GetListUserHandler(IUserRepository userRepository) : IRequestHandler<GetListUserQuery, PagedList<UserDTO>>
     {
-        public async Task<List<UserDTO>> Handle(GetListUserQuery request, CancellationToken cancellationToken)
+        public async Task<PagedList<UserDTO>> Handle(GetListUserQuery request, CancellationToken cancellationToken)
         {
-            var users = await userRepository.Search(request.Keyword);
-            var userDTO = users
+            var result = await userRepository.Search(request.PageNumber, request.PageSize, request.Keyword);
+            var userListDTO = result.Items
                 .Select(user => user.ToDTO())
                 .ToList();
             // Trả về kết quả trực tiếp
-            return userDTO;
+            return new PagedList<UserDTO>(userListDTO, result.MetaData);
         }
     }
 }

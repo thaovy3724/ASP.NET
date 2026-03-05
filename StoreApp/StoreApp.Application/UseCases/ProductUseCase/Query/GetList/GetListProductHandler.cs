@@ -2,21 +2,29 @@
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
+using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
 {
-    public class GetListProductHandler(IProductRepository productRepository) : IRequestHandler<GetListProductQuery, List<ProductDTO>>
+    public class GetListProductHandler(IProductRepository productRepository) : IRequestHandler<GetListProductQuery, PagedList<ProductDTO>>
     {
-        public async Task<List<ProductDTO>> Handle(GetListProductQuery request, CancellationToken cancellationToken)
+        public async Task<PagedList<ProductDTO>> Handle(GetListProductQuery request, CancellationToken cancellationToken)
         {
-            var products = await productRepository.Search(request.CategoryId, request.MinPrice, request.MaxPrice, request.Keyword);
+            var result = await productRepository
+                          .Search(
+                            request.PageNumber,
+                            request.PageSize,
+                            request.CategoryId, 
+                            request.MinPrice, 
+                            request.MaxPrice, 
+                            request.Keyword);
 
-            var productListDTO = products
+            var productListDTO = result.Items
                 .Select(product => product.ToDTO())     // entity => DTO 
                 .ToList();
 
             // Trả về kết quả
-            return productListDTO;
+            return new PagedList<ProductDTO>(productListDTO, result.MetaData);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace StoreApp.Infrastructure.Adapter
 {
     public class SupplierRepository(StoreDbContext context) : BaseRepository<Supplier>(context), ISupplierRepository
     {
-        public async Task<List<Supplier>> Search(string? keyword = null)
+        public async Task<PagedList<Supplier>> Search(int pageNumber, int pageSize, string? keyword = null)
         {
             var query = DbSet.AsNoTracking();
 
@@ -21,7 +21,7 @@ namespace StoreApp.Infrastructure.Adapter
                     (x.Address != null && x.Address.Contains(keyword)));
             }
 
-            return await query.ToListAsync();
+            return await query.ToPagedListAsync(pageNumber, pageSize);
         }
     }
 }

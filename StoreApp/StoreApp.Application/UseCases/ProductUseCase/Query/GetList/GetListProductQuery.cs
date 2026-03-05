@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
+using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
 {
@@ -7,5 +8,5 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
         (Guid? CategoryId = null, 
         decimal? MinPrice = null, 
         decimal? MaxPrice = null, 
-        string? Keyword = null) : QueryStringParameters, IRequest<List<ProductDTO>>;
+        string? Keyword = null) : QueryStringParameters, IRequest<PagedList<ProductDTO>>;
 }

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using System.Text.Json.Serialization;
 
 namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
 {
