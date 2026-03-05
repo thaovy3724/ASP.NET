@@ -6,27 +6,18 @@ using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.SupplierUseCase.Query.GetList
 {
-    public class GetListSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<GetListSupplierQuery, List<SupplierDTO>>
+    public class GetListSupplierHandler(ISupplierRepository supplierRepository) : IRequestHandler<GetListSupplierQuery, PagedList<SupplierDTO>>
     {
-        public async Task<List<SupplierDTO>> Handle(GetListSupplierQuery request, CancellationToken cancellationToken)
+        public async Task<PagedList<SupplierDTO>> Handle(GetListSupplierQuery request, CancellationToken cancellationToken)
         {
-            var suppliers = new List<Supplier>();
-            if(string.IsNullOrEmpty(request.Keyword))
-            {
-                // Nếu không có từ khóa, lấy tất cả nhà cung cấp
-                suppliers = await supplierRepository.GetAll();
-            }
-            else
-            {
-                suppliers = await supplierRepository.Search(request.Keyword);
-            }
-
-            var supplierDTO = suppliers
+            var result = await supplierRepository.Search(request.PageNumber, request.PageSize, request.Keyword);
+        
+            var supplierListDTO = result.Items
                 .Select(supplier => supplier.ToDTO())
                 .ToList();
 
             // Trả về kết quả trực tiếp
-            return supplierDTO;
+            return new PagedList<SupplierDTO>(supplierListDTO, result.MetaData);
         }
     }
 }

@@ -9,12 +9,7 @@ namespace StoreApp.Infrastructure.Adapter
     {
         private readonly DbSet<User> _dbset = context.Set<User>();
 
-        public Task<User?> GetByName(string name)
-        {
-            return _dbset.AsNoTracking().FirstOrDefaultAsync(x => x.Username == name);
-        }
-
-        public async Task<List<User>> Search(string? keyword = null)
+        public async Task<PagedList<User>> Search(int pageNumber, int pageSize, string? keyword = null)
         {
             var query = _dbset.AsNoTracking();
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -25,7 +20,12 @@ namespace StoreApp.Infrastructure.Adapter
                     x.FullName.Contains(keyword) ||
                     x.Role.ToString().Contains(keyword));
             }
-            return await query.ToListAsync();
+            return await query.ToPagedListAsync(pageNumber, pageSize);
+        }
+
+        public Task<User?> GetByName(string name)
+        {
+            return _dbset.AsNoTracking().FirstOrDefaultAsync(x => x.Username == name);
         }
     }
 }

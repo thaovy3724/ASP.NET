@@ -8,7 +8,7 @@ namespace StoreApp.Infrastructure.Adapter
     public class ProductRepository(StoreDbContext context) : BaseRepository<Product>(context), IProductRepository
     {
         // filter 
-        public async Task<List<Product>> Search(Guid? categoryId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null)
+        public async Task<PagedList<Product>> Search(int pageNumber, int pageSize, Guid? categoryId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null)
         {
             var query = DbSet.AsNoTracking();
 
@@ -28,7 +28,7 @@ namespace StoreApp.Infrastructure.Adapter
                     x.ProductName.Contains(k)
                 );
             }
-            return await query.ToListAsync();
+            return await query.ToPagedListAsync(pageNumber, pageSize);
         }
     }
 }
