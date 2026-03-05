@@ -25,7 +25,7 @@ namespace StoreApp.Infrastructure.Adapter
                     x.FullName.Contains(keyword) ||
                     x.Role.ToString().Contains(keyword));
             }
-            return await _dbset.ToListAsync();
+            return await query.ToListAsync();
         }
     }
 }
