@@ -1,16 +1,29 @@
-using SM.Infrastructure.Adapters.Payment.Config;
+﻿using SM.Infrastructure.Adapters.Payment.Config;
 using StoreApp.Api;
+using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
 using StoreApp.Application.Repository;
-using StoreApp.Api.ApplException;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //==== SERVICE REGISTRATION ====//
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+// để enum (Role…) trả về dạng "Admin", "Staff", "Client" thay vì số.
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// CORS configuration to allow requests from RazorFE
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("RazorFE", policy =>
+        policy.WithOrigins("https://localhost:7235", "http://localhost:5293")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
 // Add application and infrastructure services (repositories, services, etc.)
 builder.Services.AddAppDI(builder.Configuration);
@@ -37,6 +50,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();   // để có thể truy cập vào wwwroot (chứa ảnh sản phẩm)
+
+app.UseCors("RazorFE");
 
 app.UseAuthentication();
 app.UseAuthorization();

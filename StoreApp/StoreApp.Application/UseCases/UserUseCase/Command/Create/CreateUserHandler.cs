@@ -30,8 +30,8 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
             var user = new User
             (
                 request.UserName,
-                request.FullName,
                 hashedPassword,
+                request.FullName,
                 request.Phone,
                 role,
                 DateTime.Now

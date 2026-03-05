@@ -1,18 +1,17 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application.UseCases.CategoryUseCase.Query.GetList;
 using StoreApp.Application.UseCases.UserUseCase.Command.Create;
 using StoreApp.Application.UseCases.UserUseCase.Command.Delete;
 using StoreApp.Application.UseCases.UserUseCase.Command.Update;
+using StoreApp.Application.UseCases.UserUseCase.Query.GetList;
 using StoreApp.Application.UseCases.UserUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(IMediator mediator) : Controller
+    public class UserController(IMediator mediator) : ControllerBase
     {
-        
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -22,7 +21,7 @@ namespace StoreApp.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetList([FromQuery] GetListCategoryQuery cmd)
+        public async Task<IActionResult> GetList([FromQuery] GetListUserQuery cmd)
         {
             var result = await mediator.Send(cmd);
             return Ok(result);
@@ -46,7 +45,7 @@ namespace StoreApp.Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var cmd = new DeleteUserCommand(Id:id);
+            var cmd = new DeleteUserCommand(Id: id);
             await mediator.Send(cmd);
             return NoContent();
         }
