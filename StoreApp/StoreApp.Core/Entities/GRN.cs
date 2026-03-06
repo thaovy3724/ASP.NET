@@ -11,12 +11,6 @@ namespace StoreApp.Core.Entities
         public DateTime UpdatedAt { get; private set; } = DateTime.Now;
         public List<GRNDetail> Items { get; private set; } = [];
 
-        public void UpdateInventoryStatus(GRNStatus grnStatus)
-        {
-            Status = grnStatus;
-            UpdatedAt = DateTime.Now;
-        }
-
         public void AddItem(Guid productId, int quantity, decimal price)
         {
             var item = new GRNDetail(Id, productId, quantity, price);
@@ -62,6 +56,8 @@ namespace StoreApp.Core.Entities
                     existedItem.Update(item.Quantity, item.Price);
                 else Items.Add(item);
             }
+
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }
