@@ -2,7 +2,7 @@
 {
     public enum OrderStatus
     {
-        Pending, Confirmed, Delivered, Canceled
+        Pending, Paid, Confirmed, Delivered, Canceled
         // Pending: chờ duyệt, Confirmed: đã duyệt, Delivered: đã giao hàng
     }
 }

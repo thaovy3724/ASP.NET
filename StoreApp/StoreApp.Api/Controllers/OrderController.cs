@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StoreApp.Application.Repository;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Confirm;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Create;
@@ -14,64 +13,64 @@ namespace StoreApp.Api.Controllers
     [ApiController]
     public class OrderController(IMediator mediator) : Controller
     {
-        // get order by id
-        //[HttpGet("{id:guid}")]
-        //public async Task<IActionResult> GetById(Guid id)
-        //{
-        //    var cmd = new GetOrderQuery(Id: id);
-        //    var result = await mediator.Send(cmd);
-        //    return Ok(result);
-        //}
+       //get order by id
+       [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var cmd = new GetOrderQuery(Id: id);
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
 
-        //// get list of orders
+        // get list of orders
         //[HttpGet]
         //public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
         //{
         //    var result = await mediator.Send(query);
-        //    return Ok(result);
+        //    return CreatedAtAction(nameof(GetById), new { id = result. }, result);
         //}
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
-        //{
-        //    var result = await mediator.Send(cmd);
-        //    return Ok(result);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
 
-        //// Confirm order
-        //[HttpPut("{id:guid}/confirm")]
-        //public async Task<IActionResult> Confirm(Guid id)
-        //{
-        //    var cmd = new ConfirmOrderCommand(Id: id);
-        //    var result = await mediator.Send(cmd);
-        //    return Ok(result);
-        //}
+        // Confirm order
+        [HttpPut("{id:guid}/confirm")]
+        public async Task<IActionResult> Confirm(Guid id)
+        {
+            var cmd = new ConfirmOrderCommand(Id: id);
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
 
-        //// Deliver order
-        //[HttpPut("{id:guid}/deliver")]
-        //public async Task<IActionResult> Deliver(Guid id)
-        //{
-        //    var cmd = new DeliverOrderCommand(Id: id);
-        //    var result = await mediator.Send(cmd);
-        //    return Ok(result);
-        //}
+        // Deliver order
+        [HttpPut("{id:guid}/deliver")]
+        public async Task<IActionResult> Deliver(Guid id)
+        {
+            var cmd = new DeliverOrderCommand(Id: id);
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
 
-        //// Cancel order
-        //[HttpPut("{id:guid}/cancel")]
-        //public async Task<IActionResult> Cancel(Guid id)
-        //{
-        //    var cmd = new CancelOrderCommand(Id: id);
-        //    var result = await mediator.Send(cmd);
-        //    return Ok(result);
-        //}
+        // Cancel order
+        [HttpPut("{id:guid}/cancel")]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            var cmd = new CancelOrderCommand(Id: id);
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
 
-        //// Pay order (VNPAY)
+        // Pay order (VNPAY)
         //[HttpGet("payment-callback")]
-        //public async Task<IActionResult> PaymentCallback()
+        //public async Task<IActionResult> PaymentCallback([FromQuery] Dictionary<string, string> callbackParams)
         //{
         //    Console.WriteLine("--- BẮT ĐẦU CALLBACK ---");
         //    // 1. Nhận dữ liệu từ VNPay
-        //    var response = vnPayService.PaymentExecute(Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString()));
+        //    var response = vnPayService.PaymentExecute(callbackParams);
 
         //    // 2. Tạo Command gửi sang Handler
         //    // Lưu ý: response.Success sẽ là FALSE nếu khách hủy (Code 24)

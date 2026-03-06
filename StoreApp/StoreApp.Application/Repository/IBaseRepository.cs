@@ -12,6 +12,9 @@ namespace StoreApp.Application.Repository
         Task Delete(T entity); // Xoá khỏi DB luôn 
 
         // Kiểm tra tồn tại theo điều kiện nào đó (ví dụ: tên đã tồn tại chưa)
-        Task<bool> IsExist(Expression<Func<T, bool>> predicate); 
+        Task<bool> IsExist(Expression<Func<T, bool>> predicate);
+        Task BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
     }
 }

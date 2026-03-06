@@ -29,6 +29,13 @@ namespace StoreApp.Api.Controllers
             return Ok(result.Items);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateGRNCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+
         // Complete GRN
         [HttpPut("{id:guid}/complete")]
         public async Task<IActionResult> Complete(Guid id)
@@ -45,13 +52,6 @@ namespace StoreApp.Api.Controllers
             var cmd = new CancelGRNCommand(Id: id);
             await mediator.Send(cmd);
             return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateGRNCommand cmd)
-        {
-            var result = await mediator.Send(cmd);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
     }
 }

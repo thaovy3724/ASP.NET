@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using StoreApp.Application.DTOs;
+using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 {
     public sealed record CreateOrderCommand(
         Guid CustomerId,
-        List<CreateOrderRequestItem> Items,
-        string PaymentMethod = "Cash"  // Mặc định là tiền mặt
-    ) : IRequest<OrderDTO>;
+        List<CreateOrderItem> Items,
+        string Address,
+        PaymentMethod PaymentMethod) : IRequest<OrderDTO>;
 }

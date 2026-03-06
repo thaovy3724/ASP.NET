@@ -2,17 +2,21 @@
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Mapper;
 using StoreApp.Application.Repository;
+using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Query.GetList
 {
-    public class GetListOrderHandler(IOrderRepository orderRepository) : IRequestHandler<GetListOrderQuery, List<OrderDTO>>
+    public class GetListOrderHandler(IOrderRepository orderRepository) : IRequestHandler<GetListOrderQuery, PagedList<OrderDTO>>
     {
-        public async Task<List<OrderDTO>> Handle(GetListOrderQuery req, CancellationToken cancellationToken)
+        public async Task<PagedList<OrderDTO>> Handle(GetListOrderQuery request, CancellationToken cancellationToken)
         {
-            var orders = await orderRepository.GetListOrderWithDetails();
-            var orderDTOs = orders.Select(orders => orders.ToDTO()).ToList();
+            //var result = await orderRepository.GetListOrderWithDetails();
+            var result = await orderRepository.Search(request.PageNumber, request.PageSize, request.CustomerId);
+            var orderListDTO = result.Items.
+                Select(orders => orders.ToDTO())
+                .ToList();
 
-            return orderDTOs;
+            return new PagedList<OrderDTO>(orderListDTO, result.MetaData);
         }
     }
 }

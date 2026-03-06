@@ -3,6 +3,6 @@
     public enum PaymentMethod
     {
         Cash = 0,
-        VnPay = 2
+        VnPay = 1
     }
 }

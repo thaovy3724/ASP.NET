@@ -6,5 +6,11 @@
         public Guid ProductId { get; private set; } = productId;
         public int Quantity { get; private set; } = quantity;
         public decimal Price { get; private set; } = price;
+
+        public void Update(int quantity, decimal price)
+        {
+            Quantity = quantity;
+            Price = price;
+        }
     }
 }
