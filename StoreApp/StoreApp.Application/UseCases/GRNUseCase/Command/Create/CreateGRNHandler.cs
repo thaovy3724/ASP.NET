@@ -20,23 +20,38 @@ namespace StoreApp.Application.UseCases.GRNUseCase.Command.Create
                 throw new NotFoundException("Nhà cung cấp không tồn tại");
             }
 
-            // Kiểm tra tồn tại sản phẩm (Product)
-            request.Items.ForEach(item => 
+            //Bắt đầu Transaction để đảm bảo tính nguyên tử (Atomicity)
+            await grnRepository.BeginTransactionAsync();
+
+            try
             {
-                var product = productRepository.GetById(item.ProductId);
-                if(product is null)
+                // Tạo mới GRN
+                var grn = new GRN(request.SupplierId);
+
+                foreach(var item in request.Items)
                 {
-                    throw new NotFoundException($"Sản phẩm với ID {item.ProductId} không tồn tại");
+                    var product = await productRepository.GetById(item.ProductId);
+                    if (product is null)
+                    {
+                        throw new NotFoundException($"Sản phẩm với ID {item.ProductId} không tồn tại");
+                    }
+
+                    grn.AddItem(item.ProductId, item.Quantity, item.Price);
                 }
-            });
+                await grnRepository.Create(grn);
 
-            // Tạo mới GRN
-            var grn = new GRN(request.SupplierId);
+                // 6. Xác nhận giao dịch thành công
+                await grnRepository.CommitTransactionAsync();
+                return grn.ToDTO();
+            }
+            catch (Exception ex)
+            {
+                await grnRepository.RollbackTransactionAsync();
+                if (ex is NotFoundException) throw;
 
-            // Thêm các item vào GRN
-            request.Items.ForEach(item => grn.AddItem(item.ProductId, item.Quantity, item.Price));
-            await grnRepository.Create(grn);
-            return grn.ToDTO();
+                // Lỗi hệ thống chưa biết
+                throw new Exception("Hệ thống không thể xử lý phiếu nhập kho lúc này. Vui lòng liên hệ quản trị viên.");
+            }
         }
     }
 }

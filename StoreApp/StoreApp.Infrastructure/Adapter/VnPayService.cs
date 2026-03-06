@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using SM.Infrastructure.Adapters.Payment.Libs;
 using StoreApp.Application.DTOs;
-using StoreApp.Application.Repository;
+using StoreApp.Application.Service.Payment;
+using StoreApp.Core.Entities;
 public class VnPayService : IVnPayService
 {
     private readonly IConfiguration _config;
@@ -14,7 +15,7 @@ public class VnPayService : IVnPayService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string CreatePaymentUrl(OrderDTO order)
+    public string CreatePaymentUrl(Order order)
     {
         var context = _httpContextAccessor.HttpContext;
         var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");

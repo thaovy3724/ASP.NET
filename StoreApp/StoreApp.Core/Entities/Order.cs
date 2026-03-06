@@ -3,18 +3,12 @@ using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Core.Entities
 {
-    public class Order(
-        Guid customerId,
-        Guid? staffId,
-        DateTime updatedAt,
-        string address,
-        PaymentMethod paymentMethod,
-        OrderStatus orderStatus) : BaseEntity
+    public class Order(Guid customerId,string address, PaymentMethod paymentMethod) : BaseEntity
     {
         public Guid CustomerId { get; private set; } = customerId;
-        public Guid? StaffId { get; private set; } = staffId;
-        public DateTime UpdatedAt { get; private set; } = updatedAt;
-        public OrderStatus OrderStatus { get; private set; } = orderStatus;
+        public Guid? StaffId { get; private set; }
+        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
+        public OrderStatus OrderStatus { get; private set; } = OrderStatus.Pending;
         public string Address { get; private set; } = address;
         public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
         public decimal TotalAmount => Items.Sum(x => x.Subtotal);
@@ -52,6 +46,12 @@ namespace StoreApp.Core.Entities
                 throw new OrderCannotBeCanceledException("Không thể hủy đơn hàng đã được xác nhận.");
             }
             OrderStatus = OrderStatus.Canceled;
+        }
+
+        public void AddItem(Guid productId, int quantity, decimal price)
+        {
+            var item = new OrderDetail(Id, productId, quantity, price);
+            Items.Add(item);
         }
     }
 }

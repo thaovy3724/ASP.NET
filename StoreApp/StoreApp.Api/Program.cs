@@ -2,7 +2,7 @@
 using StoreApp.Api;
 using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
-using StoreApp.Application.Repository;
+using StoreApp.Application.Service.Payment;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

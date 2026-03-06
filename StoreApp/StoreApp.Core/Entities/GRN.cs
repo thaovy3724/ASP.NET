@@ -42,5 +42,26 @@ namespace StoreApp.Core.Entities
             Status = GRNStatus.Completed;
             UpdatedAt = DateTime.Now;
         }
+
+        public void UpdateItem(List<GRNDetail> newItems)
+        {
+            // Kiểm tra trạng thái của phiếu nhập
+            if(Status != GRNStatus.Pending)
+            {
+                throw new GRNCannotBeUpdatedException("Chỉ có thể chỉnh sửa phiếu nhập ở trạng thái chờ duyệt");
+            }
+
+            // Xóa những item không còn trong danh sách mới
+            Items.RemoveAll(old => !newItems.Any(n => n.ProductId == old.ProductId));
+
+            // Cập nhật item
+            foreach(var item in newItems)
+            {
+                var existedItem = Items.FirstOrDefault(x => x.Id == item.Id);
+                if (existedItem != null)
+                    existedItem.Update(item.Quantity, item.Price);
+                else Items.Add(item);
+            }
+        }
     }
 }
