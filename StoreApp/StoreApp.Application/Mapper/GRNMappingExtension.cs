@@ -11,12 +11,7 @@ namespace StoreApp.Application.Mapper
                 Id: entity.Id,
                 SupplierId: entity.SupplierId,
                 GRNStatus: entity.Status,
-                UpdatedAt: entity.UpdatedAt,
-                Items: entity.Items.Select(item => new GRNDetailDTO(
-                    ProductId: item.ProductId,
-                    Quantity: item.Quantity,
-                    Price: item.Price
-                )).ToList()
+                UpdatedAt: entity.UpdatedAt
             );
         }
     }
