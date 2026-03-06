@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Confirm;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Create;
@@ -23,12 +24,13 @@ namespace StoreApp.Api.Controllers
         }
 
         // get list of orders
-        //[HttpGet]
-        //public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
-        //{
-        //    var result = await mediator.Send(query);
-        //    return CreatedAtAction(nameof(GetById), new { id = result. }, result);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
+        {
+            var result = await mediator.Send(query);
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
