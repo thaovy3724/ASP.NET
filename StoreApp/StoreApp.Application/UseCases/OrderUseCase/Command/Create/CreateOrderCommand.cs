@@ -8,5 +8,5 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         Guid CustomerId,
         List<CreateOrderItem> Items,
         string Address,
-        PaymentMethod PaymentMethod) : IRequest<OrderDTO>;
+        PaymentMethod PaymentMethod) : IRequest<CreateOrderResponseDTO>;
 }

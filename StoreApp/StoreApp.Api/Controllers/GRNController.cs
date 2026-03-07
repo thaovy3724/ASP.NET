@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Complete;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Create;
+using StoreApp.Application.UseCases.GRNUseCase.Command.Update;
 using StoreApp.Application.UseCases.GRNUseCase.Query.GetList;
 using StoreApp.Application.UseCases.GRNUseCase.Query.GetOne;
 
@@ -34,6 +35,14 @@ namespace StoreApp.Api.Controllers
         {
             var result = await mediator.Send(cmd);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Complete(Guid id, [FromBody] UpdateGRNCommand cmd)
+        {
+            cmd = cmd with { Id = id };
+            await mediator.Send(cmd);
+            return NoContent();
         }
 
         // Complete GRN

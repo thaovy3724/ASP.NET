@@ -42,12 +42,6 @@ namespace StoreApp.Infrastructure.Configuration
                    .WithMany()
                    .HasForeignKey(od => od.ProductId)
                    .OnDelete(DeleteBehavior.Restrict);
-
-            // Quan hệ với bảng GRN
-            builder.HasOne<GRN>()
-                   .WithMany()
-                   .HasForeignKey(od => od.GRNId)
-                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

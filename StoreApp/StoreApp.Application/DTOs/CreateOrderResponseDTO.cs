@@ -2,13 +2,13 @@
 
 namespace StoreApp.Application.DTOs
 {
-    public sealed record OrderDTO(
+    public sealed record CreateOrderResponseDTO(
         Guid Id,
         Guid CustomerId,
-        Guid? StaffId,
         DateTime UpdatedAt,
         OrderStatus OrderStatus,
         string Address,
         decimal TotalAmount,
-        PaymentMethod PaymentMethod);
+        PaymentMethod PaymentMethod,
+        string? PaymentUrl); // Nếu PaymentMethod = Cash thì PaymentUrl = null
 }

@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Confirm;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Create;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Deliver;
+using StoreApp.Application.UseCases.OrderUseCase.Command.PaymentCallback;
 using StoreApp.Application.UseCases.OrderUseCase.Query.GetList;
 using StoreApp.Application.UseCases.OrderUseCase.Query.GetOne;
 
@@ -23,12 +25,13 @@ namespace StoreApp.Api.Controllers
         }
 
         // get list of orders
-        //[HttpGet]
-        //public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
-        //{
-        //    var result = await mediator.Send(query);
-        //    return CreatedAtAction(nameof(GetById), new { id = result. }, result);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
+        {
+            var result = await mediator.Send(query);
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
@@ -65,39 +68,11 @@ namespace StoreApp.Api.Controllers
         }
 
         // Pay order (VNPAY)
-        //[HttpGet("payment-callback")]
-        //public async Task<IActionResult> PaymentCallback([FromQuery] Dictionary<string, string> callbackParams)
-        //{
-        //    Console.WriteLine("--- BẮT ĐẦU CALLBACK ---");
-        //    // 1. Nhận dữ liệu từ VNPay
-        //    var response = vnPayService.PaymentExecute(callbackParams);
-
-        //    // 2. Tạo Command gửi sang Handler
-        //    // Lưu ý: response.Success sẽ là FALSE nếu khách hủy (Code 24)
-        //    var command = new UpdateOrderStatusCommand(response.OrderId, response.Success, response.PaymentId);
-        //    Console.WriteLine("--- BẮT ĐẦU GỌI MEDIATOR ---");
-        //    // 3. Gọi Handler để xử lý Database (Cập nhật trạng thái + Hoàn kho)
-        //    var result = await mediator.Send(command);
-        //    Console.WriteLine("--- KẾT THÚC MEDIATOR ---");
-        //    // 4. ĐIỀU HƯỚNG NGƯỜI DÙNG (Frontend)
-        //    if (response.Success)
-        //    {
-        //        return Redirect($"http://localhost:3000/payment-success?id={response.OrderId}");
-        //    }
-        //    else
-        //    {
-        //        // Kiểm tra xem có phải khách hủy không (Mã 24)
-        //        string reason = "Lỗi thanh toán";
-        //        if (response.VnPayResponseCode == "24")
-        //        {
-        //            reason = "Bạn đã hủy giao dịch";
-        //        }
-        //        Console.WriteLine("Response Code: " + response.VnPayResponseCode + "Response order id" + response.OrderId);
-        //        // Chuyển hướng về trang thất bại kèm lý do
-        //        string encodedReason = Uri.EscapeDataString(reason);
-
-        //        return Redirect($"http://localhost:3000/payment-failed?reason={encodedReason}&id={response.OrderId}");
-        //    }
-        //}
+        [HttpGet("payment-callback")]
+        public async Task<IActionResult> PaymentCallback([FromQuery] PaymentCallbackCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
     }
 }

@@ -11,12 +11,6 @@ namespace StoreApp.Application.DTOs
         // Trạng thái giao dịch (True = Thành công, False = Thất bại)
         public bool Success { get; set; }
 
-        // Tên phương thức thanh toán (VD: "VnPay", "Momo")
-        public string PaymentMethod { get; set; } = string.Empty;
-
-        // Nội dung thanh toán (VD: "Thanh toan don hang #123")
-        public string OrderDescription { get; set; } = string.Empty;
-
         // Mã đơn hàng nội bộ của bạn (Guid hoặc Int)
         public Guid OrderId { get; set; }
 
@@ -25,9 +19,6 @@ namespace StoreApp.Application.DTOs
 
         // Mã giao dịch từ phía cổng thanh toán (vnp_TransactionNo)
         public string TransactionId { get; set; } = string.Empty;
-
-        // Token bảo mật (vnp_SecureHash) - Dùng để lưu log kiểm tra nếu cần
-        public string Token { get; set; } = string.Empty;
 
         // Mã lỗi chi tiết từ VNPay (VD: "00" là thành công, "24" là hủy)
         // Lưu lại để sau này debug nếu khách kêu lỗi

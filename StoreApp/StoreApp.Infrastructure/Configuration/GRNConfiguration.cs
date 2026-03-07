@@ -38,7 +38,7 @@ namespace StoreApp.Infrastructure.Configuration
             // Quan hệ 1-N với GRNDetail
             builder.HasMany(o => o.Items)
                    .WithOne()
-                   .HasForeignKey("GRN_id")
+                   .HasForeignKey(od => od.GRNId)
                    .OnDelete(DeleteBehavior.Cascade);
         }
     }

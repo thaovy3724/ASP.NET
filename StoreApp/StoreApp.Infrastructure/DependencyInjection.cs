@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StoreApp.Application.Repository;
+using StoreApp.Application.Service.Payment;
 using StoreApp.Application.Service.Security;
 using StoreApp.Infrastructure.Adapter;
 using StoreApp.Infrastructure.Adapter.Security;
@@ -29,6 +30,7 @@ namespace StoreApp.Infrastructure
             services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IVnPayService, VnPayService>();
 
             // Security Services
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 

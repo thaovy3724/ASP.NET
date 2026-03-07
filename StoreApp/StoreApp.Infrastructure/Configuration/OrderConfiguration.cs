@@ -68,7 +68,7 @@ namespace StoreApp.Infrastructure.Configuration
             // Quan hệ 1-N với OrderItem
             builder.HasMany(o => o.Items)
                    .WithOne()
-                   .HasForeignKey("order_id")
+                   .HasForeignKey(od => od.OrderId)
                    .OnDelete(DeleteBehavior.Cascade);
         }
     }
