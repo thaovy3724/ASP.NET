@@ -12,7 +12,7 @@ using StoreApp.Infrastructure.Data;
 namespace StoreApp.Infrastructure.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20260228155425_init")]
+    [Migration("20260307013958_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -81,9 +81,6 @@ namespace StoreApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("GRN_id");
 
-                    b.Property<Guid>("GRN_id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("price");
@@ -100,15 +97,9 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.HasIndex("GRNId");
 
-                    b.HasIndex("GRN_id");
-
                     b.HasIndex("ProductId");
 
-                    b.ToTable("GRN_detail", null, t =>
-                        {
-                            t.Property("GRN_id")
-                                .HasColumnName("GRN_id1");
-                        });
+                    b.ToTable("GRN_detail", (string)null);
                 });
 
             modelBuilder.Entity("StoreApp.Core.Entities.Order", b =>
@@ -179,20 +170,13 @@ namespace StoreApp.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("quantity");
 
-                    b.Property<Guid>("order_id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("order_id");
-
-                    b.ToTable("order_detail", null, t =>
-                        {
-                            t.Property("order_id")
-                                .HasColumnName("order_id1");
-                        });
+                    b.ToTable("order_detail", (string)null);
                 });
 
             modelBuilder.Entity("StoreApp.Core.Entities.Product", b =>
@@ -330,14 +314,8 @@ namespace StoreApp.Infrastructure.Migrations
             modelBuilder.Entity("StoreApp.Core.Entities.GRNDetail", b =>
                 {
                     b.HasOne("StoreApp.Core.Entities.GRN", null)
-                        .WithMany()
-                        .HasForeignKey("GRNId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("StoreApp.Core.Entities.GRN", null)
                         .WithMany("Items")
-                        .HasForeignKey("GRN_id")
+                        .HasForeignKey("GRNId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -365,16 +343,16 @@ namespace StoreApp.Infrastructure.Migrations
 
             modelBuilder.Entity("StoreApp.Core.Entities.OrderDetail", b =>
                 {
+                    b.HasOne("StoreApp.Core.Entities.Order", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StoreApp.Core.Entities.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("StoreApp.Core.Entities.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("order_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

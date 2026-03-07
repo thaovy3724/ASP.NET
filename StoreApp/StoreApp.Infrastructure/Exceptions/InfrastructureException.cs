@@ -6,7 +6,5 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Infrastructure.Exceptions
 {
-    internal class InfrastructureException
-    {
-    }
+    public abstract class InfrastructureException(string message) : Exception(message);
 }

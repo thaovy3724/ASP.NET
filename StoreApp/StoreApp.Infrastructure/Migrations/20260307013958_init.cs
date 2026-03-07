@@ -144,8 +144,7 @@ namespace StoreApp.Infrastructure.Migrations
                     GRN_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     product_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
-                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    GRN_id1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,12 +152,6 @@ namespace StoreApp.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_GRN_detail_GRN_GRN_id",
                         column: x => x.GRN_id,
-                        principalTable: "GRN",
-                        principalColumn: "GRN_id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_GRN_detail_GRN_GRN_id1",
-                        column: x => x.GRN_id1,
                         principalTable: "GRN",
                         principalColumn: "GRN_id",
                         onDelete: ReferentialAction.Cascade);
@@ -178,15 +171,14 @@ namespace StoreApp.Infrastructure.Migrations
                     order_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     product_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
-                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    order_id1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_order_detail", x => x.order_detail_id);
                     table.ForeignKey(
-                        name: "FK_order_detail_order_order_id1",
-                        column: x => x.order_id1,
+                        name: "FK_order_detail_order_order_id",
+                        column: x => x.order_id,
                         principalTable: "order",
                         principalColumn: "order_id",
                         onDelete: ReferentialAction.Cascade);
@@ -209,11 +201,6 @@ namespace StoreApp.Infrastructure.Migrations
                 column: "GRN_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GRN_detail_GRN_id1",
-                table: "GRN_detail",
-                column: "GRN_id1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GRN_detail_product_id",
                 table: "GRN_detail",
                 column: "product_id");
@@ -229,9 +216,9 @@ namespace StoreApp.Infrastructure.Migrations
                 column: "staff_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_order_detail_order_id1",
+                name: "IX_order_detail_order_id",
                 table: "order_detail",
-                column: "order_id1");
+                column: "order_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_order_detail_product_id",

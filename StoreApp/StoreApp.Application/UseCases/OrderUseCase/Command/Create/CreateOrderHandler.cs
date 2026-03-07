@@ -14,9 +14,9 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         IProductRepository productRepository,
         IUserRepository userRepository,
         IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
-    ) : IRequestHandler<CreateOrderCommand, OrderDTO>
+    ) : IRequestHandler<CreateOrderCommand, CreateOrderResponseDTO>
     {
-        public async Task<OrderDTO> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<CreateOrderResponseDTO> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             // --- 1. VALIDATION LAYER ---
             //if (request.Items == null || !request.Items.Any())
@@ -69,7 +69,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                 if (request.PaymentMethod == PaymentMethod.VnPay)
                 {
                     // Tạo URL
-                    string url = vnPayService.CreatePaymentUrl(orderResponse);
+                    string url = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount);
 
                     // Cập nhật tiếp PaymentUrl
                     orderResponse = orderResponse with { PaymentUrl = url };

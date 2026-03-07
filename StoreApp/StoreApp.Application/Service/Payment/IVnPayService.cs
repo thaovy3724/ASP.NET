@@ -5,7 +5,7 @@ namespace StoreApp.Application.Service.Payment
 {
     public interface IVnPayService
     {
-        string CreatePaymentUrl(Order order);
+        string CreatePaymentUrl(Guid id, decimal totalAmount);
         PaymentResponseModel PaymentExecute(Dictionary<string, string> collections);
     }
 }

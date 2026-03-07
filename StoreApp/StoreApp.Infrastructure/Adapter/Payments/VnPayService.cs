@@ -4,6 +4,7 @@ using SM.Infrastructure.Adapters.Payment.Libs;
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Service.Payment;
 using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Exceptions;
 public class VnPayService : IVnPayService
 {
     private readonly IConfiguration _config;
@@ -15,7 +16,7 @@ public class VnPayService : IVnPayService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string CreatePaymentUrl(Order order)
+    public string CreatePaymentUrl(Guid id, decimal totalAmount)
     {
         var context = _httpContextAccessor.HttpContext;
         var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -25,17 +26,17 @@ public class VnPayService : IVnPayService
         pay.AddRequestData("vnp_Version", "2.1.0");
         pay.AddRequestData("vnp_Command", "pay");
         pay.AddRequestData("vnp_TmnCode", _config["VnPay:TmnCode"]);
-        pay.AddRequestData("vnp_Amount", ((long)order.TotalAmount * 100).ToString());
+        pay.AddRequestData("vnp_Amount", ((long)totalAmount * 100).ToString());
         pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
         pay.AddRequestData("vnp_ExpireDate", timeNow.AddMinutes(2).ToString("yyyyMMddHHmmss"));
 
         pay.AddRequestData("vnp_CurrCode", "VND");
         pay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(context));
         pay.AddRequestData("vnp_Locale", "vn");
-        pay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang {order.Id}");
+        pay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang {id}");
         pay.AddRequestData("vnp_OrderType", "other");
         pay.AddRequestData("vnp_ReturnUrl", _config["VnPay:ReturnUrl"]);
-        pay.AddRequestData("vnp_TxnRef", order.Id.ToString());
+        pay.AddRequestData("vnp_TxnRef", id.ToString());
 
         var paymentUrl = pay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSecret"]);
         return paymentUrl;
@@ -68,12 +69,7 @@ public class VnPayService : IVnPayService
         {
             Console.WriteLine("---------------[DEBUG VNPay] Lỗi: Không thể ép kiểu sang Guid!");
             // Nếu không parse được thì return lỗi luôn (lúc này ID là Empty là đúng)
-            return new PaymentResponseModel
-            {
-                Success = false,
-                VnPayResponseCode = "INVALID_ORDER_ID_FORMAT",
-                OrderId = Guid.Empty
-            };
+            throw new PaymentException("Lỗi: OrderId không hợp lệ");
         }
 
         // 3. Kiểm tra chữ ký (Bây giờ mới check)
@@ -82,14 +78,7 @@ public class VnPayService : IVnPayService
         {
             Console.WriteLine("---------------[DEBUG VNPay] Lỗi: Sai chữ ký (Invalid Signature)!");
 
-            return new PaymentResponseModel
-            {
-                Success = false,
-                VnPayResponseCode = "INVALID_SIGNATURE",
-
-                // --- SỬA 3: GÁN ID VÀO ĐÂY (Để Controller không bị ID 0000...) ---
-                OrderId = orderId
-            };
+            throw new PaymentException("Lỗi: Sai chữ ký (Invalid Signature)");
         }
 
         // 4. Kiểm tra mã lỗi từ VNPay (Ví dụ: Khách hủy = 24)
@@ -108,12 +97,9 @@ public class VnPayService : IVnPayService
         return new PaymentResponseModel
         {
             Success = true,
-            PaymentMethod = "VnPay",
-            OrderDescription = pay.GetResponseData("vnp_OrderInfo"),
             OrderId = orderId,
             PaymentId = vnp_SecureHash,
             TransactionId = pay.GetResponseData("vnp_TransactionNo"),
-            Token = vnp_SecureHash,
             VnPayResponseCode = vnp_ResponseCode
         };
     }

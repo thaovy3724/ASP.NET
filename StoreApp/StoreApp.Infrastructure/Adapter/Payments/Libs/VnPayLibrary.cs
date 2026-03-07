@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using System.Net;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 
