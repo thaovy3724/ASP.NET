@@ -14,6 +14,7 @@ namespace StoreApp.Application.Mapper
                 SupplierId: entity.SupplierId,
                 ProductName:entity.ProductName,
                 Price:      entity.Price,
+                Quantity:     entity.Quantity,
                 ImageUrl:   entity.ImageUrl
             );
         }
