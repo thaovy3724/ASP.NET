@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using ValidationException = StoreApp.Application.Exceptions.ValidationException;
 
 namespace StoreApp.Application.Behaviors
 {
@@ -17,7 +18,17 @@ namespace StoreApp.Application.Behaviors
                 var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
                 if (failures.Count != 0)
-                    throw new ValidationException(failures);
+                {
+                    var errorsDictionary = failures
+                        .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
+                        .ToDictionary(
+                            failureGroup => failureGroup.Key,
+                            failureGroup => failureGroup.ToArray()
+                        );
+
+                    // 3. Ném Exception của bạn (StoreApp.Application.Exceptions)
+                    throw new ValidationException(errorsDictionary);
+                }
             }
             return await next();
         }

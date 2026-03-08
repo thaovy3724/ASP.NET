@@ -23,10 +23,10 @@ namespace StoreApp.Api.ApplException
                 Instance = context.Request.Path
             };
 
-            //if (exception is ValidationException validationException)
-            //{
-            //    problemDetails.Extensions["errors"] = validationException.Errors;
-            //}
+            if (exception is ValidationException validationException)
+            {
+                problemDetails.Extensions["errors"] = validationException.Errors;
+            }
 
             var result = await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
             {
@@ -44,7 +44,7 @@ namespace StoreApp.Api.ApplException
             BadRequestException => (StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ"),
             ConflictException => (StatusCodes.Status409Conflict, "Dữ liệu bị xung đột"),
             DomainException => (StatusCodes.Status400BadRequest, "Lỗi nghiệp vụ"),
-            //ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
+            ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
 
             //BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
 

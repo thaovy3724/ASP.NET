@@ -26,17 +26,10 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
             { 
                 throw new NotFoundException("Thể loại không tồn tại");
             }
-            // kiểm tra SupplierId tồn tại không
-            var supplier = await supplierRepository.GetById(request.SupplierId);
-            if (supplier is null)
-            {
-                throw new NotFoundException("Nhà cung cấp không tồn tại");
-            }
 
             // pass hết thì gọi Update để truyền data vào Product Entity 
             product.Update(
                 request.CategoryId,
-                request.SupplierId,
                 request.ProductName,
                 request.Price,
                 request.ImageUrl
