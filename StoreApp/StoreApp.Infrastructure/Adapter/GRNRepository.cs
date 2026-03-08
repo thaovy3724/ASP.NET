@@ -26,8 +26,7 @@ namespace StoreApp.Infrastructure.Adapter
         // Override method GetById ở BaseRepository 
         public new Task<GRN?> GetById(Guid id)
         {
-            return DbSet.AsNoTracking()
-                        .Include(o => o.Items)
+            return DbSet.Include(o => o.Items)
                         .FirstOrDefaultAsync(o => o.Id == id);
         }
     }

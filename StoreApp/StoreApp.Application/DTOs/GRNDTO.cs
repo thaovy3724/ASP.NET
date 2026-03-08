@@ -6,6 +6,7 @@ namespace StoreApp.Application.DTOs
         Guid Id,
         Guid SupplierId,
         GRNStatus GRNStatus,
-        DateTime UpdatedAt
+        DateTime UpdatedAt,
+        List<GRNDetailDTO> Items
     );
 }

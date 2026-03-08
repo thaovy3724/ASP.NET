@@ -16,7 +16,15 @@ namespace StoreApp.Application.Mapper
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,
                 TotalAmount: order.TotalAmount,
-                PaymentMethod: order.PaymentMethod
+                PaymentMethod: order.PaymentMethod,
+                Items: order.Items
+                    .Select(x => new OrderDetailDTO(
+                        x.ProductId,
+                        x.Quantity,
+                        x.Price,
+                        x.Subtotal
+                    ))
+                    .ToList()
             );
         }
 

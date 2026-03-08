@@ -10,5 +10,7 @@ namespace StoreApp.Application.DTOs
         OrderStatus OrderStatus,
         string Address,
         decimal TotalAmount,
-        PaymentMethod PaymentMethod);
+        PaymentMethod PaymentMethod,
+        List<OrderDetailDTO> Items
+    );
 }

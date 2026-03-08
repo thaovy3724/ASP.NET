@@ -51,7 +51,8 @@ namespace StoreApp.Core.Entities
             // Cập nhật item
             foreach(var item in newItems)
             {
-                var existedItem = Items.FirstOrDefault(x => x.Id == item.Id);
+                // tìm theo ProductId nhé 
+                var existedItem = Items.FirstOrDefault(x => x.ProductId == item.ProductId);
                 if (existedItem != null)
                     existedItem.Update(item.Quantity, item.Price);
                 else Items.Add(item);
