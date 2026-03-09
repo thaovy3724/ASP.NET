@@ -47,10 +47,12 @@ namespace StoreApp.Infrastructure.Migrations
                     password = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     full_name = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     phone = table.Column<string>(type: "nvarchar(10)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     refresh_token = table.Column<string>(type: "nvarchar(255)", nullable: true),
-                    refresh_token_expiry_time = table.Column<DateTime>(type: "datetime", nullable: true)
+                    refresh_token_expiry_time = table.Column<DateTime>(type: "datetime", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

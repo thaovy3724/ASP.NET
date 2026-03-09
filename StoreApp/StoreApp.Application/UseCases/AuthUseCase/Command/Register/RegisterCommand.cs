@@ -7,7 +7,8 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.Register
         string UserName,
         string FullName,
         string Password,
-        string Phone
+        string Phone,
+        string Email
     ) : IRequest<UserDTO>;
 
 }

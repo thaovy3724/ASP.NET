@@ -38,7 +38,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
                 hashedPassword = passwordHasher.HashPassword(user, request.Password!);
             }
 
-            user.Update(request.UserName, hashedPassword, request.FullName, request.Phone, role);
+            user.Update(request.UserName, hashedPassword, request.FullName, request.Phone, request.Email, role, request.IsActive);
             await userRepository.Update(user);
 
             return Unit.Value;

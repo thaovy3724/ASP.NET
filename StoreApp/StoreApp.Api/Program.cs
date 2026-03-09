@@ -2,6 +2,7 @@
 using StoreApp.Api;
 using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
+using StoreApp.Application.Common.Settings;
 using StoreApp.Application.Service.Payment;
 using System.Text.Json.Serialization;
 
@@ -36,6 +37,13 @@ builder.Services.AddHostedService<OrderAutoCancelService>();
 // Global exception handler
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Cấu hình EmailSettings để có thể inject vào các service cần thiết
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Đăng ký MemoryCache để lưu mã OTP tạm thời
+builder.Services.AddMemoryCache();
 
 //==== CONFIGURE HTTP PIPELINE ====//
 

@@ -8,5 +8,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
         string FullName,
         string? Password,   // password bị hash nên ko inner html đc 
         string Phone,
-        string Role) : IRequest<Unit>;
+        string Email,
+        string Role,
+        bool IsActive) : IRequest<Unit>;
 }

@@ -33,6 +33,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
                 hashedPassword,
                 request.FullName,
                 request.Phone,
+                request.Email,
                 role,
                 DateTime.Now
             );
