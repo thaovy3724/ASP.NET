@@ -7,7 +7,8 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetOne
         public GetProductValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id không được để trống");
+                .NotEmpty().WithMessage("Id không được để trống")
+                .NotEqual(Guid.Empty).WithMessage("Id không hợp lệ.");
         }
     }
 }

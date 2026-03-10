@@ -7,7 +7,8 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Update
         public UpdateProductValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id không được để trống");
+                .NotEmpty().WithMessage("Id không được để trống")
+                .NotEqual(Guid.Empty).WithMessage("Id không hợp lệ.");
             RuleFor(x => x.CategoryId)
                  .NotEmpty().WithMessage("Thể loại không được để trống");
             RuleFor(x => x.ProductName)

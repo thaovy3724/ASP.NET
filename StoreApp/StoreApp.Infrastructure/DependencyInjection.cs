@@ -9,6 +9,7 @@ using StoreApp.Application.Service.Security;
 using StoreApp.Infrastructure.Adapter;
 using StoreApp.Infrastructure.Adapter.Security;
 using StoreApp.Infrastructure.Data;
+using System.Security.Claims;
 using System.Text;
 
 namespace StoreApp.Infrastructure
@@ -19,7 +20,7 @@ namespace StoreApp.Infrastructure
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer("Server=SHIBATEO\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+                options.UseSqlServer("Server=DESKTOP-U6O3QQL\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
             });
 
             // Repositories
@@ -45,7 +46,8 @@ namespace StoreApp.Infrastructure
                             ValidateLifetime = true,
                             IssuerSigningKey = new SymmetricSecurityKey(
                                 Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]!)),
-                            ValidateIssuerSigningKey = true
+                            ValidateIssuerSigningKey = true,
+                            RoleClaimType = ClaimTypes.Role
                         };
                     });
 

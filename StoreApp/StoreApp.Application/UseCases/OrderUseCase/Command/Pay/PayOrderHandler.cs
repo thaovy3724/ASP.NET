@@ -1,12 +1,14 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
+using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 
-namespace StoreApp.Application.UseCases.OrderUseCase.Command.Deliver
+
+namespace StoreApp.Application.UseCases.OrderUseCase.Command.Pay
 {
-    public class DeliverOrderHandler(IOrderRepository orderRepository) : IRequestHandler<DeliverOrderCommand, Unit>
+    public class PayOrderHandler(IOrderRepository orderRepository) : IRequestHandler<CancelOrderCommand, Unit>
     {
-        public async Task<Unit> Handle(DeliverOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await orderRepository.GetById(request.Id);
             if (order is null)
@@ -14,8 +16,9 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Deliver
                 throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
 
-            order.DeliverOrder();
+            order.PayOrder();
             await orderRepository.Update(order);
+
             return Unit.Value;
         }
     }

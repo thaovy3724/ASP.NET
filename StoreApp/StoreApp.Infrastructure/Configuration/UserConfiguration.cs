@@ -59,6 +59,10 @@ namespace StoreApp.Infrastructure.Configuration
             builder.Property(u => u.RefreshTokenExpiryTime)
                    .HasColumnName("refresh_token_expiry_time")
                    .HasColumnType("datetime");
+
+            // --- INDEXING ---
+            builder.HasIndex(u => u.Username).IsUnique();
+            builder.HasIndex(u => u.RefreshToken);
         }
     }
 }

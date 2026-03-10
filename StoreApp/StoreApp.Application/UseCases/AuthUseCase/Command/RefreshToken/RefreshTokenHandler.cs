@@ -11,7 +11,7 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.RefreshToken
     {
         public async Task<TokenResponseDTO> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            var user = await authService.ValidateRefreshTokenAsync(request.userId, request.refreshToken);
+            var user = await authService.ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
             if (user is null)
             {
                 throw new UnauthorizedAccessException("Refresh token không hợp lệ hoặc đã hết hạn");

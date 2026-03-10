@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using StoreApp.Application.UseCases.AuthUseCase.Command.Login;
+using StoreApp.Application.UseCases.AuthUseCase.Command.Logout;
 using StoreApp.Application.UseCases.AuthUseCase.Command.RefreshToken;
 using StoreApp.Application.UseCases.AuthUseCase.Command.Register;
 
@@ -22,6 +23,13 @@ namespace StoreApp.Api.Controllers
         {
             var result = await mediator.Send(cmd);
             return Ok(result);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return NoContent();
         }
 
         [HttpPost("refresh-token")]

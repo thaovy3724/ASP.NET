@@ -21,16 +21,17 @@ namespace StoreApp.Core.Entities
             OrderStatus = status;
         }
 
-        public void MarkAsConfirmed()
+        public void ConfirmOrder()
         {
-            if(OrderStatus != OrderStatus.Pending)
+            if((OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.Cash) 
+                && (OrderStatus == OrderStatus.Paid && PaymentMethod == PaymentMethod.VnPay))
             {
-                throw new OrderCannotBeConfirmedException("Chỉ có thể xác nhận đơn hàng ở trạng thái Pending.");
+                OrderStatus = OrderStatus.Confirmed;
             }
-            OrderStatus = OrderStatus.Confirmed;
+            else throw new OrderCannotBeConfirmedException("Không thể xác nhận đơn hàng do trạng thái đơn hàng không hợp lệ");
         }
 
-        public void MarkAsDelivered()
+        public void DeliverOrder()
         {
             if (OrderStatus != OrderStatus.Confirmed)
             {
@@ -48,6 +49,14 @@ namespace StoreApp.Core.Entities
             OrderStatus = OrderStatus.Canceled;
         }
 
+        public void PayOrder()
+        {
+            if(OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.VnPay)
+            {
+                OrderStatus = OrderStatus.Paid;
+            }
+            else throw new OrderCannotBePaidException("Không thể thanh toán cho đơn hàng do trạng thái đơn hàng không hợp lệ.");
+        }
         public void AddItem(Guid productId, int quantity, decimal price)
         {
             var item = new OrderDetail(Id, productId, quantity, price);

@@ -12,7 +12,8 @@ namespace StoreApp.Application.UseCases.SupplierUseCase.Command.Update
         public UpdateSupplierValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id không được để trống");
+                .NotEmpty().WithMessage("Id không được để trống")
+                .NotEqual(Guid.Empty).WithMessage("Id không hợp lệ.");
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Tên nhà cung cấp không được để trống");
             RuleFor(x => x.Phone)

@@ -29,6 +29,10 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Create
                 throw new NotFoundException("Nhà cung cấp không tồn tại");
             }
 
+            if (await productRepository.IsExist(p => p.ProductName == request.ProductName && p.SupplierId == request.SupplierId))
+            {
+                throw new ConflictException("Sản phẩm đã tồn tại");
+            }
             // truyền data vào Product Entity
             var product = new Product(
                 request.CategoryId,

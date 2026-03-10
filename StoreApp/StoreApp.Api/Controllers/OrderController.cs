@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
@@ -11,6 +12,7 @@ using StoreApp.Application.UseCases.OrderUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController(IMediator mediator) : Controller
@@ -72,7 +74,16 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> PaymentCallback([FromQuery] PaymentCallbackCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            string frontendUrl = "http://localhost:3000";
+            if (result.Success)
+            {
+                return Redirect($"{frontendUrl}/payment-success?id={result.OrderId}");
+            }
+            else
+            {
+                return Redirect($"{frontendUrl}/payment-failed?id={result.OrderId}");
+
+            }
         }
     }
 }

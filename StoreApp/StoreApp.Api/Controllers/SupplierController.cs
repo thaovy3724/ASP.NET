@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StoreApp.Application.UseCases.SupplierUseCase.Command.Create;
@@ -9,6 +10,7 @@ using StoreApp.Application.UseCases.SupplierUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SupplierController(IMediator mediator) : Controller

@@ -12,7 +12,8 @@ namespace StoreApp.Application.UseCases.CategoryUseCase.Query.GetOne
         public GetCategoryValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id không được để trống");
+                .NotEmpty().WithMessage("Id không được để trống")
+                .NotEqual(Guid.Empty).WithMessage("Id không hợp lệ.");
         }
     }
 }

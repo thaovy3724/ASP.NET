@@ -25,7 +25,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
             //if (request.Items.Any(x => x.Quantity <= 0))
             //    return new ResultWithData<OrderDTO>(false, "Số lượng sản phẩm phải lớn hơn 0.", null);
 
-            if (await userRepository.IsExist(user => user.Id == request.CustomerId && user.Role == Role.Customer))
+            if (!await userRepository.IsExist(user => user.Id == request.CustomerId && user.Role == Role.Customer))
             {
                 throw new NotFoundException("Khách hàng không tồn tại.");
             }

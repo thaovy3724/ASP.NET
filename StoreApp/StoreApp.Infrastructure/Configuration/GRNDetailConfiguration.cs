@@ -42,6 +42,8 @@ namespace StoreApp.Infrastructure.Configuration
                    .WithMany()
                    .HasForeignKey(od => od.ProductId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(od => new { od.GRNId, od.ProductId }).IsUnique(); // Đảm bảo mỗi sản phẩm chỉ xuất hiện một lần trong cùng một GRN
         }
     }
 }

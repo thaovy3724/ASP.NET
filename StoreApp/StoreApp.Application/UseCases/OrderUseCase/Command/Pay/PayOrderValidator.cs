@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace StoreApp.Application.UseCases.GRNUseCase.Command.Complete
+namespace StoreApp.Application.UseCases.OrderUseCase.Command.Pay
 {
-    public class CompleteGRNValidator : AbstractValidator<CompleteGRNCommand>
+    public class PayOrderValidator : AbstractValidator<PayOrderCommand>
     {
-        public CompleteGRNValidator()
+        public PayOrderValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id không được để trống")

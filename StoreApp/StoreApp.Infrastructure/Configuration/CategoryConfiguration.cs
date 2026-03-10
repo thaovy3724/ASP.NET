@@ -18,6 +18,8 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("name")
                    .HasColumnType("nvarchar(100)")
                    .IsRequired();
+
+            builder.HasIndex(c => c.Name).IsUnique(); // Đảm bảo tên danh mục là duy nhất
         }
     }
 }
