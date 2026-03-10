@@ -18,7 +18,7 @@ namespace StoreApp.Infrastructure.Configuration
             // Username: Cần Unique để không bị trùng tên đăng nhập
             builder.Property(u => u.Username)
                    .HasColumnName("username")
-                   .HasColumnType("nvarchar(50)")
+                   .HasColumnType("nvarchar(255)")
                    .IsRequired();
 
             // Password: Thường để dài hơn để lưu Hash
@@ -59,6 +59,10 @@ namespace StoreApp.Infrastructure.Configuration
             builder.Property(u => u.RefreshTokenExpiryTime)
                    .HasColumnName("refresh_token_expiry_time")
                    .HasColumnType("datetime");
+
+            // --- INDEXING ---
+            builder.HasIndex(u => u.Username).IsUnique();
+            builder.HasIndex(u => u.RefreshToken);
         }
     }
 }

@@ -16,10 +16,9 @@ namespace StoreApp.Core.Entities
         // BẮT BUỘC: Thêm constructor trống để EF Core có thể khởi tạo đối tượng khi lấy dữ liệu từ DB
         //private User() : this(default!, default!, default!, default!, default!) { }
 
-        public void Update(string username, string password, string fullName, string phone, Role role)
+        public void Update(string username, string fullName, string phone, Role role)
         {
             Username = username;
-            Password = password;
             FullName = fullName;
             Phone = phone;
             Role = role;

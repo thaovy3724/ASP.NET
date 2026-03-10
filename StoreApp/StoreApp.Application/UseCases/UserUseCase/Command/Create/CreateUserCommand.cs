@@ -4,7 +4,7 @@ using StoreApp.Application.DTOs;
 namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
 {
     public sealed record CreateUserCommand(
-        string UserName, 
+        string UserName, // Email as username
         string FullName, 
         string Password, 
         string Phone,

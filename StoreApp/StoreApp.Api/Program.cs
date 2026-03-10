@@ -2,7 +2,6 @@
 using StoreApp.Api;
 using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
-using StoreApp.Application.Service.Payment;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,9 +24,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-// Add application and infrastructure services (repositories, services, etc.)
-builder.Services.AddAppDI(builder.Configuration);
-
 // cau hinh vnpay & order
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
 builder.Services.AddHttpContextAccessor();
@@ -36,6 +32,9 @@ builder.Services.AddHostedService<OrderAutoCancelService>();
 // Global exception handler
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Add application and infrastructure services (repositories, services, etc.)
+builder.Services.AddAppDI(builder.Configuration);
 
 //==== CONFIGURE HTTP PIPELINE ====//
 

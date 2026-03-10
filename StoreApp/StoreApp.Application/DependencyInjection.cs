@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using StoreApp.Application.Behaviors;
 using StoreApp.Core.Entities;
 
 namespace StoreApp.Application
@@ -8,15 +11,16 @@ namespace StoreApp.Application
     {
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
+            var assembly = typeof(DependencyInjection).Assembly;
             services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+                cfg.RegisterServicesFromAssembly(assembly);
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             });
 
-            // Application Services
-
+            services.AddValidatorsFromAssembly(assembly);
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             return services;
-        }
+        } 
     }
 }

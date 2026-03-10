@@ -42,7 +42,7 @@ public class VnPayService : IVnPayService
         return paymentUrl;
     }
 
-    public PaymentResponseModel PaymentExecute(Dictionary<string, string> collections)
+    public PaymentResponseDTO PaymentExecute(Dictionary<string, string> collections)
     {
         var pay = new VnPayLibrary();
 
@@ -81,26 +81,22 @@ public class VnPayService : IVnPayService
             throw new PaymentException("Lỗi: Sai chữ ký (Invalid Signature)");
         }
 
-        // 4. Kiểm tra mã lỗi từ VNPay (Ví dụ: Khách hủy = 24)
+        // 4. Kiểm tra mã lỗi từ VNPay (Ví dụ: Khách hủy = 24) (vnp_ResponseCode)
         if (vnp_ResponseCode != "00")
         {
             Console.WriteLine($"---------------[DEBUG VNPay] Khách hủy hoặc lỗi. Code: {vnp_ResponseCode}");
-            return new PaymentResponseModel
-            {
-                Success = false,
-                VnPayResponseCode = vnp_ResponseCode,
-                OrderId = orderId // Trả về ID để Controller xử lý
-            };
+            return new PaymentResponseDTO
+            (
+                Success : false,
+                OrderId : orderId // Trả về ID để Controller xử lý
+            );
         }
 
         // 5. Thành công
-        return new PaymentResponseModel
-        {
-            Success = true,
-            OrderId = orderId,
-            PaymentId = vnp_SecureHash,
-            TransactionId = pay.GetResponseData("vnp_TransactionNo"),
-            VnPayResponseCode = vnp_ResponseCode
-        };
+        return new PaymentResponseDTO
+            (
+                Success: true,
+                OrderId: orderId // Trả về ID để Controller xử lý
+            );
     }
 }

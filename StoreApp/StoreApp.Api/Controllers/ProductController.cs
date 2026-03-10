@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Create;
@@ -29,6 +30,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result.Items);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
         {
@@ -36,6 +38,7 @@ namespace StoreApp.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command)
         {
@@ -45,6 +48,7 @@ namespace StoreApp.Api.Controllers
             return NoContent(); 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -53,6 +57,7 @@ namespace StoreApp.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         // Upload image:
         [HttpPost("upload-image")]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file)

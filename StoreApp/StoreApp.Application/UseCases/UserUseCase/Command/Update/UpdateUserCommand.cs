@@ -6,7 +6,6 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
         Guid Id,
         string UserName,
         string FullName,
-        string? Password,   // password bị hash nên ko inner html đc 
         string Phone,
         string Role) : IRequest<Unit>;
 }

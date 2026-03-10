@@ -38,6 +38,10 @@ namespace StoreApp.Infrastructure.Configuration
             builder.Property(s => s.Address)
                    .HasColumnType("nvarchar(500)") // 
                    .IsRequired();
+
+            builder.HasIndex(s => s.Email).IsUnique(); // Đảm bảo email là duy nhất trong hệ thống
+            builder.HasIndex(s => s.Phone).IsUnique();
+            builder.HasIndex(s => s.Name).IsUnique(); // Đảm bảo tên nhà cung cấp là duy nhất trong hệ thống
         }
     }
 }

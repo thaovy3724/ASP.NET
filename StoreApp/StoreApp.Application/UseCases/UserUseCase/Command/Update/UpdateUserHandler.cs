@@ -31,14 +31,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
                 _ => throw new ArgumentException("Vai trò không hợp lệ(Admin/Staff/Customer)."),
             };
 
-            // Nếu Password rỗng -> giữ nguyên password hiện tại.
-            var hashedPassword = user.Password;
-            if (!string.IsNullOrWhiteSpace(request.Password))
-            {
-                hashedPassword = passwordHasher.HashPassword(user, request.Password!);
-            }
-
-            user.Update(request.UserName, hashedPassword, request.FullName, request.Phone, role);
+            user.Update(request.UserName, request.FullName, request.Phone, role);
             await userRepository.Update(user);
 
             return Unit.Value;

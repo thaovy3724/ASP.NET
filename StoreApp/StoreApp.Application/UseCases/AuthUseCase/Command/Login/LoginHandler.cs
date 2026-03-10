@@ -11,13 +11,13 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.Login
     {
         public async Task<TokenResponseDTO> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetByName(request.userName);
+            var user = await userRepository.GetByName(request.UserName);
             if (user is null)
             {
                 throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không đúng.");
             }
 
-            if (passwordHasher.VerifyHashedPassword(user, user.Password, request.password)
+            if (passwordHasher.VerifyHashedPassword(user, user.Password, request.Password)
                 == PasswordVerificationResult.Failed)
             {
                 throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không đúng.");

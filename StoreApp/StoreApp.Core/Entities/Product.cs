@@ -12,10 +12,9 @@ namespace StoreApp.Core.Entities
         public DateTime CreatedAt { get; private set; } = DateTime.Now; 
         public string ImageUrl { get; private set; } = imageUrl;
         
-        public void Update(Guid categoryId, Guid supplierId, string productName, decimal price, string imageUrl)
+        public void Update(Guid categoryId, string productName, decimal price, string imageUrl)
         {
             CategoryId = categoryId;
-            SupplierId = supplierId;
             ProductName = productName;
             Price = price;
             ImageUrl = imageUrl;
