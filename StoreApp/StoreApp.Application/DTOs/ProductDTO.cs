@@ -7,6 +7,7 @@
         string ProductName,
         decimal Price,
         int Quantity,
+        DateTime CreatedAt,
         string? ImageUrl
     );
 }

@@ -21,14 +21,18 @@ namespace StoreApp.Core.Entities
             OrderStatus = status;
         }
 
-        public void ConfirmOrder()
+        public void ConfirmOrder(Guid staffId)
         {
-            if((OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.Cash) 
-                && (OrderStatus == OrderStatus.Paid && PaymentMethod == PaymentMethod.VnPay))
-            {
-                OrderStatus = OrderStatus.Confirmed;
-            }
-            else throw new OrderCannotBeConfirmedException("Không thể xác nhận đơn hàng do trạng thái đơn hàng không hợp lệ");
+            var canConfirm =
+                (OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.Cash)
+                || (OrderStatus == OrderStatus.Paid && PaymentMethod == PaymentMethod.VnPay);
+
+            if (!canConfirm)
+                throw new OrderCannotBeConfirmedException("Không thể xác nhận đơn hàng do trạng thái đơn hàng không hợp lệ");
+
+            StaffId = staffId;
+            OrderStatus = OrderStatus.Confirmed;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void DeliverOrder()
@@ -38,15 +42,20 @@ namespace StoreApp.Core.Entities
                 throw new OrderCannotBeDeliveredException("Chỉ có thể giao hàng cho đơn hàng đã được xác nhận.");
             }
             OrderStatus = OrderStatus.Delivered;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void CancelOrder()
         {
-            if (OrderStatus != OrderStatus.Confirmed)
+            if (OrderStatus != OrderStatus.Pending
+                && OrderStatus != OrderStatus.Paid
+                && OrderStatus != OrderStatus.Confirmed)
             {
-                throw new OrderCannotBeCanceledException("Không thể hủy đơn hàng đã được xác nhận.");
+                throw new OrderCannotBeCanceledException("Không thể hủy đơn hàng ở trạng thái hiện tại.");
             }
+
             OrderStatus = OrderStatus.Canceled;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void PayOrder()
@@ -54,6 +63,7 @@ namespace StoreApp.Core.Entities
             if(OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.VnPay)
             {
                 OrderStatus = OrderStatus.Paid;
+                UpdatedAt = DateTime.UtcNow;
             }
             else throw new OrderCannotBePaidException("Không thể thanh toán cho đơn hàng do trạng thái đơn hàng không hợp lệ.");
         }
