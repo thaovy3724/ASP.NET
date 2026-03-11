@@ -22,14 +22,13 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnType("datetime")
                    .IsRequired();
 
-            // Khách hàng (Có thể null nếu khách lẻ không đăng ký)
             builder.Property(o => o.CustomerId)
-                   .HasColumnName("customer_id");
+                   .HasColumnName("customer_id")
+                   .IsRequired();
 
-            // Nhân viên bán hàng (Bắt buộc)
+            // Nhân viên bán hàng
             builder.Property(o => o.StaffId)
-                   .HasColumnName("staff_id")
-                   .IsRequired(false);
+                   .HasColumnName("staff_id");
 
             // OrderStatus
             builder.Property(u => u.OrderStatus)

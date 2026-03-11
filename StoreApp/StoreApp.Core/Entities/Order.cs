@@ -35,23 +35,32 @@ namespace StoreApp.Core.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void DeliverOrder()
+        public void DeliverOrder(Guid staffId)
         {
             if (OrderStatus != OrderStatus.Confirmed)
             {
                 throw new OrderCannotBeDeliveredException("Chỉ có thể giao hàng cho đơn hàng đã được xác nhận.");
             }
+            StaffId = staffId;
             OrderStatus = OrderStatus.Delivered;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void CancelOrder()
+        public void CancelOrder(Guid? staffId = null)
         {
-            if (OrderStatus != OrderStatus.Pending
-                && OrderStatus != OrderStatus.Paid
-                && OrderStatus != OrderStatus.Confirmed)
+            var canCancel =
+                (OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.Cash)
+                || (OrderStatus == OrderStatus.Paid && PaymentMethod == PaymentMethod.VnPay);
+
+            if (!canCancel)
+                
             {
                 throw new OrderCannotBeCanceledException("Không thể hủy đơn hàng ở trạng thái hiện tại.");
+            }
+
+            if(staffId is not null) // Nếu khách hàng hủy đơn hàng thì staffId sẽ là null, ngược lại nếu nhân viên hủy đơn hàng thì sẽ có staffId
+            {
+                StaffId = staffId.Value;
             }
 
             OrderStatus = OrderStatus.Canceled;
