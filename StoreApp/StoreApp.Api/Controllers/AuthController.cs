@@ -4,6 +4,8 @@ using StoreApp.Application.UseCases.AuthUseCase.Command.Login;
 using StoreApp.Application.UseCases.AuthUseCase.Command.Logout;
 using StoreApp.Application.UseCases.AuthUseCase.Command.RefreshToken;
 using StoreApp.Application.UseCases.AuthUseCase.Command.Register;
+using StoreApp.Application.UseCases.AuthUseCase.Command.ResendOtp;
+using StoreApp.Application.UseCases.AuthUseCase.Command.VerifyOtp;
 
 namespace StoreApp.Api.Controllers
 {
@@ -34,6 +36,20 @@ namespace StoreApp.Api.Controllers
 
         [HttpPost("refresh-token")]
         public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<ActionResult> VerifyOtp([FromBody] VerifyOtpCommand cmd)
+        {
+            var result = await mediator.Send(cmd);
+            return Ok(result);
+        }
+
+        [HttpPost("resend-otp")]
+        public async Task<ActionResult> ResendOtp([FromBody] ResendOtpCommand cmd)
         {
             var result = await mediator.Send(cmd);
             return Ok(result);

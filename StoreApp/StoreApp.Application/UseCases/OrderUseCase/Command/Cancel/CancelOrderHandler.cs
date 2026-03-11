@@ -15,7 +15,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Cancel
             }
 
             // Cập nhật trạng thái đơn hàng thành "Đã hủy"
-            order.CancelOrder();
+            order.CancelOrder(request.StaffId);
             await orderRepository.Update(order);
 
             // Cập nhật tồn kho cho các sản phẩm trong đơn hàng

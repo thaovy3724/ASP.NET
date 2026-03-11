@@ -28,6 +28,8 @@ namespace StoreApp.Infrastructure.Adapter
                     x.ProductName.Contains(k)
                 );
             }
+            // mới nhất hiện trước 
+            query = query.OrderByDescending(x => x.CreatedAt);
             return await query.ToPagedListAsync(pageNumber, pageSize);
         }
     }

@@ -16,7 +16,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.PaymentCallback
 
             if (!response.Success)
             {
-                await mediator.Send(new CancelOrderCommand(response.OrderId));
+                await mediator.Send(new CancelOrderCommand(response.OrderId, null));
             }
             else
             {

@@ -18,14 +18,6 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
                 throw new ConflictException("Tên đăng nhập đã tồn tại.");
             }
 
-            var role = request.Role switch
-            {
-                "Admin" => Role.Admin,
-                "Staff" => Role.Staff,
-                "Customer" => Role.Customer,
-                _ => throw new ArgumentException("Vai trò người dùng không hợp lệ(Admin/Staff/Customer)"),
-            };
-
             var hashedPassword = PasswordHasher.HashPassword(null, request.Password);
             var user = new User
             (
@@ -33,7 +25,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
                 hashedPassword,
                 request.FullName,
                 request.Phone,
-                role,
+                request.Role,
                 DateTime.Now
             );
 

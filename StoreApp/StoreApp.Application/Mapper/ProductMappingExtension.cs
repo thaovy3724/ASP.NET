@@ -15,6 +15,7 @@ namespace StoreApp.Application.Mapper
                 ProductName:entity.ProductName,
                 Price:      entity.Price,
                 Quantity:     entity.Quantity,
+                CreatedAt: entity.CreatedAt,
                 ImageUrl:   entity.ImageUrl
             );
         }

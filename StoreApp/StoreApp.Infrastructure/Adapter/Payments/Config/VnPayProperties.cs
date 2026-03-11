@@ -20,6 +20,6 @@ namespace SM.Infrastructure.Adapters.Payment.Config
         // Thêm trường này nếu trong appsettings bạn đặt tên key là "PayUrl" 
         // (để chứa link https://sandbox.vnpayment.vn/paymentv2/vpcpay.html)
         public string PaymentUrl { get; set; } = string.Empty;
-        public int PaymentTimeout { get; set; } = 15; // Thời gian timeout mặc định là 15 phút
+        public int PaymentTimeout { get; set; } = 1; // Thời gian timeout mặc định là 15 phút
     }
 }
