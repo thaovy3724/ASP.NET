@@ -399,3 +399,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+StoreApp/StoreApp.Infrastructure/DependencyInjection.cs
+StoreApp/StoreApp.Infrastructure/Migrations/20260311135018_init.cs
+StoreApp/StoreApp.Infrastructure/DependencyInjection.cs
+StoreApp/StoreApp.Infrastructure/Migrations/20260311135018_init.Designer.cs
+StoreApp/StoreApp.Infrastructure/Migrations/StoreDbContextModelSnapshot.cs
+StoreApp/StoreApp.Infrastructure/DependencyInjection.cs
