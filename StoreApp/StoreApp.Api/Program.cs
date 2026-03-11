@@ -2,6 +2,8 @@
 using StoreApp.Api;
 using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
+using StoreApp.Application.Common.Settings;
+using StoreApp.Application.Service.Payment;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,12 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Add application and infrastructure services (repositories, services, etc.)
 builder.Services.AddAppDI(builder.Configuration);
+// Cấu hình EmailSettings để có thể inject vào các service cần thiết
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Đăng ký MemoryCache để lưu mã OTP tạm thời
+builder.Services.AddMemoryCache();
 
 //==== CONFIGURE HTTP PIPELINE ====//
 
