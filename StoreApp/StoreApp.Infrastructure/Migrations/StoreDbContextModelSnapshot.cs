@@ -36,6 +36,9 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("category", (string)null);
                 });
 
@@ -92,9 +95,10 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GRNId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("GRNId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("GRN_detail", (string)null);
                 });
@@ -169,9 +173,10 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("OrderId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("order_detail", (string)null);
                 });
@@ -216,7 +221,8 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("SupplierId");
+                    b.HasIndex("SupplierId", "ProductName")
+                        .IsUnique();
 
                     b.ToTable("product", (string)null);
                 });
@@ -245,6 +251,15 @@ namespace StoreApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.ToTable("supplier", (string)null);
                 });
@@ -291,10 +306,15 @@ namespace StoreApp.Infrastructure.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnName("username");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RefreshToken");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("user", (string)null);
                 });

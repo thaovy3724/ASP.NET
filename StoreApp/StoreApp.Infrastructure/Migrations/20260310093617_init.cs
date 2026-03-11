@@ -43,7 +43,7 @@ namespace StoreApp.Infrastructure.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    username = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    username = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     password = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     full_name = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     phone = table.Column<string>(type: "nvarchar(10)", nullable: false),
@@ -191,14 +191,21 @@ namespace StoreApp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_category_name",
+                table: "category",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GRN_supplier_id",
                 table: "GRN",
                 column: "supplier_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GRN_detail_GRN_id",
+                name: "IX_GRN_detail_GRN_id_product_id",
                 table: "GRN_detail",
-                column: "GRN_id");
+                columns: new[] { "GRN_id", "product_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_GRN_detail_product_id",
@@ -216,9 +223,10 @@ namespace StoreApp.Infrastructure.Migrations
                 column: "staff_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_order_detail_order_id",
+                name: "IX_order_detail_order_id_product_id",
                 table: "order_detail",
-                column: "order_id");
+                columns: new[] { "order_id", "product_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_order_detail_product_id",
@@ -231,9 +239,39 @@ namespace StoreApp.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_SupplierId",
+                name: "IX_product_SupplierId_product_name",
                 table: "product",
-                column: "SupplierId");
+                columns: new[] { "SupplierId", "product_name" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_supplier_Email",
+                table: "supplier",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_supplier_Name",
+                table: "supplier",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_supplier_Phone",
+                table: "supplier",
+                column: "Phone",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_refresh_token",
+                table: "user",
+                column: "refresh_token");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_username",
+                table: "user",
+                column: "username",
+                unique: true);
         }
 
         /// <inheritdoc />
