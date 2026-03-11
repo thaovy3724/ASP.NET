@@ -57,6 +57,10 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 
                     //await inventoryRepository.deductQuantityOfCreatedOrder(item.ProductId, item.Quantity);
 
+                    // Trừ tồn kho ngay khi tạo order
+                    product.DecreaseStock(item.Quantity);
+                    await productRepository.Update(product);
+
                     order.AddItem(item.ProductId, item.Quantity, item.Price);
                 }
                 await orderRepository.Create(order);

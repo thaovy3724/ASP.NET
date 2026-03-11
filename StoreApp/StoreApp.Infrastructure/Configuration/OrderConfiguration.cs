@@ -29,7 +29,7 @@ namespace StoreApp.Infrastructure.Configuration
             // Nhân viên bán hàng (Bắt buộc)
             builder.Property(o => o.StaffId)
                    .HasColumnName("staff_id")
-                   .IsRequired();
+                   .IsRequired(false);
 
             // OrderStatus
             builder.Property(u => u.OrderStatus)

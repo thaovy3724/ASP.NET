@@ -21,7 +21,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("RazorFE", policy =>
         policy.WithOrigins("https://localhost:7235", "http://localhost:5293")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .WithExposedHeaders("X-Pagination"));
 });
 
 // cau hinh vnpay & order
