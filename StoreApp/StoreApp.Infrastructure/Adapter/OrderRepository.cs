@@ -22,21 +22,6 @@ namespace StoreApp.Infrastructure.Adapter
             return await query.ToPagedListAsync(pageNumber, pageSize);
         }
 
-        // Override method GetById ở BaseRepository 
-        public new Task<Order?> GetById(Guid id)
-        {
-            return DbSet.AsNoTracking()
-                        .Include(o => o.Items)
-                        .FirstOrDefaultAsync(o => o.Id == id);
-        }
-
-        public Task<List<Order>> GetListOrderWithDetails()
-        {
-            return DbSet.AsNoTracking()
-                        .Include(o => o.Items)
-                        .ToListAsync();
-        }
-
         public Task<List<Order>> GetListExpiredOrders(DateTime timeLimit)
         { // kiểm tra các đơn hàng Pending và chưa quá hạn
             return DbSet.AsNoTracking()

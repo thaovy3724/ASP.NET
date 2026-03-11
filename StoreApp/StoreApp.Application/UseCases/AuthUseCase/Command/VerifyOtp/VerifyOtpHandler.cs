@@ -2,11 +2,6 @@
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Ports;
 using StoreApp.Application.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Application.UseCases.AuthUseCase.Command.VerifyOtp
 {
@@ -22,7 +17,7 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.VerifyOtp
             }
 
             // 2. Logic kích hoạt tài khoản trong Database
-            var user = await UserRepository.GetByEmail(request.Email);
+            var user = await UserRepository.GetByName(request.Email);
             user.Activate();
             await UserRepository.Update(user);
 

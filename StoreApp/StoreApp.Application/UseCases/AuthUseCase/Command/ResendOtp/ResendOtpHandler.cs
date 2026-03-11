@@ -21,7 +21,7 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.ResendOtp
                 throw new BadRequestException("Vui lòng đợi 60 giây trước khi yêu cầu mã mới.");
             }
 
-            var user = await userRepository.GetByEmail(request.Email);
+            var user = await userRepository.GetByName(request.Email);
             if (user == null)
             {
                 return false; 

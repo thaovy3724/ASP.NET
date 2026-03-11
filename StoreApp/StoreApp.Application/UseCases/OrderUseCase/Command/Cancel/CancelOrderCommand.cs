@@ -2,5 +2,5 @@
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Cancel
 {
-    public sealed record CancelOrderCommand(Guid Id) : IRequest<Unit>;
+    public sealed record CancelOrderCommand(Guid Id, Guid? StaffId) : IRequest<Unit>;
 }

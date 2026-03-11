@@ -38,11 +38,11 @@ namespace StoreApp.Infrastructure.Adapter.Security
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-        public async Task<TokenResponseDTO> CreateTokenResponse(User? user)
+        public async Task<TokenResponseDTO> CreateTokenResponse(User user)
         {
             return new TokenResponseDTO(
-                accessToken: CreateToken(user),
-                refreshToken: await GenerateAndSaveRefreshTokenAsync(user)
+                AccessToken: CreateToken(user),
+                RefreshToken: await GenerateAndSaveRefreshTokenAsync(user)
             );
         }
 

@@ -83,13 +83,8 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Confirm(Guid id)
         {
             // Lấy staffId từ token
-            var staffIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);   // lấy giá trị của claim NameIdentifier chứa staffId
-            if (!Guid.TryParse(staffIdText, out var staffId))   // chuỗi không chuyển thành GUID đc => id không hợp lệ
-            {
-                return Forbid();
-            }
-
-            var cmd = new ConfirmOrderCommand(Id: id, StaffId: staffId);
+            var staffId = GetCurrentUserId();
+            var cmd = new ConfirmOrderCommand(id, staffId);
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
@@ -99,7 +94,8 @@ namespace StoreApp.Api.Controllers
         [HttpPut("{id:guid}/deliver")]
         public async Task<IActionResult> Deliver(Guid id)
         {
-            var cmd = new DeliverOrderCommand(Id: id);
+            var staffId = GetCurrentUserId();
+            var cmd = new DeliverOrderCommand(id, staffId);
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
@@ -109,7 +105,8 @@ namespace StoreApp.Api.Controllers
         [HttpPut("{id:guid}/cancel")]
         public async Task<IActionResult> Cancel(Guid id)
         {
-            var cmd = new CancelOrderCommand(Id: id);
+            var staffId = GetCurrentUserId();
+            var cmd = new CancelOrderCommand(id, staffId);
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
@@ -129,6 +126,16 @@ namespace StoreApp.Api.Controllers
                 return Redirect($"{frontendUrl}/payment-failed?id={result.OrderId}");
 
             }
+        }
+
+        private Guid? GetCurrentUserId()
+        {
+            var idText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (Guid.TryParse(idText, out var guid))
+            {
+                return guid;
+            }
+            return null;
         }
     }
 }

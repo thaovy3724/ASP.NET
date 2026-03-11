@@ -27,10 +27,5 @@ namespace StoreApp.Infrastructure.Adapter
         {
             return _dbset.AsNoTracking().FirstOrDefaultAsync(x => x.Username == name);
         }
-
-        public Task<User?> GetByEmail(string email)
-        {
-            return _dbset.AsNoTracking().FirstOrDefaultAsync(x => x.Email == email);
-        }
     }
 }

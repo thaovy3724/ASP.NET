@@ -14,7 +14,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Confirm
                 throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
 
-            order.ConfirmOrder(request.StaffId);
+            order.ConfirmOrder(request.StaffId.Value);
             await orderRepository.Update(order);
             return Unit.Value;
         }
