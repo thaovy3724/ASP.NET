@@ -1,13 +1,7 @@
 ﻿using MediatR;
 using StoreApp.Application.Exceptions;
-using StoreApp.Application.Ports;
 using StoreApp.Application.Repository;
-using StoreApp.Application.Service.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StoreApp.Application.Service.Email;
 
 namespace StoreApp.Application.UseCases.AuthUseCase.Command.ResendOtp
 {
@@ -15,24 +9,14 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.ResendOtp
     {
         public async Task<bool> Handle(ResendOtpCommand request, CancellationToken cancellationToken)
         {
-            // Kiểm tra xem có đang bị khóa gửi lại OTP không
-            if (OtpService.IsResendLocked(request.Email))
+            var user = await userRepository.GetByName(request.UserName);
+            if (user is not null)
             {
-                throw new BadRequestException("Vui lòng đợi 60 giây trước khi yêu cầu mã mới.");
+                throw new ConflictException("Tài khoản đã được xác thực trước đó");
             }
 
-            var user = await userRepository.GetByName(request.Email);
-            if (user == null)
-            {
-                return false; 
-            }
-
-            if (user.IsActive)
-            {
-                throw new BadRequestException("Tài khoản này đã được xác thực trước đó.");
-            }
             // Gọi lại phương thức gửi OTP
-            await OtpService.SendAndCacheOtpAsync(request.Email, user.FullName);
+            await OtpService.ResendAndCachedOtpAsync(request.UserName);
 
             return true;
         }

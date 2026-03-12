@@ -2,5 +2,5 @@
 
 namespace StoreApp.Application.UseCases.AuthUseCase.Command.ResendOtp
 {
-    public sealed record ResendOtpCommand(string Email) : IRequest<bool>;
+    public sealed record ResendOtpCommand(string UserName) : IRequest<bool>;
 }

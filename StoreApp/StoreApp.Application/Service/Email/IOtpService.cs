@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StoreApp.Core.Entities;
 
-namespace StoreApp.Application.Ports
+namespace StoreApp.Application.Service.Email
 {
     public interface IOtpService
     {
         // Gửi mã OTP và lưu vào Cache
-        Task SendAndCacheOtpAsync(string email, string fullName);
+        Task SendAndCacheOtpAsync(User user);
+        Task ResendAndCachedOtpAsync(string userName);
 
         // Kiểm tra xem mã người dùng nhập có khớp với Cache không
-        bool ValidateOtp(string email, string inputOtp);
+        User? ValidateOtp(string email, string inputOtp);
 
         // Xóa mã sau khi đã Verify thành công
         void ClearOtp(string email);
