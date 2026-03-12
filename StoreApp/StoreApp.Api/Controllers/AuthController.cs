@@ -17,7 +17,7 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return Ok(result);
+            return NoContent();
         }
 
         [HttpPost("login")]

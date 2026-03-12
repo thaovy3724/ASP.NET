@@ -1,11 +1,7 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StoreApp.Application.DTOs;
 
 namespace StoreApp.Application.UseCases.AuthUseCase.Command.VerifyOtp
 {
-    public sealed record VerifyOtpCommand(string Email, string Otp) : IRequest<bool>;
+    public sealed record VerifyOtpCommand(string Email, string Otp) : IRequest<VerifyOtpResponseDTO>;
 }

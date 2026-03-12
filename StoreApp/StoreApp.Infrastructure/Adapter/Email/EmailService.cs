@@ -4,9 +4,9 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using StoreApp.Application.Common.Settings;
-using StoreApp.Application.Ports;
+using StoreApp.Application.Service.Email;
 
-namespace StoreApp.Infrastructure.Adapters.Mailing
+namespace StoreApp.Infrastructure.Adapter.Email
 {
     public class EmailService : IEmailService
     {

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using StoreApp.Application.DTOs;
 
 namespace StoreApp.Application.UseCases.AuthUseCase.Command.Register
 {
@@ -8,6 +7,6 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.Register
         string FullName,
         string Password,
         string Phone
-    ) : IRequest<UserDTO>;
+    ) : IRequest<Unit>;
 
 }
