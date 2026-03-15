@@ -81,9 +81,11 @@ namespace StoreApp.Infrastructure.Adapter.Email
         {
             // Tạo đúng Key mà bạn đã dùng để lưu lúc Register/Resend
             string cacheKey = $"Verify_{email}";
+            string resendLockKey = $"ResendLock_{email}";
 
             // Xóa bỏ Key này khỏi RAM ngay lập tức
             cache.Remove(cacheKey);
+            cache.Remove(resendLockKey);
         }
 
         public bool IsResendLocked(string email)

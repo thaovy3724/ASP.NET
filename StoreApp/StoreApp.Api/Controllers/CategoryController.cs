@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Create;
@@ -10,7 +9,7 @@ using StoreApp.Application.UseCases.CategoryUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController(IMediator mediator) : Controller
