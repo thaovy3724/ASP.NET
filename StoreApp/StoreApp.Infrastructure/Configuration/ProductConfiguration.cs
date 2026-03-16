@@ -50,7 +50,7 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasForeignKey(o => o.CategoryId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(p => new { p.SupplierId, p.ProductName, }).IsUnique(); // Đảm bảo tên sản phẩm là duy nhất trong hệ thống
+            builder.HasIndex(p => new { p.SupplierId, p.ProductName }).IsUnique(); // Đảm bảo tên sản phẩm là duy nhất trong hệ thống
         }
     }
 }
