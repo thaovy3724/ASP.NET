@@ -7,7 +7,6 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
         string UserName,
         string FullName,
         string Phone,
-        string Email,
         string Role,
         bool IsActive) : IRequest<Unit>;
 }

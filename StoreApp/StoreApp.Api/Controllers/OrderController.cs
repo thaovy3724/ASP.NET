@@ -100,30 +100,53 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Staff")]
-        // Cancel order
+        [Authorize(Roles = "Staff,Customer")]
         [HttpPut("{id:guid}/cancel")]
         public async Task<IActionResult> Cancel(Guid id)
         {
-            var staffId = GetCurrentUserId();
-            var cmd = new CancelOrderCommand(id, staffId);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
+            if (User.IsInRole("Staff"))
+            {
+                var staffId = GetCurrentUserId();
+                var cmd = new CancelOrderCommand(id, staffId);
+                var result = await mediator.Send(cmd);
+                return Ok(result);
+            }
+
+            // Customer được huỷ đơn của chính mình
+            var query = new GetOrderQuery(Id: id);
+            var order = await mediator.Send(query);
+
+            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(customerIdText, out var customerId))
+            {
+                return Forbid();
+            }
+
+            if (order.CustomerId != customerId)
+            {
+                return Forbid();
+            }
+
+            var cancelCmd = new CancelOrderCommand(id, null);
+            var cancelResult = await mediator.Send(cancelCmd);
+            return Ok(cancelResult);
         }
 
+        // This endpoint will be called by VNPAY after payment is completed 
+        [AllowAnonymous]
         // Pay order (VNPAY)
         [HttpGet("payment-callback")]
         public async Task<IActionResult> PaymentCallback([FromQuery] PaymentCallbackCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            string frontendUrl = "http://localhost:3000";
+            string frontendUrl = "https://localhost:7235";  // đổi thành URL của frontend
             if (result.Success)
             {
-                return Redirect($"{frontendUrl}/payment-success?id={result.OrderId}");
+                return Redirect($"{frontendUrl}/customer/orders?payment=success&id={result.OrderId}");
             }
             else
             {
-                return Redirect($"{frontendUrl}/payment-failed?id={result.OrderId}");
+                return Redirect($"{frontendUrl}/customer/orders?payment=failed&id={result.OrderId}");
 
             }
         }

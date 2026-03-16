@@ -49,8 +49,14 @@ namespace StoreApp.Core.Entities
         public void CancelOrder(Guid? staffId = null)
         {
             var canCancel =
-                (OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.Cash)
-                || (OrderStatus == OrderStatus.Paid && PaymentMethod == PaymentMethod.VnPay);
+                // Cash: staff và customer đều huỷ khi Pending
+                (PaymentMethod == PaymentMethod.Cash && OrderStatus == OrderStatus.Pending)
+
+                // VNPay: customer / auto-cancel / callback fail => huỷ khi Pending
+                || (PaymentMethod == PaymentMethod.VnPay && staffId is null && OrderStatus == OrderStatus.Pending)
+
+                // VNPay: staff huỷ khi Paid
+                || (PaymentMethod == PaymentMethod.VnPay && staffId is not null && OrderStatus == OrderStatus.Paid);
 
             if (!canCancel)
                 

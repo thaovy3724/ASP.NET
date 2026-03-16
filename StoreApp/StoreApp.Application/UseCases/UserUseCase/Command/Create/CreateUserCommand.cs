@@ -9,6 +9,5 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
         string FullName, 
         string Password, 
         string Phone,
-        string Email,
         Role Role) : IRequest<UserDTO>;
 }
