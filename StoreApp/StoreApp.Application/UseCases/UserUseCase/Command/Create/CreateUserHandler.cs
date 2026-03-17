@@ -17,6 +17,10 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Create
             {
                 throw new ConflictException("Tên đăng nhập đã tồn tại.");
             }
+            if (await UserRepository.IsExist(u => u.Phone == request.Phone))
+            {
+                throw new ConflictException("Số điện thoại đã tồn tại.");
+            }
 
             var hashedPassword = PasswordHasher.HashPassword(null, request.Password);
             var user = new User
