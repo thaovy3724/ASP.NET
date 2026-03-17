@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 {
@@ -8,7 +9,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         {
             RuleFor(x => x.CustomerId)
                     .NotEmpty().WithMessage("Id khách hàng không được để trống");
-    
+
             RuleFor(x => x.Address)
                 .NotEmpty().WithMessage("Địa chỉ không được để trống");
 
@@ -18,8 +19,14 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                 WithMessage("Tất cả sản phẩm phải có số lượng và đơn giá lớn hơn 0");
 
             RuleFor(x => x.PaymentMethod)
-                .IsInEnum()
-                .WithMessage("Phương thức thanh toán không hợp lệ.");
+                .Must(BeAValidPaymentMethod)
+                .WithMessage("Phương thức thanh toán không hợp lệ");
+        }
+
+        // Hàm phụ để kiểm tra chuỗi có thuộc Enum không
+        private bool BeAValidPaymentMethod(string method)
+        {
+            return Enum.TryParse(typeof(PaymentMethod), method, true, out _);
         }
     }
 }

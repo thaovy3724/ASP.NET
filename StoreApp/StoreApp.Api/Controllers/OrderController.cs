@@ -160,5 +160,19 @@ namespace StoreApp.Api.Controllers
             }
             return null;
         }
+
+        [Authorize(Roles = "Customer")]
+        [HttpGet("order-history")]
+        public async Task<IActionResult> GetOrderHistory()
+        {
+            // Lấy ID từ Claim NameIdentifier đã lưu trong Token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null) return Unauthorized();
+
+            var query = new GetListOrderQuery(CustomerId: Guid.Parse(userIdClaim));
+            var result = await mediator.Send(query);
+
+            return Ok(result.Items);
+        }
     }
 }

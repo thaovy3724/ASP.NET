@@ -11,12 +11,22 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Query.GetList
         public async Task<PagedList<OrderDTO>> Handle(GetListOrderQuery request, CancellationToken cancellationToken)
         {
             //var result = await orderRepository.GetListOrderWithDetails();
-            var result = await orderRepository.Search(request.PageNumber, request.PageSize, request.CustomerId);
-            var orderListDTO = result.Items.
-                Select(orders => orders.ToDTO())
-                .ToList();
-
-            return new PagedList<OrderDTO>(orderListDTO, result.MetaData);
+            if (request.CustomerId == null)
+            {
+                var result = await orderRepository.Search(request.PageNumber, request.PageSize);
+                var orderListDTO = result.Items.
+                    Select(orders => orders.ToDTO())
+                    .ToList();
+                return new PagedList<OrderDTO>(orderListDTO, result.MetaData);
+            }
+            else
+            {
+                var result = await orderRepository.Search(request.PageNumber, request.PageSize, request.CustomerId);
+                var orderListDTO = result.Items.
+                    Select(orders => orders.ToDTO())
+                    .ToList();
+                return new PagedList<OrderDTO>(orderListDTO, result.MetaData);
+            }
         }
     }
 }
