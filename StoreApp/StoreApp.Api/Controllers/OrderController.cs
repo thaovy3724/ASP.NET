@@ -25,6 +25,9 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> GetListForStaff([FromQuery] GetListOrderQuery query)
         {
             var result = await mediator.Send(query);
+            // thêm 1 HTTP Response Header tên là "X-Pagination"
+            // bên trong chứa thông tin phân trang
+            // dữ liệu được chuyển thành chuỗi JSON 
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
             return Ok(result.Items);
         }
@@ -43,6 +46,9 @@ namespace StoreApp.Api.Controllers
             query = query with { CustomerId = customerId };
 
             var result = await mediator.Send(query);
+            // thêm 1 HTTP Response Header tên là "X-Pagination"
+            // bên trong chứa thông tin phân trang
+            // dữ liệu được chuyển thành chuỗi JSON 
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
             return Ok(result.Items);
         }
@@ -168,20 +174,6 @@ namespace StoreApp.Api.Controllers
             }
 
             return null;
-        }
-
-        [Authorize(Roles = "Customer")]
-        [HttpGet("order-history")]
-        public async Task<IActionResult> GetOrderHistory()
-        {
-            // Lấy ID từ Claim NameIdentifier đã lưu trong Token
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userIdClaim == null) return Unauthorized();
-
-            var query = new GetListOrderQuery(CustomerId: Guid.Parse(userIdClaim));
-            var result = await mediator.Send(query);
-
-            return Ok(result.Items);
         }
     }
 }
