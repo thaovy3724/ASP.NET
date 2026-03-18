@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.DTOs;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Confirm;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Create;
@@ -150,9 +151,11 @@ namespace StoreApp.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("payment-callback")]
-        public async Task<IActionResult> PaymentCallback([FromQuery] PaymentCallbackCommand cmd)
+        public async Task<IActionResult> PaymentCallback([FromQuery] VnPayCallbackRequest request)
         {
-            var result = await mediator.Send(cmd);
+            var collections = Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
+            var command = new PaymentCallbackCommand(collections);
+            var result = await mediator.Send(command);
             string frontendUrl = "https://localhost:7235";
 
             if (result.Success)

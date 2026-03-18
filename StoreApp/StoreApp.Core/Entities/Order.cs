@@ -7,7 +7,7 @@ namespace StoreApp.Core.Entities
     {
         public Guid CustomerId { get; private set; } = customerId;
         public Guid? StaffId { get; private set; }
-        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow.AddHours(7);
         public OrderStatus OrderStatus { get; private set; } = OrderStatus.Pending;
         public string Address { get; private set; } = address;
         public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
@@ -32,7 +32,7 @@ namespace StoreApp.Core.Entities
 
             StaffId = staffId;
             OrderStatus = OrderStatus.Confirmed;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow.AddHours(7);
         }
 
         public void DeliverOrder(Guid staffId)
@@ -43,7 +43,7 @@ namespace StoreApp.Core.Entities
             }
             StaffId = staffId;
             OrderStatus = OrderStatus.Delivered;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow.AddHours(7);
         }
 
         public void CancelOrder(Guid? staffId = null)
@@ -70,7 +70,7 @@ namespace StoreApp.Core.Entities
             }
 
             OrderStatus = OrderStatus.Canceled;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow.AddHours(7);
         }
 
         public void PayOrder()
@@ -78,7 +78,7 @@ namespace StoreApp.Core.Entities
             if(OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.VnPay)
             {
                 OrderStatus = OrderStatus.Paid;
-                UpdatedAt = DateTime.UtcNow;
+                UpdatedAt = DateTime.UtcNow.AddHours(7);
             }
             else throw new OrderCannotBePaidException("Không thể thanh toán cho đơn hàng do trạng thái đơn hàng không hợp lệ.");
         }
