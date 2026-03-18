@@ -151,7 +151,7 @@ namespace StoreApp.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("payment-callback")]
-        public async Task<IActionResult> PaymentCallback([FromQuery] VnPayCallbackRequest request)
+        public async Task<IActionResult> PaymentCallback([FromQuery] Dictionary<string, string> request)
         {
             var collections = Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
             var command = new PaymentCallbackCommand(collections);

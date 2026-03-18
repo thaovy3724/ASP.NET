@@ -1,9 +1,9 @@
-﻿using SM.Infrastructure.Adapters.Payment.Config;
-using StoreApp.Api;
+﻿using StoreApp.Api;
 using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
 using StoreApp.Application.Common.Settings;
 using StoreApp.Application.Service.Payment;
+using StoreApp.Infrastructure.Adapter.Payments.Config;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
