@@ -13,7 +13,7 @@ namespace StoreApp.Api.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController(IMediator mediator) : Controller
+    public class CategoryController(IMediator mediator) : ControllerBase
     {
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)

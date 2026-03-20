@@ -12,7 +12,7 @@ namespace StoreApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(IMediator mediator, IWebHostEnvironment env) : Controller
+    public class ProductController(IMediator mediator, IWebHostEnvironment env) : ControllerBase
     {
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)

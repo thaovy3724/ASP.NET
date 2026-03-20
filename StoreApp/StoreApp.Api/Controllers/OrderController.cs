@@ -17,7 +17,7 @@ namespace StoreApp.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController(IMediator mediator) : Controller
+    public class OrderController(IMediator mediator) : ControllerBase
     {
 
         // staff xem tất cả order

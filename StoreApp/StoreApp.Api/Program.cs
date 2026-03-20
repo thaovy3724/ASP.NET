@@ -1,7 +1,6 @@
 ﻿using StoreApp.Api;
 using StoreApp.Api.ApplException;
 using StoreApp.Api.BackgroundServices;
-using StoreApp.Application.Common.Settings;
 using StoreApp.Application.Service.Payment;
 using StoreApp.Infrastructure.Adapter.Payments.Config;
 using System.Text.Json.Serialization;
@@ -13,9 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // để enum (Role…) trả về dạng "Admin", "Staff", "Client" thay vì số.
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 // CORS configuration to allow requests from RazorFE
 builder.Services.AddCors(options =>
@@ -38,9 +34,6 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Add application and infrastructure services (repositories, services, etc.)
 builder.Services.AddAppDI(builder.Configuration);
-// Cấu hình EmailSettings để có thể inject vào các service cần thiết
-
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 // Đăng ký MemoryCache để lưu mã OTP tạm thời
 builder.Services.AddMemoryCache();
@@ -50,11 +43,6 @@ builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 app.UseExceptionHandler();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 app.UseHttpsRedirection();
 
