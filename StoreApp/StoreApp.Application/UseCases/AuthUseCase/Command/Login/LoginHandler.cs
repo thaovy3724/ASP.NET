@@ -14,13 +14,13 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.Login
             var user = await userRepository.GetByName(request.UserName);
             if (user is null)
             {
-                throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không đúng.");
+                throw new UnauthorizedAccessException("Tài khoản không tồn tại.");
             }
 
             if (passwordHasher.VerifyHashedPassword(user, user.Password, request.Password)
                 == PasswordVerificationResult.Failed)
             {
-                throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không đúng.");
+                throw new UnauthorizedAccessException("Mật khẩu chưa chính xác.");
             }
 
             return await authService.CreateTokenResponse(user);
