@@ -1,21 +1,19 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
-using StoreApp.Application.Common.Settings;
 using StoreApp.Application.Service.Email;
 
 namespace StoreApp.Infrastructure.Adapter.Email
 {
     public class EmailService : IEmailService
     {
-        private readonly EmailSettings _emailSettings;
+        private readonly IConfiguration _configuration;
 
-        // Inject EmailSettings đã cấu hình trong appsettings.json
-        public EmailService(IOptions<EmailSettings> emailSettings)
+        public EmailService(IConfiguration config)
         {
-            _emailSettings = emailSettings.Value;
+            _configuration = config;
         }
 
         public async Task SendEmailAsync(string to, string subject, string body)
@@ -24,7 +22,7 @@ namespace StoreApp.Infrastructure.Adapter.Email
             var email = new MimeMessage();
 
             // Người gửi (Lấy từ cấu hình)
-            email.From.Add(MailboxAddress.Parse(_emailSettings.Email));
+            email.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:Email"]));
 
             // Người nhận
             email.To.Add(MailboxAddress.Parse(to));
@@ -41,13 +39,13 @@ namespace StoreApp.Infrastructure.Adapter.Email
             {
                 // Kết nối tới Server (Gmail: smtp.gmail.com, Port: 587)
                 await smtp.ConnectAsync(
-                    _emailSettings.Host,
-                    _emailSettings.Port,
+                    _configuration["EmailSettings:Host"],
+                    int.Parse(_configuration["EmailSettings:Port"]),
                     SecureSocketOptions.StartTls
                 );
 
                 // Xác thực bằng Email và App Password
-                await smtp.AuthenticateAsync(_emailSettings.Email, _emailSettings.Password);
+                await smtp.AuthenticateAsync(_configuration["EmailSettings:Email"], _configuration["EmailSettings:Passwords"]);
 
                 // Thực hiện gửi thư
                 await smtp.SendAsync(email);

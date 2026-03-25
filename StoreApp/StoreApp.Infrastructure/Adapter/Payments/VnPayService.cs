@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using SM.Infrastructure.Adapters.Payment.Libs;
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Service.Payment;
-using StoreApp.Core.Entities;
+using StoreApp.Infrastructure.Adapter.Payments.Config;
 using StoreApp.Infrastructure.Exceptions;
 public class VnPayService : IVnPayService
 {
-    private readonly IConfiguration _config;
+    private readonly VnPayProperties _vnPayConfig;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public VnPayService(IConfiguration config, IHttpContextAccessor httpContextAccessor)
+    public VnPayService(IOptions<VnPayProperties> config, IHttpContextAccessor httpContextAccessor)
     {
-        _config = config;
+        _vnPayConfig = config.Value;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -23,22 +23,22 @@ public class VnPayService : IVnPayService
         var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
         var pay = new VnPayLibrary();
 
-        pay.AddRequestData("vnp_Version", "2.1.0");
-        pay.AddRequestData("vnp_Command", "pay");
-        pay.AddRequestData("vnp_TmnCode", _config["VnPay:TmnCode"]);
+        pay.AddRequestData("vnp_Version", _vnPayConfig.Version);
+        pay.AddRequestData("vnp_Command", _vnPayConfig.Command);
+        pay.AddRequestData("vnp_TmnCode", _vnPayConfig.TmnCode);
         pay.AddRequestData("vnp_Amount", ((long)totalAmount * 100).ToString());
         pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
-        pay.AddRequestData("vnp_ExpireDate", timeNow.AddMinutes(2).ToString("yyyyMMddHHmmss"));
+        pay.AddRequestData("vnp_ExpireDate", timeNow.AddMinutes(_vnPayConfig.PaymentTimeout).ToString("yyyyMMddHHmmss"));
 
-        pay.AddRequestData("vnp_CurrCode", "VND");
+        pay.AddRequestData("vnp_CurrCode", _vnPayConfig.CurrCode);
         pay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(context));
-        pay.AddRequestData("vnp_Locale", "vn");
+        pay.AddRequestData("vnp_Locale", _vnPayConfig.Locale);
         pay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang {id}");
         pay.AddRequestData("vnp_OrderType", "other");
-        pay.AddRequestData("vnp_ReturnUrl", _config["VnPay:ReturnUrl"]);
+        pay.AddRequestData("vnp_ReturnUrl", _vnPayConfig.ReturnUrl);
         pay.AddRequestData("vnp_TxnRef", id.ToString());
 
-        var paymentUrl = pay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSecret"]);
+        var paymentUrl = pay.CreateRequestUrl(_vnPayConfig.BaseUrl, _vnPayConfig.HashSecret);
         return paymentUrl;
     }
 
@@ -73,7 +73,7 @@ public class VnPayService : IVnPayService
         }
 
         // 3. Kiểm tra chữ ký (Bây giờ mới check)
-        bool checkSignature = pay.ValidateSignature(vnp_SecureHash, _config["VnPay:HashSecret"]);
+        bool checkSignature = pay.ValidateSignature(vnp_SecureHash, _vnPayConfig.HashSecret);
         if (!checkSignature)
         {
             Console.WriteLine("---------------[DEBUG VNPay] Lỗi: Sai chữ ký (Invalid Signature)!");

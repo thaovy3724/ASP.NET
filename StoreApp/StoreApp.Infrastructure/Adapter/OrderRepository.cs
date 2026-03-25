@@ -22,10 +22,11 @@ namespace StoreApp.Infrastructure.Adapter
             return await query.ToPagedListAsync(pageNumber, pageSize);
         }
 
+        // hàm này dùng cho auto cancel VNPay thôi mà 
         public Task<List<Order>> GetListExpiredOrders(DateTime timeLimit)
-        { // kiểm tra các đơn hàng Pending và chưa quá hạn
+        { // kiểm tra các đơn hàng Pending của VNPay chưa quá hạn
             return DbSet.AsNoTracking()
-                        .Where(o => o.OrderStatus == OrderStatus.Pending && o.UpdatedAt < timeLimit)
+                        .Where(o => o.PaymentMethod == PaymentMethod.VnPay && o.OrderStatus == OrderStatus.Pending && o.UpdatedAt < timeLimit)
                         .ToListAsync();
         }
 
@@ -34,6 +35,12 @@ namespace StoreApp.Infrastructure.Adapter
             return DbSet.AsNoTracking()
                         .Include(o => o.Items)
                         .AnyAsync(o => o.Items.Any(oi => oi.ProductId == productId));
+        }
+        public async Task<Order?> GetByIdWithItems(Guid id)
+        {
+            return await DbSet
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
     }
 }

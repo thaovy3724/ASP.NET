@@ -8,7 +8,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Cancel
     {
         public async Task<Unit> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await orderRepository.GetById(request.Id);
+            var order = await orderRepository.GetByIdWithItems(request.Id);
             if (order is null)
             {
                 throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");

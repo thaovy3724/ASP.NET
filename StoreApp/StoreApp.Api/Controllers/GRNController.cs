@@ -14,7 +14,7 @@ namespace StoreApp.Api.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class GRNController(IMediator mediator) : Controller
+    public class GRNController(IMediator mediator) : ControllerBase
     {
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)

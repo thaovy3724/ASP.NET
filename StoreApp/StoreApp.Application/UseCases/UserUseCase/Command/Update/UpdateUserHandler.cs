@@ -22,7 +22,10 @@ namespace StoreApp.Application.UseCases.UserUseCase.Command.Update
             {
                 throw new ConflictException("Tên đăng nhập đã tồn tại.");
             }
-
+            if (await userRepository.IsExist(u => u.Phone == request.Phone && u.Id != request.Id))
+            {
+                throw new ConflictException("Số điện thoại đã tồn tại.");
+            }
             var role = request.Role switch
             {
                 "Admin" => Role.Admin,

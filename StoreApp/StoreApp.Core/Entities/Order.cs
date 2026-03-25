@@ -7,7 +7,7 @@ namespace StoreApp.Core.Entities
     {
         public Guid CustomerId { get; private set; } = customerId;
         public Guid? StaffId { get; private set; }
-        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow.AddHours(7);
         public OrderStatus OrderStatus { get; private set; } = OrderStatus.Pending;
         public string Address { get; private set; } = address;
         public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
@@ -32,7 +32,7 @@ namespace StoreApp.Core.Entities
 
             StaffId = staffId;
             OrderStatus = OrderStatus.Confirmed;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow.AddHours(7);
         }
 
         public void DeliverOrder(Guid staffId)
@@ -43,14 +43,20 @@ namespace StoreApp.Core.Entities
             }
             StaffId = staffId;
             OrderStatus = OrderStatus.Delivered;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow.AddHours(7);
         }
 
         public void CancelOrder(Guid? staffId = null)
         {
             var canCancel =
-                (OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.Cash)
-                || (OrderStatus == OrderStatus.Paid && PaymentMethod == PaymentMethod.VnPay);
+                // Cash: staff và customer đều huỷ khi Pending
+                (PaymentMethod == PaymentMethod.Cash && OrderStatus == OrderStatus.Pending)
+
+                // VNPay: customer / auto-cancel / callback fail => huỷ khi Pending
+                || (PaymentMethod == PaymentMethod.VnPay && staffId is null && OrderStatus == OrderStatus.Pending)
+
+                // VNPay: staff huỷ khi Paid
+                || (PaymentMethod == PaymentMethod.VnPay && staffId is not null && OrderStatus == OrderStatus.Paid);
 
             if (!canCancel)
                 
@@ -64,7 +70,7 @@ namespace StoreApp.Core.Entities
             }
 
             OrderStatus = OrderStatus.Canceled;
-            UpdatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow.AddHours(7);
         }
 
         public void PayOrder()
@@ -72,7 +78,7 @@ namespace StoreApp.Core.Entities
             if(OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.VnPay)
             {
                 OrderStatus = OrderStatus.Paid;
-                UpdatedAt = DateTime.UtcNow;
+                UpdatedAt = DateTime.UtcNow.AddHours(7);
             }
             else throw new OrderCannotBePaidException("Không thể thanh toán cho đơn hàng do trạng thái đơn hàng không hợp lệ.");
         }

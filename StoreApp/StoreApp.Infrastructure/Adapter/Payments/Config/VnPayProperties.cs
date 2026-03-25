@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SM.Infrastructure.Adapters.Payment.Config
+namespace StoreApp.Infrastructure.Adapter.Payments.Config
 {
     public class VnPayProperties
     {

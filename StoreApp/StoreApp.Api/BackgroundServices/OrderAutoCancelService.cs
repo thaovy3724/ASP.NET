@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using SM.Infrastructure.Adapters.Payment.Config;
 using StoreApp.Application.Repository;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
+using StoreApp.Infrastructure.Adapter.Payments.Config;
 
 namespace StoreApp.Api.BackgroundServices;
 

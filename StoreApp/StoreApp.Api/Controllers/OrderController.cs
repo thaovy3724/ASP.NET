@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.DTOs;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Confirm;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Create;
@@ -16,73 +17,89 @@ namespace StoreApp.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController(IMediator mediator) : Controller
+    public class OrderController(IMediator mediator) : ControllerBase
     {
-        //get order by id
-        // staff xem order
-        [Authorize(Roles = "Staff,Customer")]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id)
+
+        // staff xem tất cả order
+        [Authorize(Roles = "Staff")]
+        [HttpGet("staff")]
+        public async Task<IActionResult> GetListForStaff([FromQuery] GetListOrderQuery query)
         {
-            var cmd = new GetOrderQuery(Id: id);
-            var result = await mediator.Send(cmd);
+            var result = await mediator.Send(query);
+            // thêm 1 HTTP Response Header tên là "X-Pagination"
+            // bên trong chứa thông tin phân trang
+            // dữ liệu được chuyển thành chuỗi JSON 
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
+        }
 
-            // Nếu là customer thì chỉ được xem order của chính mình
-            if (User.IsInRole("Customer"))
+        // customer chỉ xem order của chính mình
+        [Authorize(Roles = "Customer")]
+        [HttpGet("customer")]
+        public async Task<IActionResult> GetListForCustomer([FromQuery] GetListOrderQuery query)
+        {
+            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(customerIdText, out var customerId))
             {
-                var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (!Guid.TryParse(customerIdText, out var customerId))
-                {
-                    return Forbid();
-                }
+                return Forbid();
+            }
 
-                if (result.CustomerId != customerId)
-                {
-                    return Forbid();
-                }
+            query = query with { CustomerId = customerId };
+
+            var result = await mediator.Send(query);
+            // thêm 1 HTTP Response Header tên là "X-Pagination"
+            // bên trong chứa thông tin phân trang
+            // dữ liệu được chuyển thành chuỗi JSON 
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
+        }
+
+
+        // staff xem chi tiết order
+        [Authorize(Roles = "Staff")]
+        [HttpGet("staff/{id:guid}")]
+        public async Task<IActionResult> GetByIdForStaff(Guid id)
+        {
+            var query = new GetOrderQuery(Id: id);
+            var result = await mediator.Send(query);
+            return Ok(result);
+        }
+
+        // customer chỉ xem order của chính mình
+        [Authorize(Roles = "Customer")]
+        [HttpGet("customer/{id:guid}")]
+        public async Task<IActionResult> GetByIdForCustomer(Guid id)
+        {
+            var query = new GetOrderQuery(Id: id);
+            var result = await mediator.Send(query);
+
+            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(customerIdText, out var customerId))
+            {
+                return Forbid();
+            }
+
+            if (result.CustomerId != customerId)
+            {
+                return Forbid();
             }
 
             return Ok(result);
         }
 
-        // staff xem tất cả, customer chỉ xem lịch sử của chính mình
-        [Authorize(Roles = "Staff,Customer")]
-        [HttpGet]
-        public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
-        {
-            if (User.IsInRole("Customer"))
-            {
-                var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (!Guid.TryParse(customerIdText, out var customerId))
-                {
-                    return Forbid();
-                }
-
-                // ép customer chỉ lấy order của chính họ
-                query = query with { CustomerId = customerId };
-            }
-
-            var result = await mediator.Send(query);
-            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
-            return Ok(result.Items);
-        }
-
-        // customer tạo order
         [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
         {
             var result = await mediator.Send(cmd);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetByIdForCustomer), new { id = result.Id }, result);
         }
 
-        // staff duyệt order
+
         [Authorize(Roles = "Staff")]
-        // Confirm order
         [HttpPut("{id:guid}/confirm")]
         public async Task<IActionResult> Confirm(Guid id)
         {
-            // Lấy staffId từ token
             var staffId = GetCurrentUserId();
             var cmd = new ConfirmOrderCommand(id, staffId);
             var result = await mediator.Send(cmd);
@@ -90,7 +107,6 @@ namespace StoreApp.Api.Controllers
         }
 
         [Authorize(Roles = "Staff")]
-        // Deliver order
         [HttpPut("{id:guid}/deliver")]
         public async Task<IActionResult> Deliver(Guid id)
         {
@@ -101,9 +117,8 @@ namespace StoreApp.Api.Controllers
         }
 
         [Authorize(Roles = "Staff")]
-        // Cancel order
-        [HttpPut("{id:guid}/cancel")]
-        public async Task<IActionResult> Cancel(Guid id)
+        [HttpPut("staff/{id:guid}/cancel")]
+        public async Task<IActionResult> CancelByStaff(Guid id)
         {
             var staffId = GetCurrentUserId();
             var cmd = new CancelOrderCommand(id, staffId);
@@ -111,20 +126,45 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        // Pay order (VNPAY)
-        [HttpGet("payment-callback")]
-        public async Task<IActionResult> PaymentCallback([FromQuery] PaymentCallbackCommand cmd)
+        [Authorize(Roles = "Customer")]
+        [HttpPut("customer/{id:guid}/cancel")]
+        public async Task<IActionResult> CancelByCustomer(Guid id)
         {
+            var query = new GetOrderQuery(Id: id);
+            var order = await mediator.Send(query);
+
+            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(customerIdText, out var customerId))
+            {
+                return Forbid();
+            }
+
+            if (order.CustomerId != customerId)
+            {
+                return Forbid();
+            }
+
+            var cmd = new CancelOrderCommand(id, null);
             var result = await mediator.Send(cmd);
-            string frontendUrl = "http://localhost:3000";
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("payment-callback")]
+        public async Task<IActionResult> PaymentCallback([FromQuery] Dictionary<string, string> request)
+        {
+            var collections = Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
+            var command = new PaymentCallbackCommand(collections);
+            var result = await mediator.Send(command);
+            string frontendUrl = "https://localhost:7235";
+
             if (result.Success)
             {
-                return Redirect($"{frontendUrl}/payment-success?id={result.OrderId}");
+                return Redirect($"{frontendUrl}/customer/orders?payment=success&id={result.OrderId}");
             }
             else
             {
-                return Redirect($"{frontendUrl}/payment-failed?id={result.OrderId}");
-
+                return Redirect($"{frontendUrl}/customer/orders?payment=failed&id={result.OrderId}");
             }
         }
 
@@ -135,6 +175,7 @@ namespace StoreApp.Api.Controllers
             {
                 return guid;
             }
+
             return null;
         }
     }

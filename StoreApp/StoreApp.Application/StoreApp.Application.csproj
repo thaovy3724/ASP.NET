@@ -1,28 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="DTOs\Customer\**" />
-    <EmbeddedResource Remove="DTOs\Customer\**" />
-    <None Remove="DTOs\Customer\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="DTOs\Customer\**" />
+		<EmbeddedResource Remove="DTOs\Customer\**" />
+		<None Remove="DTOs\Customer\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\StoreApp.Core\StoreApp.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\StoreApp.Core\StoreApp.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageReference Include="MediatR" Version="14.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.2" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.35.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageReference Include="MediatR" Version="14.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.3" />
+		<PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.16.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.35.0" />
+	</ItemGroup>
 
 </Project>

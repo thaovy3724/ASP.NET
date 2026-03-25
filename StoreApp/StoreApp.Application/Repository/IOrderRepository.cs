@@ -13,5 +13,6 @@ namespace StoreApp.Application.Repository
         Task<PagedList<Order>> Search(int pageNumber, int pageSize, Guid? customerId = null);
         Task<List<Order>> GetListExpiredOrders(DateTime timeLimit);
         Task<bool> HasProductReference(Guid productId);
+        Task<Order?> GetByIdWithItems(Guid id);
     }
 }

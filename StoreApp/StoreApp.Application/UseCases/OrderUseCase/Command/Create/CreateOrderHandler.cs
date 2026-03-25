@@ -35,8 +35,9 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 
             try
             {
+                var pttt = Enum.Parse<PaymentMethod>(request.PaymentMethod);
                 // A. Khởi tạo Order
-                var order = new Order(request.CustomerId, request.Address, request.PaymentMethod);
+                var order = new Order(request.CustomerId, request.Address, pttt);
 
                 // B. Xử lý từng sản phẩm (Giữ nguyên logic cũ)
                 foreach (var item in request.Items)
@@ -70,7 +71,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                 var orderResponse = order.ToCreateOrderResponseDTO();
 
                 // 3. Logic VNPay tạo URL
-                if (request.PaymentMethod == PaymentMethod.VnPay)
+                if (pttt == PaymentMethod.VnPay)
                 {
                     // Tạo URL
                     string url = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount);
