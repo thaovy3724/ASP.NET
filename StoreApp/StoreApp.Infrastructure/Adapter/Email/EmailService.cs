@@ -45,7 +45,7 @@ namespace StoreApp.Infrastructure.Adapter.Email
                 );
 
                 // Xác thực bằng Email và App Password
-                await smtp.AuthenticateAsync(_configuration["EmailSettings:Email"], _configuration["EmailSettings:Passwords"]);
+                await smtp.AuthenticateAsync(_configuration["EmailSettings:Email"], _configuration["EmailSettings:Password"]);
 
                 // Thực hiện gửi thư
                 await smtp.SendAsync(email);
