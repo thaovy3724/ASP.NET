@@ -18,12 +18,6 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
     {
         public async Task<CreateOrderResponseDTO> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            // --- 1. VALIDATION LAYER ---
-            //if (request.Items == null || !request.Items.Any())
-            //    return new ResultWithData<OrderDTO>(false, "Đơn hàng phải có ít nhất 1 sản phẩm.", null);
-
-            //if (request.Items.Any(x => x.Quantity <= 0))
-            //    return new ResultWithData<OrderDTO>(false, "Số lượng sản phẩm phải lớn hơn 0.", null);
 
             if (!await userRepository.IsExist(user => user.Id == request.CustomerId && user.Role == Role.Customer))
             {
@@ -48,20 +42,12 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                         throw new NotFoundException($"Sản phẩm ID {item.ProductId} không tồn tại.");
                     }
 
-                    // Kiểm tra tồn kho có đủ để cập nhật tồn kho không
-                    //var inventory = await inventoryRepository.GetByProductID(item.ProductId);
-                    //if (inventory == null || inventory.Quantity < item.Quantity)
-                    //{
-                    //    await orderRepository.RollbackTransactionAsync();
-                    //    return new ResultWithData<OrderDTO>(false, $"Sản phẩm '{product.ProductName}' không đủ hàng (Còn: {inventory?.Quantity ?? 0}).", null);
-                    //}
-
-                    //await inventoryRepository.deductQuantityOfCreatedOrder(item.ProductId, item.Quantity);
-
-                    // Trừ tồn kho ngay khi tạo order
-                    product.DecreaseStock(item.Quantity);
-                    await productRepository.Update(product);
-
+                    var isSuccess = await productRepository.DecreaseStockIfAvailable(item.ProductId, item.Quantity);
+                    if (!isSuccess)
+                    {
+                        throw new ConflictException($"Sản phẩm '{product.ProductName}' không đủ hàng (Còn: {product.Quantity}).");
+                    }
+                    
                     order.AddItem(item.ProductId, item.Quantity, item.Price);
                 }
                 await orderRepository.Create(order);

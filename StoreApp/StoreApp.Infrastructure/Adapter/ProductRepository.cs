@@ -7,6 +7,13 @@ namespace StoreApp.Infrastructure.Adapter
 {
     public class ProductRepository(StoreDbContext context) : BaseRepository<Product>(context), IProductRepository
     {
+        public async Task<bool> DecreaseStockIfAvailable(Guid productId, int quantity)
+        {
+            var rowEffected = await DbSet.Where(p => p.Id == productId && p.Quantity >= quantity)
+                                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.Quantity, p => p.Quantity - quantity));
+            return rowEffected > 0;
+        }
+
         // filter 
         public async Task<PagedList<Product>> Search(int pageNumber, int pageSize, Guid? categoryId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null)
         {

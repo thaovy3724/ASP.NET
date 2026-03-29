@@ -12,5 +12,7 @@ namespace StoreApp.Application.Repository
             decimal? minPrice = null, 
             decimal? maxPrice = null, 
             string? keyword = null);
+
+        Task<bool> DecreaseStockIfAvailable(Guid productId, int quantity);
     }
 }

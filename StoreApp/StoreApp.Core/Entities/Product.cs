@@ -27,15 +27,6 @@ namespace StoreApp.Core.Entities
             Quantity += quantity;
         }
 
-        public void DecreaseStock(int quantity)
-        {
-            if (quantity < 0)
-                throw new InvalidStockQuantityException("Số lượng sản phẩm không được âm");
-            if (quantity > Quantity)
-                throw new InsufficientStockException("Không đủ tồn kho để giảm số lượng sản phẩm");
-            Quantity -= quantity;
-        }
-
         public void EnsureCanBeDeleted()
         {
             if (Quantity > 0)
