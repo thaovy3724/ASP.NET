@@ -31,7 +31,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
             {
                 var pttt = Enum.Parse<PaymentMethod>(request.PaymentMethod);
                 // A. Khởi tạo Order
-                var order = new Order(request.CustomerId, request.Address, pttt);
+                var order = new Order(request.CustomerId.Value, request.Address, pttt);
 
                 // B. Xử lý từng sản phẩm (Giữ nguyên logic cũ)
                 foreach (var item in request.Items)

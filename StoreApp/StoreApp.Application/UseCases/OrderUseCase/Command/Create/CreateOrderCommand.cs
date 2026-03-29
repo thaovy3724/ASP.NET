@@ -5,8 +5,8 @@ using StoreApp.Core.ValueObject;
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
 {
     public sealed record CreateOrderCommand(
-        Guid CustomerId,
         List<CreateOrderItem> Items,
         string Address,
-        string PaymentMethod) : IRequest<CreateOrderResponseDTO>;
+        string PaymentMethod,
+        Guid? CustomerId) : IRequest<CreateOrderResponseDTO>;
 }
