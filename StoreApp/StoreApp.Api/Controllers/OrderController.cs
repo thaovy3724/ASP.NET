@@ -21,7 +21,7 @@ namespace StoreApp.Api.Controllers
     {
 
         // staff xem tất cả order
-        [Authorize(Roles = "Staff")]
+        //[Authorize(Roles = "Staff")]
         [HttpGet("staff")]
         public async Task<IActionResult> GetListForStaff([FromQuery] GetListOrderQuery query)
         {
@@ -34,7 +34,7 @@ namespace StoreApp.Api.Controllers
         }
 
         // customer chỉ xem order của chính mình
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
         [HttpGet("customer")]
         public async Task<IActionResult> GetListForCustomer([FromQuery] GetListOrderQuery query)
         {
@@ -56,7 +56,7 @@ namespace StoreApp.Api.Controllers
 
 
         // staff xem chi tiết order
-        [Authorize(Roles = "Staff")]
+        //[Authorize(Roles = "Staff")]
         [HttpGet("staff/{id:guid}")]
         public async Task<IActionResult> GetByIdForStaff(Guid id)
         {
@@ -66,7 +66,7 @@ namespace StoreApp.Api.Controllers
         }
 
         // customer chỉ xem order của chính mình
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
         [HttpGet("customer/{id:guid}")]
         public async Task<IActionResult> GetByIdForCustomer(Guid id)
         {
@@ -87,7 +87,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
         {
@@ -96,7 +96,7 @@ namespace StoreApp.Api.Controllers
         }
 
 
-        [Authorize(Roles = "Staff")]
+        //[Authorize(Roles = "Staff")]
         [HttpPut("{id:guid}/confirm")]
         public async Task<IActionResult> Confirm(Guid id)
         {
@@ -106,7 +106,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Staff")]
+        //[Authorize(Roles = "Staff")]
         [HttpPut("{id:guid}/deliver")]
         public async Task<IActionResult> Deliver(Guid id)
         {
@@ -116,7 +116,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Staff")]
+        //[Authorize(Roles = "Staff")]
         [HttpPut("staff/{id:guid}/cancel")]
         public async Task<IActionResult> CancelByStaff(Guid id)
         {
@@ -126,7 +126,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
         [HttpPut("customer/{id:guid}/cancel")]
         public async Task<IActionResult> CancelByCustomer(Guid id)
         {

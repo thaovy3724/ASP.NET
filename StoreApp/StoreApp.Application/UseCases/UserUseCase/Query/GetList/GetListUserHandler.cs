@@ -10,7 +10,7 @@ namespace StoreApp.Application.UseCases.UserUseCase.Query.GetList
     {
         public async Task<PagedList<UserDTO>> Handle(GetListUserQuery request, CancellationToken cancellationToken)
         {
-            var result = await userRepository.Search(request.PageNumber, request.PageSize, request.Keyword);
+            var result = await userRepository.Search(request.PageNumber, request.PageSize, request.Keyword, request.role);
             var userListDTO = result.Items
                 .Select(user => user.ToDTO())
                 .ToList();

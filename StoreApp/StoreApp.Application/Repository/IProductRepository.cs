@@ -9,6 +9,8 @@ namespace StoreApp.Application.Repository
             int pageNumber, 
             int pageSize, 
             Guid? categoryId = null, 
+            Guid? supplierId = null,
+            String? orderDate = null,
             decimal? minPrice = null, 
             decimal? maxPrice = null, 
             string? keyword = null);
