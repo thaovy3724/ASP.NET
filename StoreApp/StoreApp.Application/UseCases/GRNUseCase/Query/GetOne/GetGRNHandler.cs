@@ -10,7 +10,7 @@ namespace StoreApp.Application.UseCases.GRNUseCase.Query.GetOne
     {
         public async Task<GRNDTO> Handle(GetGRNQuery request, CancellationToken cancellationToken)
         {
-            var grn = await grnRepository.GetById(request.Id);
+            var grn = await grnRepository.GetByIdWithItems(request.Id);
             if (grn is null)
             {
                 throw new NotFoundException($"Không tìm thấy tồn kho với Id: {request.Id}");

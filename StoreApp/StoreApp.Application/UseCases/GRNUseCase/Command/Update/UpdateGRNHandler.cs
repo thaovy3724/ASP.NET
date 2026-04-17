@@ -2,7 +2,6 @@
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
 using StoreApp.Core.Entities;
-using StoreApp.Core.Exceptions;
 
 namespace StoreApp.Application.UseCases.GRNUseCase.Command.Update
 {
@@ -10,32 +9,59 @@ namespace StoreApp.Application.UseCases.GRNUseCase.Command.Update
     {
         public async Task<Unit> Handle(UpdateGRNCommand request, CancellationToken cancellationToken)
         {
-            var grn = await grnRepository.GetById(request.Id);
-            if(grn is null)
+            // Kiểm tra xem phiếu nhập có tồn tại không
+            var grn = await grnRepository.GetByIdWithItems(request.Id);
+            if (grn is null)
             {
-                throw new NotFoundException("Phiếu nhập không tồn tại"); 
+                throw new NotFoundException("Phiếu nhập không tồn tại");
             }
 
-            //Bắt đầu Transaction để đảm bảo tính nguyên tử (Atomicity)
+            // Kiểm tra xem tất cả sản phẩm trong phiếu nhập có tồn tại không
+            foreach (var item in request.Items)
+            {
+                var product = await productRepository.GetById(item.ProductId);
+                if (product is null)
+                {
+                    throw new NotFoundException($"Sản phẩm với ID {item.ProductId} không tồn tại");
+                }
+            }
+
+            // Lưu lại danh sách sản phẩm cũ để so sánh
+            var oldProductIds = grn.Items
+                .Select(x => x.ProductId)
+                .ToHashSet();
+
+            // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
             await grnRepository.BeginTransactionAsync();
             try
             {
-                grn.UpdateItem(request.Items.Select(item=>new GRNDetail(
-                    grn.Id, item.ProductId, item.Quantity, item.Price
-                    )).ToList());
-                await grnRepository.Update(grn);
+                var newItems = request.Items
+                    .Select(item => new GRNDetail(
+                        grn.Id,
+                        item.ProductId,
+                        item.Quantity,
+                        item.Price
+                    ))
+                    .ToList();
 
-                // 6. Xác nhận giao dịch thành công
+                // Cập nhật phiếu nhập với danh sách sản phẩm mới
+                grn.UpdateItem(newItems);
+
+                foreach (var item in grn.Items.Where(x => !oldProductIds.Contains(x.ProductId)))
+                {
+                    grnRepository.MarkDetailAsAdded(item);
+                }
+
+                // Cập nhật các sản phẩm đã tồn tại
+                await grnRepository.SaveChangesAsync();
                 await grnRepository.CommitTransactionAsync();
                 return Unit.Value;
             }
-            catch (Exception ex)
+            catch
             {
                 await grnRepository.RollbackTransactionAsync();
-                if (ex is DomainException) throw;
-
-                // Lỗi hệ thống chưa biết
-                throw new Exception("Hệ thống không thể xử lý phiếu nhập kho lúc này. Vui lòng liên hệ quản trị viên.");
+                // Nếu có lỗi xảy ra, rollback transaction và ném lại lỗi để xử lý ở tầng trên
+                throw;
             }
         }
     }
