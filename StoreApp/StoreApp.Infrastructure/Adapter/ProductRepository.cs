@@ -15,12 +15,15 @@ namespace StoreApp.Infrastructure.Adapter
         }
 
         // filter 
-        public async Task<PagedList<Product>> Search(int pageNumber, int pageSize, Guid? categoryId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null)
+        public async Task<PagedList<Product>> Search(int pageNumber, int pageSize, Guid? categoryId = null, Guid? supplierId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null)
         {
             var query = DbSet.AsNoTracking();
 
             if (categoryId is not null)
                 query = query.Where(x => x.CategoryId == categoryId.Value);
+
+            if (supplierId is not null)
+                query = query.Where(x => x.SupplierId == supplierId.Value);
 
             if (minPrice is not null)
                 query = query.Where(x => x.Price >= minPrice.Value);
