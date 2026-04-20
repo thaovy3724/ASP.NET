@@ -51,6 +51,10 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnType("datetime")
                    .IsRequired();
 
+            builder.Property(u => u.IsLocked)
+                   .HasColumnName("is_locked")
+                   .HasDefaultValue(false)
+                   .IsRequired();
             builder.Property(u => u.RefreshToken)
                    .HasColumnName("refresh_token")
                    .HasColumnType("nvarchar(255)");

@@ -41,6 +41,8 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                     {
                         throw new NotFoundException($"Sản phẩm ID {item.ProductId} không tồn tại.");
                     }
+                    // Kiểm tra xem sản phẩm có thể được đặt hàng không 
+                    product.EnsureCanBeOrdered();
 
                     var isSuccess = await productRepository.DecreaseStockIfAvailable(item.ProductId, item.Quantity);
                     if (!isSuccess)

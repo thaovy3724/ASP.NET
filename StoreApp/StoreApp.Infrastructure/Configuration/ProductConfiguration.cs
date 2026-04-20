@@ -38,7 +38,10 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("image_url")
                    .HasColumnType("nvarchar(500)")
                    .IsRequired();
-
+            builder.Property(p => p.IsDeleted)
+                   .HasColumnName("is_deleted")
+                   .HasDefaultValue(false)
+                   .IsRequired();
             // Cấu hình Quan hệ (Relationships)
             builder.HasOne<Supplier>()
                    .WithMany()

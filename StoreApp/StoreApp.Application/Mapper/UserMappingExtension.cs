@@ -17,7 +17,8 @@ namespace StoreApp.Application.Mapper
                 Username: user.Username,
                 FullName: user.FullName,
                 Role: user.Role,
-                Phone: user.Phone
+                Phone: user.Phone,
+                IsLocked: user.IsLocked
             );
         }
     }

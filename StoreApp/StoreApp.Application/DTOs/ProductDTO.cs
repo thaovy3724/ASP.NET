@@ -8,6 +8,7 @@
         decimal Price,
         int Quantity,
         DateTime CreatedAt,
-        string? ImageUrl
+        string? ImageUrl,
+        bool IsDeleted
     );
 }

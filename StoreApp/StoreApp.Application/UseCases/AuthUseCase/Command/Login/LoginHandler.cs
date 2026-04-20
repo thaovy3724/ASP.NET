@@ -17,6 +17,11 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.Login
                 throw new UnauthorizedAccessException("Tài khoản không tồn tại.");
             }
 
+            if (user.IsLocked)
+            {
+                throw new UnauthorizedAccessException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+            }
+
             if (passwordHasher.VerifyHashedPassword(user, user.Password, request.Password)
                 == PasswordVerificationResult.Failed)
             {

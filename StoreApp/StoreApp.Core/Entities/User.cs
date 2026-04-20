@@ -13,12 +13,23 @@ namespace StoreApp.Core.Entities
         public DateTime CreatedAt { get; private set; } = createdAt;
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public bool IsLocked { get; private set; } = false;
         public void Update(string username, string fullName, string phone, Role role)
         {
             Username = username;
             FullName = fullName;
             Phone = phone;
             Role = role;
+        }
+
+        public void Lock()
+        {
+            IsLocked = true;
+        }
+
+        public void Unlock()
+        {
+            IsLocked = false;
         }
     }
 }

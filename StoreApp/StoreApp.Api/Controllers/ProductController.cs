@@ -7,6 +7,8 @@ using StoreApp.Application.UseCases.ProductUseCase.Command.Delete;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Update;
 using StoreApp.Application.UseCases.ProductUseCase.Query.GetList;
 using StoreApp.Application.UseCases.ProductUseCase.Query.GetOne;
+using StoreApp.Application.UseCases.ProductUseCase.Command.Restore;
+using StoreApp.Application.UseCases.ProductUseCase.Query.GetDeletedList;
 
 namespace StoreApp.Api.Controllers
 {
@@ -24,6 +26,15 @@ namespace StoreApp.Api.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] GetListProductQuery cmd)
+        {
+            var result = await mediator.Send(cmd);
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
+            return Ok(result.Items);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("deleted")]
+        public async Task<IActionResult> GetDeletedList([FromQuery] GetDeletedProductQuery cmd)
         {
             var result = await mediator.Send(cmd);
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
@@ -53,6 +64,15 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var command = new DeleteProductCommand(id);
+            await mediator.Send(command);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:guid}/restore")]
+        public async Task<IActionResult> Restore(Guid id)
+        {
+            var command = new RestoreProductCommand(id);
             await mediator.Send(command);
             return NoContent();
         }

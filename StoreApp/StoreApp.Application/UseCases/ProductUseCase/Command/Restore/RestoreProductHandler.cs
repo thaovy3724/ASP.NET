@@ -2,14 +2,11 @@
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Repository;
 
-namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
+namespace StoreApp.Application.UseCases.ProductUseCase.Command.Restore
 {
-    public class DeleteProductHandler(
-        IProductRepository productRepository,
-        IOrderRepository orderRepository
-    ) : IRequestHandler<DeleteProductCommand, Unit>
+    public class RestoreProductHandler(IProductRepository productRepository) : IRequestHandler<RestoreProductCommand, Unit>
     {
-        public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RestoreProductCommand request, CancellationToken cancellationToken)
         {
             var product = await productRepository.GetById(request.Id);
             if (product is null)
@@ -19,7 +16,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
 
             try
             {
-                product.SoftDelete();
+                product.Restore();
             }
             catch (StoreApp.Core.Exceptions.DomainException ex)
             {

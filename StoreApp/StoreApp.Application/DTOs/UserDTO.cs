@@ -7,6 +7,7 @@ namespace StoreApp.Application.DTOs
         string Username,
         string FullName,
         string Phone,
-        Role Role
+        Role Role,
+        bool IsLocked
     );
 }

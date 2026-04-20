@@ -7,6 +7,8 @@ using StoreApp.Application.UseCases.UserUseCase.Command.Delete;
 using StoreApp.Application.UseCases.UserUseCase.Command.Update;
 using StoreApp.Application.UseCases.UserUseCase.Query.GetList;
 using StoreApp.Application.UseCases.UserUseCase.Query.GetOne;
+using StoreApp.Application.UseCases.UserUseCase.Command.Lock;
+using StoreApp.Application.UseCases.UserUseCase.Command.Unlock;
 using System.Security.Claims;
 
 namespace StoreApp.Api.Controllers
@@ -66,6 +68,30 @@ namespace StoreApp.Api.Controllers
             }
 
             var cmd = new DeleteUserCommand(Id: id);
+            await mediator.Send(cmd);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:guid}/lock")]
+        public async Task<IActionResult> Lock(Guid id)
+        {
+            var currentUserIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(currentUserIdStr, out var currentUserId))
+            {
+                return Unauthorized(new { message = "Không xác định được người dùng đang đăng nhập." });
+            }
+
+            var cmd = new LockUserCommand(Id: id, CurrentUserId: currentUserId);
+            await mediator.Send(cmd);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:guid}/unlock")]
+        public async Task<IActionResult> Unlock(Guid id)
+        {
+            var cmd = new UnlockUserCommand(Id: id);
             await mediator.Send(cmd);
             return NoContent();
         }

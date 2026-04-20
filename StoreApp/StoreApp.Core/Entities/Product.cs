@@ -11,7 +11,8 @@ namespace StoreApp.Core.Entities
         public int Quantity { get; private set; } = 0;
         public DateTime CreatedAt { get; private set; } = DateTime.Now; 
         public string ImageUrl { get; private set; } = imageUrl;
-        
+        public bool IsDeleted { get; private set; } = false;
+
         public void Update(Guid categoryId, string productName, decimal price, string imageUrl)
         {
             CategoryId = categoryId;
@@ -31,6 +32,27 @@ namespace StoreApp.Core.Entities
         {
             if (Quantity > 0)
                 throw new ProductCannotBeDeletedException("Không thể xóa sản phẩm còn tồn kho");
+        }
+        public void SoftDelete()
+        {
+            if (IsDeleted)
+                throw new ProductCannotBeDeletedException("Sản phẩm đã bị xóa mềm trước đó.");
+
+            IsDeleted = true;
+        }
+
+        public void Restore()
+        {
+            if (!IsDeleted)
+                throw new ProductCannotBeDeletedException("Sản phẩm chưa bị xóa mềm nên không cần khôi phục.");
+
+            IsDeleted = false;
+        }
+
+        public void EnsureCanBeOrdered()
+        {
+            if (IsDeleted)
+                throw new ProductCannotBeOrderedException("Sản phẩm đã bị xóa, không thể đặt hàng.");
         }
     }
 }

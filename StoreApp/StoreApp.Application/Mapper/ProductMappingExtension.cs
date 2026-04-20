@@ -16,7 +16,8 @@ namespace StoreApp.Application.Mapper
                 Price:      entity.Price,
                 Quantity:     entity.Quantity,
                 CreatedAt: entity.CreatedAt,
-                ImageUrl:   entity.ImageUrl
+                ImageUrl:   entity.ImageUrl,
+                IsDeleted: entity.IsDeleted
             );
         }
     }

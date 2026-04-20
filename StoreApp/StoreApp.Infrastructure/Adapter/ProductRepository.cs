@@ -9,15 +9,16 @@ namespace StoreApp.Infrastructure.Adapter
     {
         public async Task<bool> DecreaseStockIfAvailable(Guid productId, int quantity)
         {
-            var rowEffected = await DbSet.Where(p => p.Id == productId && p.Quantity >= quantity)
-                                         .ExecuteUpdateAsync(s => s.SetProperty(p => p.Quantity, p => p.Quantity - quantity));
+            var rowEffected = await DbSet
+                .Where(p => p.Id == productId && !p.IsDeleted && p.Quantity >= quantity)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Quantity, p => p.Quantity - quantity));
             return rowEffected > 0;
         }
 
         // filter 
-        public async Task<PagedList<Product>> Search(int pageNumber, int pageSize, Guid? categoryId = null, Guid? supplierId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null)
+        public async Task<PagedList<Product>> Search(int pageNumber, int pageSize, Guid? categoryId = null, Guid? supplierId = null, decimal? minPrice = null, decimal? maxPrice = null, string? keyword = null, bool isDeleted = false)
         {
-            var query = DbSet.AsNoTracking();
+            var query = DbSet.AsNoTracking().Where(x => x.IsDeleted == isDeleted);
 
             if (categoryId is not null)
                 query = query.Where(x => x.CategoryId == categoryId.Value);

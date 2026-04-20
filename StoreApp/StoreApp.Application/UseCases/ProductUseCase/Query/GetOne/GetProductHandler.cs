@@ -13,7 +13,7 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetOne
         {
             // gọi repository ở tầng Application 
             var product = await productRepository.GetById(request.Id);
-            if(product is null)
+            if(product is null || product.IsDeleted)
             {
                 throw new NotFoundException("Sản phẩm không tồn tại.");
             }

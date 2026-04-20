@@ -16,6 +16,11 @@ namespace StoreApp.Application.UseCases.AuthUseCase.Command.RefreshToken
             {
                 throw new UnauthorizedAccessException("Refresh token không hợp lệ hoặc đã hết hạn");
             }
+
+            if (user.IsLocked)
+            {
+                throw new UnauthorizedAccessException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+            }
             return await authService.CreateTokenResponse(user);
         }
     }
