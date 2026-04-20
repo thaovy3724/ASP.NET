@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.UseCases.UserUseCase.Command.BulkDelete;
 using StoreApp.Application.UseCases.UserUseCase.Command.Create;
 using StoreApp.Application.UseCases.UserUseCase.Command.Delete;
 using StoreApp.Application.UseCases.UserUseCase.Command.Update;
@@ -66,6 +67,25 @@ namespace StoreApp.Api.Controllers
             }
 
             var cmd = new DeleteUserCommand(Id: id);
+            await mediator.Send(cmd);
+            return NoContent();
+        }
+
+
+        // endpoint xóa nhiều user cùng lúc, chỉ admin mới có quyền thực hiện
+        [Authorize(Roles = "Admin")]
+        [HttpPost("bulk-delete")]
+        public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteUserCommand cmd)
+        {
+            var currentUserIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(currentUserIdStr, out var currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            cmd = cmd with { CurrentUserId = currentUserId };
+
             await mediator.Send(cmd);
             return NoContent();
         }

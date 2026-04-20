@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.UseCases.CategoryUseCase.Command.BulkDelete;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Create;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Delete;
 using StoreApp.Application.UseCases.CategoryUseCase.Command.Update;
@@ -50,10 +51,20 @@ namespace StoreApp.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var cmd = new DeleteCategoryCommand (Id : id);
+            await mediator.Send(cmd);
+            return NoContent();
+        }
+
+        // endpoint xóa nhiều category cùng lúc
+        [Authorize(Roles = "Admin")]
+        [HttpPost("bulk-delete")]
+        public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteCategoryCommand cmd)
+        {
             await mediator.Send(cmd);
             return NoContent();
         }

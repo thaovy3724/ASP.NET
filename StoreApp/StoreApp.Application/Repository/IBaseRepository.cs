@@ -18,5 +18,10 @@ namespace StoreApp.Application.Repository
         Task RollbackTransactionAsync();
 
         Task SaveChangesAsync();
+
+        // 2 phương thức mới để hỗ trợ thao tác với nhiều bản ghi cùng lúc
+        Task<List<T>> GetByIds(IEnumerable<Guid> ids);
+        // Xoá nhiều bản ghi cùng lúc
+        Task DeleteRange(IEnumerable<T> entities);
     }
 }

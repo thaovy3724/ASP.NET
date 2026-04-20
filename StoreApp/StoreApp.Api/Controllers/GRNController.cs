@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.UseCases.GRNUseCase.Command.BulkDelete;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Complete;
 using StoreApp.Application.UseCases.GRNUseCase.Command.Create;
@@ -61,6 +62,13 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Cancel(Guid id)
         {
             var cmd = new CancelGRNCommand(Id: id);
+            await mediator.Send(cmd);
+            return NoContent();
+        }
+
+        [HttpPost("bulk-delete")]
+        public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteGRNCommand cmd)
+        {
             await mediator.Send(cmd);
             return NoContent();
         }

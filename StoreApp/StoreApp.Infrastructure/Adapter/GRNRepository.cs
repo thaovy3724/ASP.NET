@@ -42,5 +42,14 @@ namespace StoreApp.Infrastructure.Adapter
                 entry.State = EntityState.Added;
             }
         }
+
+        // kiểm tra xem có tham chiếu đến product nào trước khi xóa không
+        // dùng cho product repository 
+        public Task<bool> HasProductReference(Guid productId)
+        {
+            return DbSet.AsNoTracking()
+                .Include(g => g.Items)
+                .AnyAsync(g => g.Items.Any(i => i.ProductId == productId));
+        }
     }
 }

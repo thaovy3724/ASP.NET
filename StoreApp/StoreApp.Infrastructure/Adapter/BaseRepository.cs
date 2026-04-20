@@ -83,5 +83,21 @@ namespace StoreApp.Infrastructure.Adapter
         {
             return await DbSet.AsNoTracking().AnyAsync(predicate);
         }
+
+        // 2 phương thức mới để hỗ trợ thao tác với nhiều bản ghi cùng lúc
+        public async Task<List<T>> GetByIds(IEnumerable<Guid> ids)
+        {
+            var idList = ids.Distinct().ToList();
+
+            return await DbSet
+                .Where(x => idList.Contains(x.Id))
+                .ToListAsync();
+        }
+        // Phương thức xóa nhiều bản ghi cùng lúc
+        public async Task DeleteRange(IEnumerable<T> entities)
+        {
+            DbSet.RemoveRange(entities);
+            await context.SaveChangesAsync();
+        }
     }
 }

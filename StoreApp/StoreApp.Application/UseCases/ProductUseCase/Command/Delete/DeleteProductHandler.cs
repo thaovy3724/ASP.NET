@@ -6,7 +6,8 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
 {
     public class DeleteProductHandler(
         IProductRepository productRepository,
-        IOrderRepository orderRepository
+        IOrderRepository orderRepository,
+        IGRNRepository grnRepository
     ) : IRequestHandler<DeleteProductCommand, Unit>
     {
         public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
@@ -24,6 +25,12 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Command.Delete
              {
                 throw new ConflictException("Sản phẩm đang nằm trong đơn hàng, không thể xóa.");
              }
+
+            if (await grnRepository.HasProductReference(product.Id))
+            {
+                throw new ConflictException($"Sản phẩm đang nằm trong phiếu nhập, không thể xóa.");
+            }
+
 
             // Kiểm tra tồn kho trước khi xóa sản phẩm, nếu tồn kho khác 0 thì không cho xóa sản phẩm
             product.EnsureCanBeDeleted();

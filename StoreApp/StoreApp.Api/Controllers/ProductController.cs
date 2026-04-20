@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.UseCases.ProductUseCase.Command.BulkDelete;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Create;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Delete;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Update;
@@ -104,6 +105,15 @@ namespace StoreApp.Api.Controllers
 
             // Trả JSON dạng { url: "..." } để FE lấy url và gán vào ImageUrl của product
             return Ok(new { url });
+        }
+
+        // Endpoint xóa nhiều product cùng lúc
+        [Authorize(Roles = "Admin")]
+        [HttpPost("bulk-delete")]
+        public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteProductCommand cmd)
+        {
+            await mediator.Send(cmd);
+            return NoContent();
         }
     }
 }
