@@ -43,5 +43,12 @@ namespace StoreApp.Infrastructure.Adapter
             query = query.OrderByDescending(x => x.CreatedAt);
             return await query.ToPagedListAsync(pageNumber, pageSize);
         }
+
+        public Task<List<Product>> GetByIds(List<Guid> ids)
+        {
+            return DbSet.AsNoTracking()
+                        .Where(x => ids.Contains(x.Id))
+                        .ToListAsync();
+        }
     }
 }

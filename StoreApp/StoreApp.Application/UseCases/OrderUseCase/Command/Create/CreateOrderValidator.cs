@@ -8,22 +8,20 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         public CreateOrderValidator()
         {
             RuleFor(x => x.CustomerId)
-                    .NotEmpty().WithMessage("Id khách hàng không được để trống");
+                .NotEmpty()
+                .WithMessage("Không lấy được thông tin khách hàng từ token.");
 
             RuleFor(x => x.Address)
-                .NotEmpty().WithMessage("Địa chỉ không được để trống");
-
-            RuleFor(x => x.Items)
-                .NotEmpty().WithMessage("Sản phẩm không được để trống")
-                .Must(items => items.All(item => item.Quantity > 0 && item.Price > 0)).
-                WithMessage("Tất cả sản phẩm phải có số lượng và đơn giá lớn hơn 0");
+                .NotEmpty()
+                .WithMessage("Địa chỉ không được để trống.");
 
             RuleFor(x => x.PaymentMethod)
+                .NotEmpty()
+                .WithMessage("Phương thức thanh toán không được để trống.")
                 .Must(BeAValidPaymentMethod)
-                .WithMessage("Phương thức thanh toán không hợp lệ");
+                .WithMessage("Phương thức thanh toán không hợp lệ.");
         }
 
-        // Hàm phụ để kiểm tra chuỗi có thuộc Enum không
         private bool BeAValidPaymentMethod(string method)
         {
             return Enum.TryParse(typeof(PaymentMethod), method, true, out _);

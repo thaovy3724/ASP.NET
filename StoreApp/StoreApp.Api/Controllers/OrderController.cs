@@ -60,16 +60,22 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
+        // endpoint này tạo đơn hàng từ Cart trong database của Customer hiện tại
         [Authorize(Roles = "Customer")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
+        public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var customerId = GetCurrentUserId();
-            cmd = cmd with { CustomerId = customerId.Value };
-            var result = await mediator.Send(cmd);
+
+            var command = new CreateOrderCommand(
+                Address: request.Address,
+                PaymentMethod: request.PaymentMethod,
+                CustomerId: customerId
+            );
+
+            var result = await mediator.Send(command);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-
 
         [Authorize(Roles = "Staff")]
         [HttpPut("{id:guid}/confirm")]

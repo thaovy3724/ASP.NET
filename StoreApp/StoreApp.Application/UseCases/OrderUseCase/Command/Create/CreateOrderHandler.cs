@@ -13,72 +13,94 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         IUserRepository userRepository,
-        IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
+        ICartRepository cartRepository,
+        IVnPayService vnPayService
     ) : IRequestHandler<CreateOrderCommand, CreateOrderResponseDTO>
     {
         public async Task<CreateOrderResponseDTO> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
+            var customerId = request.CustomerId!.Value;
 
-            if (!await userRepository.IsExist(user => user.Id == request.CustomerId && user.Role == Role.Customer))
+            var isCustomerExist = await userRepository.IsExist(user =>
+                user.Id == customerId &&
+                user.Role == Role.Customer &&
+                !user.IsLocked
+            );
+
+            if (!isCustomerExist)
             {
-                throw new NotFoundException("Khách hàng không tồn tại.");
+                throw new NotFoundException("Khách hàng không tồn tại hoặc đã bị khóa.");
             }
 
-            // --- 2. BUSINESS LOGIC LAYER (Transaction) ---
+            var cart = await cartRepository.GetByCustomerIdWithItems(customerId);
+
+            if (cart is null || cart.Items.Count == 0)
+            {
+                throw new BadRequestException("Giỏ hàng đang trống, không thể tạo đơn hàng.");
+            }
+
             await orderRepository.BeginTransactionAsync();
 
             try
             {
-                var pttt = Enum.Parse<PaymentMethod>(request.PaymentMethod);
-                // A. Khởi tạo Order
-                var order = new Order(request.CustomerId.Value, request.Address, pttt);
+                var paymentMethod = Enum.Parse<PaymentMethod>(request.PaymentMethod, true);
 
-                // B. Xử lý từng sản phẩm (Giữ nguyên logic cũ)
-                foreach (var item in request.Items)
+                var order = new Order(customerId, request.Address, paymentMethod);
+
+                var productIds = cart.Items
+                    .Select(x => x.ProductId)
+                    .Distinct()
+                    .ToList();
+
+                var products = await productRepository.GetByIds(productIds);
+                var productMap = products.ToDictionary(x => x.Id, x => x);
+
+                foreach (var cartItem in cart.Items)
                 {
-                    var product = await productRepository.GetById(item.ProductId);
-                    if (product == null)
+                    if (!productMap.TryGetValue(cartItem.ProductId, out var product))
                     {
-                        throw new NotFoundException($"Sản phẩm ID {item.ProductId} không tồn tại.");
+                        throw new NotFoundException($"Sản phẩm ID {cartItem.ProductId} không tồn tại.");
                     }
-                    // Kiểm tra xem sản phẩm có thể được đặt hàng không 
+
                     product.EnsureCanBeOrdered();
 
-                    var isSuccess = await productRepository.DecreaseStockIfAvailable(item.ProductId, item.Quantity);
-                    if (!isSuccess)
+                    if (cartItem.Quantity > product.Quantity)
                     {
-                        throw new ConflictException($"Sản phẩm '{product.ProductName}' không đủ hàng (Còn: {product.Quantity}).");
+                        throw new ConflictException($"Sản phẩm '{product.ProductName}' không đủ hàng. Còn lại: {product.Quantity}.");
                     }
-                    
-                    order.AddItem(item.ProductId, item.Quantity, item.Price);
+
+                    var decreaseSuccess = await productRepository.DecreaseStockIfAvailable(product.Id, cartItem.Quantity);
+
+                    if (!decreaseSuccess)
+                    {
+                        throw new ConflictException($"Sản phẩm '{product.ProductName}' không đủ hàng.");
+                    }
+
+                    order.AddItem(product.Id, cartItem.Quantity, product.Price);
                 }
+
                 await orderRepository.Create(order);
+
+                cartRepository.RemoveCartItems(cart.Items);
+                await cartRepository.SaveChangesAsync();
 
                 await orderRepository.CommitTransactionAsync();
 
-                var orderResponse = order.ToCreateOrderResponseDTO();
+                var response = order.ToCreateOrderResponseDTO();
 
-                // 3. Logic VNPay tạo URL
-                if (pttt == PaymentMethod.VnPay)
+                if (paymentMethod == PaymentMethod.VnPay)
                 {
-                    // Tạo URL
-                    string url = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount);
-
-                    // Cập nhật tiếp PaymentUrl
-                    orderResponse = orderResponse with { PaymentUrl = url };
+                    var paymentUrl = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount);
+                    response = response with { PaymentUrl = paymentUrl };
                 }
 
-                return orderResponse;
+                return response;
             }
-            catch (Exception ex)
+            catch
             {
                 await orderRepository.RollbackTransactionAsync();
-                if (ex is NotFoundException) throw;
-
-                // Lỗi hệ thống chưa biết
-                throw new Exception("Hệ thống không thể xử lý phiếu nhập kho lúc này. Vui lòng liên hệ quản trị viên.");
+                throw;
             }
-
         }
     }
 }

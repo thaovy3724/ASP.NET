@@ -16,5 +16,7 @@ namespace StoreApp.Application.Repository
             bool isDeleted = false);
 
         Task<bool> DecreaseStockIfAvailable(Guid productId, int quantity);
+
+        Task<List<Product>> GetByIds(List<Guid> ids);
     }
 }
