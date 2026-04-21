@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StoreApp.Application.UseCases.ProductReviewUseCase.Command.Create;
+using StoreApp.Application.UseCases.ProductReviewUseCase.Query.GetByProduct;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Create;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Delete;
 using StoreApp.Application.UseCases.ProductUseCase.Command.Update;
 using StoreApp.Application.UseCases.ProductUseCase.Query.GetList;
 using StoreApp.Application.UseCases.ProductUseCase.Query.GetOne;
+using System.Security.Claims;
 
 namespace StoreApp.Api.Controllers
 {
@@ -104,6 +107,45 @@ namespace StoreApp.Api.Controllers
 
             // Trả JSON dạng { url: "..." } để FE lấy url và gán vào ImageUrl của product
             return Ok(new { url });
+        }
+
+
+        [HttpGet("{productId:guid}/reviews")]
+        public async Task<IActionResult> GetReviews(Guid productId)
+        {
+            var query = new GetProductReviewsQuery(productId);
+            var result = await mediator.Send(query);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Customer")]
+        [HttpPost("{productId:guid}/reviews")]
+        public async Task<IActionResult> CreateReview(Guid productId, [FromBody] CreateProductReviewRequest request)
+        {
+            var customerId = GetCurrentUserId();
+
+            var command = new CreateProductReviewCommand(
+                productId,
+                customerId,
+                request.Rating,
+                request.Comment
+            );
+
+            var result = await mediator.Send(command);
+
+            return CreatedAtAction(nameof(GetReviews), new { productId }, result);
+        }
+
+        private Guid? GetCurrentUserId()
+        {
+            var idText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (Guid.TryParse(idText, out var guid))
+            {
+                return guid;
+            }
+
+            return null;
         }
     }
 }

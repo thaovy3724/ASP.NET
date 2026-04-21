@@ -19,5 +19,22 @@ namespace StoreApp.Application.Mapper
                 ImageUrl:   entity.ImageUrl
             );
         }
+
+        public static ProductDetailDTO ToDetailDTO(this Product entity, double averageRating, int reviewCount)
+        {
+            return new ProductDetailDTO
+            (
+                Id: entity.Id,
+                CategoryId: entity.CategoryId,
+                SupplierId: entity.SupplierId,
+                ProductName: entity.ProductName,
+                Price: entity.Price,
+                Quantity: entity.Quantity,
+                CreatedAt: entity.CreatedAt,
+                ImageUrl: entity.ImageUrl,
+                AverageRating: averageRating,
+                ReviewCount: reviewCount
+            );
+        }
     }
 }
