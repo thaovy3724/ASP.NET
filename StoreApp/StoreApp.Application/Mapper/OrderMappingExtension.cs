@@ -1,4 +1,4 @@
-﻿using StoreApp.Application.DTOs;
+using StoreApp.Application.DTOs;
 using StoreApp.Core.Entities;
 
 namespace StoreApp.Application.Mapper
@@ -12,6 +12,7 @@ namespace StoreApp.Application.Mapper
                 Id: order.Id,
                 CustomerId: order.CustomerId,
                 StaffId: order.StaffId,
+                AddressId: order.AddressId,
                 UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,
@@ -34,6 +35,7 @@ namespace StoreApp.Application.Mapper
             (
                 Id: order.Id,
                 CustomerId: order.CustomerId,
+                AddressId: order.AddressId,
                 UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,

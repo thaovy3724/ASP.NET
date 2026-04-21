@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using StoreApp.Application.DTOs;
 using StoreApp.Application.Exceptions;
 using StoreApp.Application.Mapper;
@@ -13,27 +13,45 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         IUserRepository userRepository,
-        IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
+        ICustomerAddressRepository addressRepository,
+        IVnPayService vnPayService
     ) : IRequestHandler<CreateOrderCommand, CreateOrderResponseDTO>
     {
         public async Task<CreateOrderResponseDTO> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
+            var customerId = request.CustomerId!.Value;
 
-            if (!await userRepository.IsExist(user => user.Id == request.CustomerId && user.Role == Role.Customer))
+            if (!await userRepository.IsExist(user => user.Id == customerId && user.Role == Role.Customer))
             {
                 throw new NotFoundException("Khách hàng không tồn tại.");
             }
 
-            // --- 2. BUSINESS LOGIC LAYER (Transaction) ---
+            Guid? addressId = null;
+            string addressSnapshot;
+
+            if (request.AddressId.HasValue)
+            {
+                var address = await addressRepository.GetByIdAndCustomerIdAsync(request.AddressId.Value, customerId);
+                if (address == null)
+                {
+                    throw new NotFoundException("Địa chỉ giao hàng không tồn tại hoặc không thuộc tài khoản của bạn.");
+                }
+
+                addressId = address.Id;
+                addressSnapshot = address.ToSnapshot();
+            }
+            else
+            {
+                addressSnapshot = request.Address?.Trim() ?? string.Empty;
+            }
+
             await orderRepository.BeginTransactionAsync();
 
             try
             {
-                var pttt = Enum.Parse<PaymentMethod>(request.PaymentMethod);
-                // A. Khởi tạo Order
-                var order = new Order(request.CustomerId.Value, request.Address, pttt);
+                var paymentMethod = Enum.Parse<PaymentMethod>(request.PaymentMethod, true);
+                var order = new Order(customerId, addressId, addressSnapshot, paymentMethod);
 
-                // B. Xử lý từng sản phẩm (Giữ nguyên logic cũ)
                 foreach (var item in request.Items)
                 {
                     var product = await productRepository.GetById(item.ProductId);
@@ -47,22 +65,18 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                     {
                         throw new ConflictException($"Sản phẩm '{product.ProductName}' không đủ hàng (Còn: {product.Quantity}).");
                     }
-                    
+
                     order.AddItem(item.ProductId, item.Quantity, item.Price);
                 }
-                await orderRepository.Create(order);
 
+                await orderRepository.Create(order);
                 await orderRepository.CommitTransactionAsync();
 
                 var orderResponse = order.ToCreateOrderResponseDTO();
 
-                // 3. Logic VNPay tạo URL
-                if (pttt == PaymentMethod.VnPay)
+                if (paymentMethod == PaymentMethod.VnPay)
                 {
-                    // Tạo URL
                     string url = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount);
-
-                    // Cập nhật tiếp PaymentUrl
                     orderResponse = orderResponse with { PaymentUrl = url };
                 }
 
@@ -71,12 +85,12 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
             catch (Exception ex)
             {
                 await orderRepository.RollbackTransactionAsync();
-                if (ex is NotFoundException) throw;
 
-                // Lỗi hệ thống chưa biết
-                throw new Exception("Hệ thống không thể xử lý phiếu nhập kho lúc này. Vui lòng liên hệ quản trị viên.");
+                if (ex is NotFoundException or ConflictException or BadRequestException)
+                    throw;
+
+                throw new Exception("Hệ thống không thể xử lý đơn hàng lúc này. Vui lòng liên hệ quản trị viên.");
             }
-
         }
     }
 }

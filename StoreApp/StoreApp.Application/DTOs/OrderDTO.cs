@@ -1,4 +1,4 @@
-﻿using StoreApp.Core.ValueObject;
+using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.DTOs
 {
@@ -6,6 +6,7 @@ namespace StoreApp.Application.DTOs
         Guid Id,
         Guid CustomerId,
         Guid? StaffId,
+        Guid? AddressId,
         DateTime UpdatedAt,
         OrderStatus OrderStatus,
         string Address,
