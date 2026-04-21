@@ -60,6 +60,15 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("refresh_token_expiry_time")
                    .HasColumnType("datetime");
 
+            builder.Property(u => u.FailedLoginCount)
+                   .HasColumnName("failed_login_count")
+                   .HasDefaultValue(0)
+                   .IsRequired();
+
+            builder.Property(u => u.LockoutEnd)
+                   .HasColumnName("lockout_end")
+                   .HasColumnType("datetime");
+
             // --- INDEXING ---
             builder.HasIndex(u => u.Username).IsUnique();
             builder.HasIndex(u => u.RefreshToken);
