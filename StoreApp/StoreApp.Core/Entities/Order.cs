@@ -11,7 +11,11 @@ namespace StoreApp.Core.Entities
         public OrderStatus OrderStatus { get; private set; } = OrderStatus.Pending;
         public string Address { get; private set; } = address;
         public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
-        public decimal TotalAmount => Items.Sum(x => x.Subtotal);
+        public Guid? VoucherId { get; private set; }
+        public string? VoucherCode { get; private set; }
+        public decimal DiscountAmount { get; private set; } = 0;
+        public decimal OriginalAmount => Items.Sum(x => x.Subtotal);
+        public decimal TotalAmount => Math.Max(0, OriginalAmount - DiscountAmount);
 
         // Đảm bảo list không bị null
         public List<OrderDetail> Items { get; private set; } = [];
@@ -86,6 +90,16 @@ namespace StoreApp.Core.Entities
         {
             var item = new OrderDetail(Id, productId, quantity, price);
             Items.Add(item);
+        }
+
+        public void ApplyVoucher(Guid voucherId, string voucherCode, decimal discountAmount)
+        {
+            if (discountAmount < 0)
+                throw new InvalidOrderDiscountException("Số tiền giảm giá không hợp lệ.");
+
+            VoucherId = voucherId;
+            VoucherCode = voucherCode;
+            DiscountAmount = discountAmount;
         }
     }
 }

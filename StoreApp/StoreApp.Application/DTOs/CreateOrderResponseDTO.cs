@@ -8,7 +8,11 @@ namespace StoreApp.Application.DTOs
         DateTime UpdatedAt,
         OrderStatus OrderStatus,
         string Address,
+        decimal OriginalAmount,
+        decimal DiscountAmount,
+        string? VoucherCode,
         decimal TotalAmount,
         PaymentMethod PaymentMethod,
-        string? PaymentUrl); // Nếu PaymentMethod = Cash thì PaymentUrl = null
+        string? PaymentUrl      // Nếu PaymentMethod = Cash thì PaymentUrl = null
+    );
 }

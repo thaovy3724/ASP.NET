@@ -9,6 +9,9 @@ namespace StoreApp.Application.DTOs
         DateTime UpdatedAt,
         OrderStatus OrderStatus,
         string Address,
+        decimal OriginalAmount,
+        decimal DiscountAmount,
+        string? VoucherCode,
         decimal TotalAmount,
         PaymentMethod PaymentMethod,
         List<OrderDetailDTO> Items

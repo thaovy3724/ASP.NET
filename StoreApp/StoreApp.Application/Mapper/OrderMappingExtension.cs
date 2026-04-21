@@ -15,6 +15,9 @@ namespace StoreApp.Application.Mapper
                 UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,
+                OriginalAmount: order.OriginalAmount,
+                DiscountAmount: order.DiscountAmount,
+                VoucherCode: order.VoucherCode,
                 TotalAmount: order.TotalAmount,
                 PaymentMethod: order.PaymentMethod,
                 Items: order.Items
@@ -37,6 +40,9 @@ namespace StoreApp.Application.Mapper
                 UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,
+                OriginalAmount: order.OriginalAmount,
+                DiscountAmount: order.DiscountAmount,
+                VoucherCode: order.VoucherCode,
                 TotalAmount: order.TotalAmount,
                 PaymentMethod: order.PaymentMethod,
                 PaymentUrl: null

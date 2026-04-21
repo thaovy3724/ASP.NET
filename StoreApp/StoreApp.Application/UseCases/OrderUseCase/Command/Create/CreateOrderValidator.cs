@@ -21,6 +21,10 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
             RuleFor(x => x.PaymentMethod)
                 .Must(BeAValidPaymentMethod)
                 .WithMessage("Phương thức thanh toán không hợp lệ");
+
+            RuleFor(x => x.VoucherCode)
+                .MaximumLength(50)
+                .WithMessage("Mã voucher tối đa 50 ký tự.");
         }
 
         // Hàm phụ để kiểm tra chuỗi có thuộc Enum không

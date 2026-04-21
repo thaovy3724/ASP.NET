@@ -50,6 +50,18 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnType("nvarchar(500)")
                    .IsRequired();
 
+            builder.Property(o => o.VoucherId)
+                    .HasColumnName("voucher_id");
+
+            builder.Property(o => o.VoucherCode)
+                   .HasColumnName("voucher_code")
+                   .HasColumnType("nvarchar(50)");
+
+            builder.Property(o => o.DiscountAmount)
+                   .HasColumnName("discount_amount")
+                   .HasColumnType("decimal(18,2)")
+                   .HasDefaultValue(0)
+                   .IsRequired();
             // --- Thiết lập Quan hệ ---
 
             // Quan hệ với Khách hàng
@@ -62,6 +74,11 @@ namespace StoreApp.Infrastructure.Configuration
             builder.HasOne<User>()
                    .WithMany()
                    .HasForeignKey(o => o.StaffId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<Voucher>()
+                   .WithMany()
+                   .HasForeignKey(o => o.VoucherId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             // Quan hệ 1-N với OrderItem

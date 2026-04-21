@@ -13,7 +13,8 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         IUserRepository userRepository,
-        IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
+        IVnPayService vnPayService,
+        IVoucherRepository voucherRepository
     ) : IRequestHandler<CreateOrderCommand, CreateOrderResponseDTO>
     {
         public async Task<CreateOrderResponseDTO> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -50,6 +51,31 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                     
                     order.AddItem(item.ProductId, item.Quantity, item.Price);
                 }
+
+                // Xử lỹ voucher nếu có
+                if (!string.IsNullOrWhiteSpace(request.VoucherCode))
+                {
+                    var now = DateTime.UtcNow.AddHours(7);
+
+                    var voucher = await voucherRepository.GetByCode(request.VoucherCode);
+                    if (voucher is null)
+                    {
+                        throw new NotFoundException("Voucher không tồn tại.");
+                    }
+
+                    voucher.EnsureUsable(now);
+
+                    var discountAmount = voucher.CalculateDiscount(order.OriginalAmount);
+
+                    var decreaseSuccess = await voucherRepository.TryDecreaseQuantity(voucher.Id, now);
+                    if (!decreaseSuccess)
+                    {
+                        throw new ConflictException("Voucher đã hết hạn hoặc hết số lượng.");
+                    }
+
+                    order.ApplyVoucher(voucher.Id, voucher.Code, discountAmount);
+                }
+
                 await orderRepository.Create(order);
 
                 await orderRepository.CommitTransactionAsync();

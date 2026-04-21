@@ -27,6 +27,7 @@ builder.Services.AddCors(options =>
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<OrderAutoCancelService>();
+builder.Services.AddHostedService<VoucherExpireBackgroundService>();
 
 // Global exception handler
 builder.Services.AddProblemDetails();

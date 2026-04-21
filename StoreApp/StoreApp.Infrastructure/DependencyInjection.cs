@@ -22,7 +22,7 @@ namespace StoreApp.Infrastructure
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer("Server=SHIBATEO\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+                options.UseSqlServer("Server=SHIBATEO\\SQLEXPRESS;Database=StoreApp4;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
             });
 
             // Repositories
@@ -36,6 +36,7 @@ namespace StoreApp.Infrastructure
             services.AddScoped<IVnPayService, VnPayService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<IOtpService, OtpService>();
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
 
             // Security Services
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 
