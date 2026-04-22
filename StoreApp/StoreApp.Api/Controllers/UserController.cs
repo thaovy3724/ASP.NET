@@ -7,6 +7,7 @@ using StoreApp.Application.UseCases.UserUseCase.Command.Delete;
 using StoreApp.Application.UseCases.UserUseCase.Command.Update;
 using StoreApp.Application.UseCases.UserUseCase.Query.GetList;
 using StoreApp.Application.UseCases.UserUseCase.Query.GetOne;
+using System.Security.Claims;
 
 namespace StoreApp.Api.Controllers
 {
@@ -53,6 +54,17 @@ namespace StoreApp.Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
+
+            var currentUserIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (Guid.TryParse(currentUserIdStr, out var currentUserId) && currentUserId == id)
+            {
+                return BadRequest(new
+                {
+                    message = "Bạn không thể tự xóa chính mình khi đang đăng nhập."
+                });
+            }
+
             var cmd = new DeleteUserCommand(Id: id);
             await mediator.Send(cmd);
             return NoContent();

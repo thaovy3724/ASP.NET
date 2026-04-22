@@ -57,9 +57,22 @@ namespace StoreApp.Infrastructure.Adapter
 
         public async Task Update(T entity)
         {
-            DbSet.Update(entity);
+            var entry = context.Entry(entity);
+
+            // Nếu entity chưa được theo dõi, attach nó vào context
+            if (entry.State == EntityState.Detached)
+            {
+                DbSet.Update(entity);
+            }
+
             await context.SaveChangesAsync();
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await context.SaveChangesAsync();
+        }
+
         public async Task Delete(T entity)
         {
             DbSet.Remove(entity);

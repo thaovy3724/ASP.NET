@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using StoreApp.Application.DTOs;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Cancel;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Confirm;
 using StoreApp.Application.UseCases.OrderUseCase.Command.Create;
@@ -10,6 +9,7 @@ using StoreApp.Application.UseCases.OrderUseCase.Command.Deliver;
 using StoreApp.Application.UseCases.OrderUseCase.Command.PaymentCallback;
 using StoreApp.Application.UseCases.OrderUseCase.Query.GetList;
 using StoreApp.Application.UseCases.OrderUseCase.Query.GetOne;
+using StoreApp.Core.ValueObject;
 using System.Security.Claims;
 
 namespace StoreApp.Api.Controllers
@@ -21,9 +21,9 @@ namespace StoreApp.Api.Controllers
     {
 
         // staff xem tất cả order
-        //[Authorize(Roles = "Staff")]
-        [HttpGet("staff")]
-        public async Task<IActionResult> GetListForStaff([FromQuery] GetListOrderQuery query)
+        [Authorize(Roles = "Staff")]
+        [HttpGet]
+        public async Task<IActionResult> GetList([FromQuery] GetListOrderQuery query)
         {
             var result = await mediator.Send(query);
             // thêm 1 HTTP Response Header tên là "X-Pagination"
@@ -34,16 +34,11 @@ namespace StoreApp.Api.Controllers
         }
 
         // customer chỉ xem order của chính mình
-        //[Authorize(Roles = "Customer")]
-        [HttpGet("customer")]
-        public async Task<IActionResult> GetListForCustomer([FromQuery] GetListOrderQuery query)
+        [Authorize(Roles = "Customer")]
+        [HttpGet("history")]
+        public async Task<IActionResult> GetOrderHistory([FromQuery] GetListOrderQuery query)
         {
-            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(customerIdText, out var customerId))
-            {
-                return Forbid();
-            }
-
+            var customerId = GetCurrentUserId();
             query = query with { CustomerId = customerId };
 
             var result = await mediator.Send(query);
@@ -56,47 +51,27 @@ namespace StoreApp.Api.Controllers
 
 
         // staff xem chi tiết order
-        //[Authorize(Roles = "Staff")]
-        [HttpGet("staff/{id:guid}")]
-        public async Task<IActionResult> GetByIdForStaff(Guid id)
+        [Authorize(Roles = "Staff, Customer")]
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
         {
             var query = new GetOrderQuery(Id: id);
             var result = await mediator.Send(query);
             return Ok(result);
         }
 
-        // customer chỉ xem order của chính mình
-        //[Authorize(Roles = "Customer")]
-        [HttpGet("customer/{id:guid}")]
-        public async Task<IActionResult> GetByIdForCustomer(Guid id)
-        {
-            var query = new GetOrderQuery(Id: id);
-            var result = await mediator.Send(query);
-
-            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(customerIdText, out var customerId))
-            {
-                return Forbid();
-            }
-
-            if (result.CustomerId != customerId)
-            {
-                return Forbid();
-            }
-
-            return Ok(result);
-        }
-
-        //[Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
         {
+            var customerId = GetCurrentUserId();
+            cmd = cmd with { CustomerId = customerId.Value };
             var result = await mediator.Send(cmd);
-            return CreatedAtAction(nameof(GetByIdForCustomer), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
 
-        //[Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff")]
         [HttpPut("{id:guid}/confirm")]
         public async Task<IActionResult> Confirm(Guid id)
         {
@@ -106,7 +81,7 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        //[Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Staff")]
         [HttpPut("{id:guid}/deliver")]
         public async Task<IActionResult> Deliver(Guid id)
         {
@@ -116,35 +91,13 @@ namespace StoreApp.Api.Controllers
             return Ok(result);
         }
 
-        //[Authorize(Roles = "Staff")]
-        [HttpPut("staff/{id:guid}/cancel")]
-        public async Task<IActionResult> CancelByStaff(Guid id)
+        [Authorize(Roles = "Staff, Customer")]
+        [HttpPut("{id:guid}/cancel")]
+        public async Task<IActionResult> Cancel(Guid id)
         {
-            var staffId = GetCurrentUserId();
+            var role = GetCurrentUserRole();
+            var staffId = role == Role.Staff ? GetCurrentUserId() : null; // Nếu là Staff thì lấy staffId, nếu là Customer thì để null
             var cmd = new CancelOrderCommand(id, staffId);
-            var result = await mediator.Send(cmd);
-            return Ok(result);
-        }
-
-        //[Authorize(Roles = "Customer")]
-        [HttpPut("customer/{id:guid}/cancel")]
-        public async Task<IActionResult> CancelByCustomer(Guid id)
-        {
-            var query = new GetOrderQuery(Id: id);
-            var order = await mediator.Send(query);
-
-            var customerIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(customerIdText, out var customerId))
-            {
-                return Forbid();
-            }
-
-            if (order.CustomerId != customerId)
-            {
-                return Forbid();
-            }
-
-            var cmd = new CancelOrderCommand(id, null);
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
@@ -176,6 +129,16 @@ namespace StoreApp.Api.Controllers
                 return guid;
             }
 
+            return null;
+        }
+
+        private Role? GetCurrentUserRole()
+        {
+            var roleText = User.FindFirstValue(ClaimTypes.Role);
+            if (Enum.TryParse<Role>(roleText, out var role))
+            {
+                return role;
+            }
             return null;
         }
     }

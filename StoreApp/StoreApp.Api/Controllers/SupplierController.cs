@@ -10,11 +10,11 @@ using StoreApp.Application.UseCases.SupplierUseCase.Query.GetOne;
 
 namespace StoreApp.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SupplierController(IMediator mediator) : ControllerBase
     {
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -22,6 +22,8 @@ namespace StoreApp.Api.Controllers
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] GetListSupplierQuery cmd)
         {
@@ -29,13 +31,15 @@ namespace StoreApp.Api.Controllers
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(result.MetaData));
             return Ok(result.Items);
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateSupplierCommand cmd) {
             var result = await mediator.Send(cmd);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSupplierCommand cmd) {
             cmd = cmd with { Id = id };

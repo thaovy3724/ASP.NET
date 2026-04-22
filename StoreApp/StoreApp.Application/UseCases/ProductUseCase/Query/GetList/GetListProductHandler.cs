@@ -15,8 +15,6 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
                             request.PageNumber,
                             request.PageSize,
                             request.CategoryId, 
-                            request.SupplierId,
-                            request.orderDate,
                             request.MinPrice, 
                             request.MaxPrice, 
                             request.Keyword);
