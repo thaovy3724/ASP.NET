@@ -45,6 +45,7 @@ namespace StoreApp.Api.ApplException
             ConflictException => (StatusCodes.Status409Conflict, "Dữ liệu bị xung đột"),
             DomainException => (StatusCodes.Status400BadRequest, "Lỗi nghiệp vụ"),
             ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
+            ForbiddenException => (StatusCodes.Status403Forbidden, "Không có quyền truy cập tài nguyên này"),
 
             //BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
 

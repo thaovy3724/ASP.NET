@@ -6,20 +6,24 @@ using StoreApp.Application.Exceptions;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Query.GetOne
 {
-    public class GetOrderHandler(IOrderRepository orderRepository) : IRequestHandler<GetOrderQuery, OrderDTO>
+    public class GetOrderHandler(IOrderRepository orderRepository)
+        : IRequestHandler<GetOrderQuery, OrderDTO>
     {
         public async Task<OrderDTO> Handle(GetOrderQuery request, CancellationToken cancellationToken)
         {
-            // 1. Lấy dữ liệu từ Repository
             var order = await orderRepository.GetByIdWithItems(request.Id);
 
-            // 2. Kiểm tra nếu không tìm thấy đơn hàng
             if (order == null)
             {
                 throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
 
-            // 3. Map sang DTO và trả về
+            // Nếu là Customer thì chỉ được xem order của chính mình
+            if (request.CustomerId.HasValue && order.CustomerId != request.CustomerId.Value)
+            {
+                throw new ForbiddenException("Bạn không có quyền xem đơn hàng này.");
+            }
+
             return order.ToDTO();
         }
     }

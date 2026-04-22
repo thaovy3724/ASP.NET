@@ -38,7 +38,7 @@ namespace StoreApp.Api.Controllers
         [HttpGet("history")]
         public async Task<IActionResult> GetOrderHistory([FromQuery] GetListOrderQuery query)
         {
-            var customerId = GetCurrentUserId();
+            var customerId = GetRequiredUserId();
             query = query with { CustomerId = customerId };
 
             var result = await mediator.Send(query);
@@ -55,7 +55,17 @@ namespace StoreApp.Api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var query = new GetOrderQuery(Id: id);
+            var role = GetCurrentUserRole();
+
+            Guid? customerId = role == Role.Customer
+                ? GetRequiredUserId()
+                : null;
+
+            var query = new GetOrderQuery(
+                Id: id,
+                CustomerId: customerId
+            );
+
             var result = await mediator.Send(query);
             return Ok(result);
         }
@@ -64,8 +74,8 @@ namespace StoreApp.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand cmd)
         {
-            var customerId = GetCurrentUserId();
-            cmd = cmd with { CustomerId = customerId.Value };
+            var customerId = GetRequiredUserId();
+            cmd = cmd with { CustomerId = customerId };
             var result = await mediator.Send(cmd);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
@@ -96,8 +106,21 @@ namespace StoreApp.Api.Controllers
         public async Task<IActionResult> Cancel(Guid id)
         {
             var role = GetCurrentUserRole();
-            var staffId = role == Role.Staff ? GetCurrentUserId() : null; // Nếu là Staff thì lấy staffId, nếu là Customer thì để null
-            var cmd = new CancelOrderCommand(id, staffId);
+
+            Guid? staffId = role == Role.Staff
+                ? GetRequiredUserId()
+                : null;
+
+            Guid? customerId = role == Role.Customer
+                ? GetRequiredUserId()
+                : null;
+
+            var cmd = new CancelOrderCommand(
+                Id: id,
+                StaffId: staffId,
+                CustomerId: customerId
+            );
+
             var result = await mediator.Send(cmd);
             return Ok(result);
         }
@@ -140,6 +163,18 @@ namespace StoreApp.Api.Controllers
                 return role;
             }
             return null;
+        }
+
+        private Guid GetRequiredUserId()
+        {
+            var idText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (Guid.TryParse(idText, out var guid))
+            {
+                return guid;
+            }
+
+            throw new UnauthorizedAccessException("Token không hợp lệ hoặc thiếu UserId.");
         }
     }
 }

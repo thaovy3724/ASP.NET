@@ -4,32 +4,41 @@ using StoreApp.Application.Repository;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Cancel
 {
-    public class CancelOrderHandler(IOrderRepository orderRepository, IProductRepository productRepository) : IRequestHandler<CancelOrderCommand, Unit>
+    public class CancelOrderHandler(
+        IOrderRepository orderRepository,
+        IProductRepository productRepository
+    ) : IRequestHandler<CancelOrderCommand, Unit>
     {
         public async Task<Unit> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await orderRepository.GetByIdWithItems(request.Id);
+
             if (order is null)
             {
                 throw new NotFoundException($"Không tìm thấy đơn hàng với Id: {request.Id}");
             }
 
-            // Cập nhật trạng thái đơn hàng thành "Đã hủy"
+            // Nếu là Customer thì chỉ được hủy order của chính mình
+            if (request.CustomerId.HasValue && order.CustomerId != request.CustomerId.Value)
+            {
+                throw new ForbiddenException("Bạn không có quyền hủy đơn hàng này.");
+            }
+
             order.CancelOrder(request.StaffId);
             await orderRepository.Update(order);
 
-            // Cập nhật tồn kho cho các sản phẩm trong đơn hàng
             foreach (var item in order.Items)
             {
                 var product = await productRepository.GetById(item.ProductId);
+
                 if (product != null)
                 {
-                    product.IncreaseStock(item.Quantity); // Tăng lại tồn kho
+                    product.IncreaseStock(item.Quantity);
                     await productRepository.Update(product);
                 }
             }
-            return Unit.Value;
 
+            return Unit.Value;
         }
     }
 }
