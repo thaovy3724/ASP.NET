@@ -1,0 +1,15 @@
+﻿=== Tài khoản test ===
+1. Admin - username: thaovy3724@gmail.com - password: 12345678
+2. Staff(Nhân viên) - username: lntvy@futureskills.edu.vn - password: 12345678
+3. Customer(Khách hàng) - username: vyle3442@gmail.com - password: 12345678
+
+=== Tài khoản VNPAY ===
+Ngân hàng: NCB
+Số thẻ: 9704198526191432198
+Tên chủ thẻ:NGUYEN VAN A
+Ngày phát hành:07/15
+Mật khẩu OTP:123456
+
+=== Cú pháp trong SQL Server ===
+1. Update: update [dbo].[user] set role='Admin' where user_id='1C0F69EB-7C8E-4680-8DD8-6FE081EDFD68'
+2. Insert: insert into [dbo].[user] (user_id, username, password, role) values ('1C0F69EB-7C8E-4680-8DD8-6FE081EDFD68')
