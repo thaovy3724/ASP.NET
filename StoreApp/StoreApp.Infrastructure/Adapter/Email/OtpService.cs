@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using StoreApp.Application.Exceptions;
 using StoreApp.Application.Service.Email;
 using StoreApp.Core.Entities;
 
@@ -6,45 +7,57 @@ namespace StoreApp.Infrastructure.Adapter.Email
 {
     public class OtpService(IMemoryCache cache, IEmailService emailService) : IOtpService
     {
+        private const int OtpExpiresMinutes = 5;
+        private const int ResendLockSeconds = 60;
+        private const int MaxSendPerHour = 5;
+
+        private sealed record PendingOtpData(string OTP, User UserData);
+
+        private sealed class OtpRateLimitCounter
+        {
+            public int Count { get; set; }
+            public DateTime ExpireAt { get; init; }
+        }
 
         public async Task SendAndCacheOtpAsync(User user)
         {
-            if (cache.TryGetValue($"ResendLock_{user.Username}", out _))
-            {
-                throw new Exception("Vui lòng đợi 60 giây trước khi yêu cầu mã mới.");
-            }
+            CheckRateLimit(user.Username);
+
             await SendOTP(user);
         }
 
         public async Task ResendAndCachedOtpAsync(string userName)
         {
-            if (cache.TryGetValue($"ResendLock_{userName}", out _))
+            CheckRateLimit(userName);
+
+            if (cache.TryGetValue(VerifyKey(userName), out PendingOtpData? data)
+                && data?.UserData is not null)
             {
-                throw new Exception("Vui lòng đợi 60 giây trước khi yêu cầu mã mới.");
+                await SendOTP(data.UserData);
+                return;
             }
-            if (cache.TryGetValue($"Verify_{userName}", out dynamic data))
-            {
-                var user = data.UserData as User;
-                await SendOTP(user);
-            }
-            else throw new Exception("Bạn chưa thực hiện đăng ký trước đó.");
+
+            throw new BadRequestException("Bạn chưa thực hiện đăng ký trước đó hoặc OTP đã hết hạn.");
         }
 
         private async Task SendOTP(User user)
         {
-            // 1. Tạo mã
-            string otp = new Random().Next(100000, 999999).ToString();
+            var email = NormalizeEmail(user.Username);
 
-            // 2. Lưu vào Cache (Sử dụng IMemoryCache)
-            var cacheOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-            var cacheData = new { OTP = otp, UserData = user };
-            cache.Set($"Verify_{user.Username}", cacheData, cacheOptions);
+            string otp = Random.Shared.Next(100000, 1000000).ToString();
 
-            // 3. Tạo/Cập nhật khóa phụ chặn gửi lại (60 giây)
-            cache.Set($"ResendLock_{user.Username}", true, TimeSpan.FromSeconds(60));
+            var cacheData = new PendingOtpData(otp, user);
 
-            // 4. Sử dụng EmailService để gửi
+            cache.Set(
+                VerifyKey(email),
+                cacheData,
+                TimeSpan.FromMinutes(OtpExpiresMinutes)
+            );
+
+            // Set khóa 60 giây và tăng bộ đếm 1 giờ trước khi gọi SMTP.
+            // Như vậy nếu bị giới hạn thì sẽ bị chặn từ trước, không gọi SMTP.
+            IncreaseRateLimitCounter(email);
+
             string subject = "Mã xác thực OTP - StoreApp";
 
             string body = $@"
@@ -52,45 +65,121 @@ namespace StoreApp.Infrastructure.Adapter.Email
                 <h2 style='color: #333;'>Xác nhận tài khoản StoreApp</h2>
                 <p>Chào <b>{user.FullName}</b>,</p>
                 <p>Bạn vừa thực hiện yêu cầu xác thực tài khoản. Vui lòng sử dụng mã OTP dưới đây:</p>
-        
+
                 <div style='background-color: #f8f9fa; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;'>
                     <span style='font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #007bff;'>{otp}</span>
                 </div>
 
                 <p style='color: #d9534f; font-weight: bold;'>
-                    ⚠️ Lưu ý: Mã này chỉ có hiệu lực trong vòng 5 phút.
+                    ⚠️ Lưu ý: Mã này chỉ có hiệu lực trong vòng {OtpExpiresMinutes} phút.
                 </p>
-        
+
                 <p>Sau thời gian này, mã sẽ tự động hết hạn và bạn sẽ cần yêu cầu mã mới nếu chưa hoàn tất xác thực.</p>
                 <hr style='border: 0; border-top: 1px solid #eee;' />
                 <p style='font-size: 12px; color: #888;'>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
             </div>";
 
-            await emailService.SendEmailAsync(user.Username, subject, body);
+            await emailService.SendEmailAsync(email, subject, body);
+        }
+
+        private void CheckRateLimit(string email)
+        {
+            email = NormalizeEmail(email);
+
+            // Điều kiện 1: mỗi email chỉ được gửi 1 lần trong 60 giây
+            if (cache.TryGetValue(ResendLockKey(email), out _))
+            {
+                throw new TooManyRequestsException("Vui lòng đợi 60 giây trước khi yêu cầu mã OTP mới.");
+            }
+
+            // Điều kiện 2: tối đa 5 lần trong 1 giờ
+            if (cache.TryGetValue(HourlyCounterKey(email), out OtpRateLimitCounter? counter)
+                && counter is not null
+                && counter.Count >= MaxSendPerHour)
+            {
+                throw new TooManyRequestsException("Email này đã yêu cầu OTP quá 5 lần trong 1 giờ. Vui lòng thử lại sau.");
+            }
+        }
+
+        private void IncreaseRateLimitCounter(string email)
+        {
+            email = NormalizeEmail(email);
+
+            var counterKey = HourlyCounterKey(email);
+
+            if (!cache.TryGetValue(counterKey, out OtpRateLimitCounter? counter) || counter is null)
+            {
+                counter = new OtpRateLimitCounter
+                {
+                    Count = 1,
+                    ExpireAt = DateTime.Now.AddHours(1)
+                };
+            }
+            else
+            {
+                counter.Count++;
+            }
+
+            cache.Set(
+                counterKey,
+                counter,
+                new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(counter.ExpireAt)
+            );
+
+            cache.Set(
+                ResendLockKey(email),
+                true,
+                TimeSpan.FromSeconds(ResendLockSeconds)
+            );
         }
 
         public User? ValidateOtp(string email, string inputOtp)
         {
-            if (cache.TryGetValue($"Verify_{email}", out dynamic data) && data.OTP == inputOtp)
+            email = NormalizeEmail(email);
+
+            if (cache.TryGetValue(VerifyKey(email), out PendingOtpData? data)
+                && data is not null
+                && data.OTP == inputOtp)
             {
-                return data.UserData as User;
+                return data.UserData;
             }
+
             return null;
         }
+
         public void ClearOtp(string email)
         {
-            // Tạo đúng Key mà bạn đã dùng để lưu lúc Register/Resend
-            string cacheKey = $"Verify_{email}";
-            string resendLockKey = $"ResendLock_{email}";
+            email = NormalizeEmail(email);
 
-            // Xóa bỏ Key này khỏi RAM ngay lập tức
-            cache.Remove(cacheKey);
-            cache.Remove(resendLockKey);
+            cache.Remove(VerifyKey(email));
+            cache.Remove(ResendLockKey(email));
         }
 
         public bool IsResendLocked(string email)
         {
-            return cache.TryGetValue($"ResendLock_{email}", out _);
+            email = NormalizeEmail(email);
+            return cache.TryGetValue(ResendLockKey(email), out _);
+        }
+
+        private static string NormalizeEmail(string email)
+        {
+            return email.Trim().ToLowerInvariant();
+        }
+
+        private static string VerifyKey(string email)
+        {
+            return $"Verify_{NormalizeEmail(email)}";
+        }
+
+        private static string ResendLockKey(string email)
+        {
+            return $"OtpResendLock_{NormalizeEmail(email)}";
+        }
+
+        private static string HourlyCounterKey(string email)
+        {
+            return $"OtpHourlyCounter_{NormalizeEmail(email)}";
         }
     }
 }

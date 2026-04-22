@@ -46,6 +46,8 @@ namespace StoreApp.Api.ApplException
             DomainException => (StatusCodes.Status400BadRequest, "Lỗi nghiệp vụ"),
             ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
 
+            AccountLockedException => (423, "Tài khoản tạm khóa"),
+            TooManyRequestsException => (StatusCodes.Status429TooManyRequests, "Gửi yêu cầu quá nhiều"),
             //BaseException appEx => ((int)appEx.StatusCode, "Lỗi xử lý yêu cầu"),
 
             ArgumentNullException => (StatusCodes.Status400BadRequest, "Tham số không được để trống"),

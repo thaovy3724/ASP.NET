@@ -22,8 +22,10 @@ namespace StoreApp.Infrastructure
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer("Server=SHIBATEO\\SQLEXPRESS;Database=StoreApp;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+                options.UseSqlServer("Server=SHIBATEO\\SQLEXPRESS;Database=StoreApp8;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
             });
+
+            services.AddMemoryCache();
 
             // Repositories
             services.AddScoped<ICategoryRepository, CategoryRepository>();
