@@ -15,5 +15,6 @@ namespace StoreApp.Application.Repository
             string? keyword = null);
 
         Task<bool> DecreaseStockIfAvailable(Guid productId, int quantity);
+        Task DeleteListOfProduct(List<Guid> productIds);
     }
 }

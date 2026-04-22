@@ -32,5 +32,6 @@ namespace StoreApp.Core.Entities
             if (Quantity > 0)
                 throw new ProductCannotBeDeletedException("Không thể xóa sản phẩm còn tồn kho");
         }
+
     }
 }

@@ -56,6 +56,14 @@ namespace StoreApp.Api.Controllers
             await mediator.Send(command);
             return NoContent();
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("delete-list")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteList([FromBody] DeleteListOfProductCommand command)
+        {
+            await mediator.Send(command);
+            return NoContent();
+        }
 
         [Authorize(Roles = "Admin")]
         // Upload image:

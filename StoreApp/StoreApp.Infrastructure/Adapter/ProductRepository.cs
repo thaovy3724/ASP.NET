@@ -42,5 +42,10 @@ namespace StoreApp.Infrastructure.Adapter
             query = query.OrderByDescending(x => x.CreatedAt);
             return await query.ToPagedListAsync(pageNumber, pageSize);
         }
+        public async Task DeleteListOfProduct(List<Guid> productIds)
+        {
+            await DbSet.Where(p => productIds.Contains(p.Id)).ExecuteDeleteAsync();
+            await context.SaveChangesAsync();
+        }
     }
 }
