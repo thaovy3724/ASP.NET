@@ -43,6 +43,7 @@ namespace StoreApp.Api.ApplException
             NotFoundException => (StatusCodes.Status404NotFound, "Không tìm thấy dữ liệu"),
             BadRequestException => (StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ"),
             ConflictException => (StatusCodes.Status409Conflict, "Dữ liệu bị xung đột"),
+            ForbiddenException => (StatusCodes.Status403Forbidden, "Không có quyền truy cập tài nguyên này"),
             DomainException => (StatusCodes.Status400BadRequest, "Lỗi nghiệp vụ"),
             ValidationException => (StatusCodes.Status400BadRequest, "Lỗi xác thực dữ liệu"),
 
