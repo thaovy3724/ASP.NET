@@ -14,7 +14,8 @@ namespace StoreApp.Application.UseCases.ProductUseCase.Query.GetList
                           .Search(
                             request.PageNumber,
                             request.PageSize,
-                            request.CategoryId, 
+                            request.CategoryId,
+                            request.SupplierId,
                             request.MinPrice, 
                             request.MaxPrice, 
                             request.Keyword);

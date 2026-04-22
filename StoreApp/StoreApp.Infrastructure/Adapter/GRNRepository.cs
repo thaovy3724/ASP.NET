@@ -23,11 +23,24 @@ namespace StoreApp.Infrastructure.Adapter
             return await query.ToPagedListAsync(pageNumber, pageSize);
         }
 
-        // Override method GetById ở BaseRepository 
-        public new Task<GRN?> GetById(Guid id)
+        public Task<GRN?> GetByIdWithItems(Guid id)
         {
             return DbSet.Include(o => o.Items)
                         .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public void MarkDetailAsAdded(GRNDetail item)
+        {
+            var entry = context.Entry(item);
+
+            if (entry.State == EntityState.Detached)
+            {
+                context.Set<GRNDetail>().Add(item);
+            }
+            else
+            {
+                entry.State = EntityState.Added;
+            }
         }
     }
 }

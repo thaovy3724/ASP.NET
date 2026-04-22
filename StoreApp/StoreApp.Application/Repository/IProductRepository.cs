@@ -8,9 +8,12 @@ namespace StoreApp.Application.Repository
         Task<PagedList<Product>> Search(
             int pageNumber, 
             int pageSize, 
-            Guid? categoryId = null, 
+            Guid? categoryId = null,
+            Guid? supplierId = null,
             decimal? minPrice = null, 
             decimal? maxPrice = null, 
             string? keyword = null);
+
+        Task<bool> DecreaseStockIfAvailable(Guid productId, int quantity);
     }
 }
