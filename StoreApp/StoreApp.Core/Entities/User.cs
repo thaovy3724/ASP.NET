@@ -20,5 +20,9 @@ namespace StoreApp.Core.Entities
             Phone = phone;
             Role = role;
         }
+        public int? failedLoginCount { get; set; }
+        public int? lockoutEnd { get; set; }
+        public DateTime? lockedDate { get; set; }
+
     }
 }

@@ -26,7 +26,9 @@ builder.Services.AddCors(options =>
 // cau hinh vnpay & order
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
 builder.Services.AddHttpContextAccessor();
+// Đăng ký từng HostedService riêng rẽ
 builder.Services.AddHostedService<OrderAutoCancelService>();
+builder.Services.AddHostedService<LockedUserWhenFailedLoginMore5Time>();
 
 // Global exception handler
 builder.Services.AddProblemDetails();
