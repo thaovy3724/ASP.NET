@@ -3,7 +3,7 @@ using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Core.Entities
 {
-    public class Order(Guid customerId,string address, PaymentMethod paymentMethod) : BaseEntity
+    public class Order(Guid customerId, string address, PaymentMethod paymentMethod) : BaseEntity
     {
         public Guid CustomerId { get; private set; } = customerId;
         public Guid? StaffId { get; private set; }
@@ -11,12 +11,13 @@ namespace StoreApp.Core.Entities
         public OrderStatus OrderStatus { get; private set; } = OrderStatus.Pending;
         public string Address { get; private set; } = address;
         public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
-        public decimal TotalAmount => Items.Sum(x => x.Subtotal);
+        public Guid? VoucherCode;
 
         // Đảm bảo list không bị null
         public List<OrderDetail> Items { get; private set; } = [];
+        public decimal? TotalAmount { get; set; } = 0;
 
-        public void Update( OrderStatus status)
+        public void Update(OrderStatus status)
         {
             OrderStatus = status;
         }
@@ -59,12 +60,12 @@ namespace StoreApp.Core.Entities
                 || (PaymentMethod == PaymentMethod.VnPay && staffId is not null && OrderStatus == OrderStatus.Paid);
 
             if (!canCancel)
-                
+
             {
                 throw new OrderCannotBeCanceledException("Không thể hủy đơn hàng ở trạng thái hiện tại.");
             }
 
-            if(staffId is not null) // Nếu khách hàng hủy đơn hàng thì staffId sẽ là null, ngược lại nếu nhân viên hủy đơn hàng thì sẽ có staffId
+            if (staffId is not null) // Nếu khách hàng hủy đơn hàng thì staffId sẽ là null, ngược lại nếu nhân viên hủy đơn hàng thì sẽ có staffId
             {
                 StaffId = staffId.Value;
             }
@@ -75,7 +76,7 @@ namespace StoreApp.Core.Entities
 
         public void PayOrder()
         {
-            if(OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.VnPay)
+            if (OrderStatus == OrderStatus.Pending && PaymentMethod == PaymentMethod.VnPay)
             {
                 OrderStatus = OrderStatus.Paid;
                 UpdatedAt = DateTime.UtcNow.AddHours(7);
@@ -86,6 +87,20 @@ namespace StoreApp.Core.Entities
         {
             var item = new OrderDetail(Id, productId, quantity, price);
             Items.Add(item);
+            TotalAmount += item.Subtotal;
         }
+        public void SetVoucherCode(Voucher voucher)
+        {
+            VoucherCode = voucher.Id;
+            //TotalAmount = getTotalAmount(Items, voucher.DiscountPercent, voucher.MaxDiscountAmount);
+            var discountAmount = TotalAmount * voucher.DiscountPercent / 100;
+            if (voucher.MaxDiscountAmount < discountAmount)
+            {
+                discountAmount = voucher.MaxDiscountAmount;
+            }
+            TotalAmount -= discountAmount;
+        }
+        
     }
+
 }

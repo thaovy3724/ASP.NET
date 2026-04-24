@@ -13,6 +13,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         IUserRepository userRepository,
+        IVoucherRepository voucherRepository,
         IVnPayService vnPayService // INJECT THÊM SERVICE VNPAY
     ) : IRequestHandler<CreateOrderCommand, CreateOrderResponseDTO>
     {
@@ -30,6 +31,19 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
             try
             {
                 var pttt = Enum.Parse<PaymentMethod>(request.PaymentMethod);
+                Voucher? voucher = null;
+                if (request.VoucherCode.HasValue)
+                {
+                    voucher = await voucherRepository.GetById(request.VoucherCode.Value);
+                    if(voucher == null || !voucher.Status || voucher.StartDate > DateTime.UtcNow || voucher.EndDate < DateTime.UtcNow || voucher.Quantity <= 0)
+                    {
+                        throw new NotFoundException("Mã voucher không hợp lệ hoặc đã hết hạn.");
+                    } else
+                    {
+                        voucher.decreaseQuantity();
+                        await voucherRepository.Update(voucher);
+                    }
+                }
                 // A. Khởi tạo Order
                 var order = new Order(request.CustomerId.Value, request.Address, pttt);
 
@@ -50,7 +64,11 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                     
                     order.AddItem(item.ProductId, item.Quantity, item.Price);
                 }
+                if(voucher is not null)
+                    order.SetVoucherCode(voucher);
+
                 await orderRepository.Create(order);
+                
 
                 await orderRepository.CommitTransactionAsync();
 
@@ -60,7 +78,7 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
                 if (pttt == PaymentMethod.VnPay)
                 {
                     // Tạo URL
-                    string url = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount);
+                    string url = vnPayService.CreatePaymentUrl(order.Id, order.TotalAmount ?? 0);
 
                     // Cập nhật tiếp PaymentUrl
                     orderResponse = orderResponse with { PaymentUrl = url };

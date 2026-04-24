@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using StoreApp.Core.ValueObject;
 
 namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
@@ -21,6 +23,8 @@ namespace StoreApp.Application.UseCases.OrderUseCase.Command.Create
             RuleFor(x => x.PaymentMethod)
                 .Must(BeAValidPaymentMethod)
                 .WithMessage("Phương thức thanh toán không hợp lệ");
+
+            
         }
 
         // Hàm phụ để kiểm tra chuỗi có thuộc Enum không

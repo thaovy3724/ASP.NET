@@ -49,6 +49,11 @@ namespace StoreApp.Infrastructure.Configuration
                    .HasColumnName("address")
                    .HasColumnType("nvarchar(500)")
                    .IsRequired();
+            builder.Property(o => o.TotalAmount)
+                   .HasColumnName("total_amount")
+                   .HasColumnType("decimal(18,2)");
+            builder.Property(o => o.VoucherCode)
+                   .HasColumnName("voucher_code");
 
             // --- Thiết lập Quan hệ ---
 

@@ -36,6 +36,7 @@ namespace StoreApp.Infrastructure
             services.AddScoped<IVnPayService, VnPayService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<IOtpService, OtpService>();
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
 
             // Security Services
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 

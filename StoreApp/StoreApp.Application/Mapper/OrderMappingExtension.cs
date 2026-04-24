@@ -15,7 +15,9 @@ namespace StoreApp.Application.Mapper
                 UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,
-                TotalAmount: order.TotalAmount,
+                VoucherCode: order.VoucherCode,
+
+                TotalAmount: order.TotalAmount ?? 0,
                 PaymentMethod: order.PaymentMethod,
                 Items: order.Items
                     .Select(x => new OrderDetailDTO(
@@ -37,7 +39,8 @@ namespace StoreApp.Application.Mapper
                 UpdatedAt: order.UpdatedAt,
                 OrderStatus: order.OrderStatus,
                 Address: order.Address,
-                TotalAmount: order.TotalAmount,
+                VoucherCode: order.VoucherCode,
+                TotalAmount: order.TotalAmount ?? 0,
                 PaymentMethod: order.PaymentMethod,
                 PaymentUrl: null
             );

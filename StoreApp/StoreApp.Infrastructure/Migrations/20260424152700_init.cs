@@ -61,6 +61,23 @@ namespace StoreApp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "voucher",
+                columns: table => new
+                {
+                    code = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    discount_percent = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
+                    max_discount_amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    start_date = table.Column<DateTime>(type: "datetime", nullable: false),
+                    end_date = table.Column<DateTime>(type: "datetime", nullable: false),
+                    quantity = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_voucher", x => x.code);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GRN",
                 columns: table => new
                 {
@@ -120,7 +137,9 @@ namespace StoreApp.Infrastructure.Migrations
                     updated_date = table.Column<DateTime>(type: "datetime", nullable: false),
                     order_status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     address = table.Column<string>(type: "nvarchar(500)", nullable: false),
-                    payment_method = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    payment_method = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    total_amount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    voucher_code = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -285,6 +304,9 @@ namespace StoreApp.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "order_detail");
+
+            migrationBuilder.DropTable(
+                name: "voucher");
 
             migrationBuilder.DropTable(
                 name: "GRN");

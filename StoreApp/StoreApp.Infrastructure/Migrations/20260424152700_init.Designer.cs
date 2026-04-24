@@ -12,7 +12,7 @@ using StoreApp.Infrastructure.Data;
 namespace StoreApp.Infrastructure.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20260423092522_init")]
+    [Migration("20260424152700_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -138,9 +138,17 @@ namespace StoreApp.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("staff_id");
 
+                    b.Property<decimal?>("TotalAmount")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("total_amount");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime")
                         .HasColumnName("updated_date");
+
+                    b.Property<Guid?>("VoucherCode")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("voucher_code");
 
                     b.HasKey("Id");
 
@@ -336,6 +344,42 @@ namespace StoreApp.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("user", (string)null);
+                });
+
+            modelBuilder.Entity("StoreApp.Core.Entities.Voucher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("code");
+
+                    b.Property<decimal>("DiscountPercent")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("discount_percent");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("end_date");
+
+                    b.Property<decimal>("MaxDiscountAmount")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("max_discount_amount");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("start_date");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("voucher", (string)null);
                 });
 
             modelBuilder.Entity("StoreApp.Core.Entities.GRN", b =>
