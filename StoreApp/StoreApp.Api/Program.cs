@@ -41,7 +41,7 @@ builder.Services.AddMemoryCache();
 //==== CONFIGURE HTTP PIPELINE ====//
 
 var app = builder.Build();
-
+app.UseMiddleware<LoggingMiddleware>(); 
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
